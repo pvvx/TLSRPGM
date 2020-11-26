@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-### TlsrPgm.py ###
+##### TlsrPgm.py #####
 ###  Autor: pvvx   ###
 
 import sys
