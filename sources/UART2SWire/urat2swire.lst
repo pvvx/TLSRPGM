@@ -1,0 +1,1809 @@
+
+urat2swire.abs:     file format elf32-littletc32
+urat2swire.abs
+architecture: tc32, flags 0x00000112:
+EXEC_P, HAS_SYMS, D_PAGED
+start address 0x00000000
+
+Program Header:
+    LOAD off    0x00008000 vaddr 0x00000000 paddr 0x00000000 align 2**15
+         filesz 0x00000dd4 memsz 0x00000dd4 flags r-x
+    LOAD off    0x00009700 vaddr 0x00841700 paddr 0x00000dd4 align 2**15
+         filesz 0x00000030 memsz 0x00000a68 flags rw-
+private flags = 0: [APCS-32] [FPA float format]
+
+Sections:
+Idx Name          Size      VMA       LMA       File off  Algn
+  0 .vectors      000000bc  00000000  00000000  00008000  2**2
+                  CONTENTS, ALLOC, LOAD, READONLY, CODE
+  1 .ram_code     00000cc8  000000bc  000000bc  000080bc  2**2
+                  CONTENTS, ALLOC, LOAD, READONLY, CODE
+  2 .rodata       00000050  00000d84  00000d84  00008d84  2**2
+                  CONTENTS, ALLOC, LOAD, READONLY, DATA
+  3 .data         00000030  00841700  00000dd4  00009700  2**2
+                  CONTENTS, ALLOC, LOAD, DATA
+  4 .bss          00000a38  00841730  00000e04  00009730  2**2
+                  ALLOC
+  5 .comment      0000001a  00000000  00000000  00009730  2**0
+                  CONTENTS, READONLY
+  6 .TC32.attributes 00000010  00000000  00000000  0000974a  2**0
+                  CONTENTS, READONLY
+SYMBOL TABLE:
+00000000 l    d  .vectors	00000000 .vectors
+000000bc l    d  .ram_code	00000000 .ram_code
+00000d84 l    d  .rodata	00000000 .rodata
+00841700 l    d  .data	00000000 .data
+00841730 l    d  .bss	00000000 .bss
+00000000 l    d  .comment	00000000 .comment
+00000000 l    d  .TC32.attributes	00000000 .TC32.attributes
+00000180 l       *ABS*	00000000 IRQ_STK_SIZE
+00000020 l       .vectors	00000000 FLASH_WAKEUP_BEGIN
+000000b8 l       .vectors	00000000 FLASH_RECOVER
+0000002e l       .vectors	00000000 TNOP
+0000008c l       .vectors	00000000 DAT0
+0000004e l       .vectors	00000000 ZERO
+00000058 l       .vectors	00000000 ZERO_END
+00000058 l       .vectors	00000000 ZERO_TAG
+0000005e l       .vectors	00000000 ZERO_TAG_BEGIN
+00000068 l       .vectors	00000000 ZERO_TAG_END
+00000068 l       .vectors	00000000 SETIC
+000000ac l       .vectors	00000000 DATA_I
+00000078 l       .vectors	00000000 COPY_DATA
+00000086 l       .vectors	00000000 COPY_DATA_END
+000000bc l       .vectors	00000000 ASMEND
+00000000 l    df *ABS*	00000000 main.c
+00000000 l    df *ABS*	00000000 crc.c
+00000000 l    df *ABS*	00000000 clock.c
+00000000 l    df *ABS*	00000000 analog.c
+00000000 l    df *ABS*	00000000 swire.c
+00842168 g       *ABS*	00000000 _end_bss_
+00000e04 g       *ABS*	00000000 _bin_size_
+00000020 g       .vectors	00000000 __reset
+0000019c g     F .ram_code	00000044 _swire_fcmd_faddr
+00000bc8 g     F .ram_code	00000058 swire_read
+00000158 g     F .ram_code	00000014 memcpy
+00000dd4 g       *ABS*	00000000 _code_size_
+00841730 g       .data	00000000 _end_data_
+00841730 g     O .bss	00000004 MCU_PROD_ID
+00000d48 g     F .ram_code	0000003c swire_fifo_read
+00841730 g       .bss	00000000 _start_bss_
+00841734 g     O .bss	00000001 cur_uart_baud
+00000c20 g     F .ram_code	00000078 swire_write_bytes
+0084172e g     O .data	00000001 swire_addr_len
+00841700 g     O .data	00000001 new_uart_baud
+00841738 g     O .bss	00000004 MCU_PROD__TID
+00841704 g     O .data	00000024 uart_tab_baud
+00000000 g       .vectors	00000000 __start
+00841700 g       .data	00000000 _start_data_
+000000bc g     F .ram_code	0000009c uart_init
+00000b20 g     F .ram_code	00000014 sleep_us
+00000b8c g     F .ram_code	0000003c swire_write
+0084173c g     O .bss	00000414 utxb
+00008000 g       *ABS*	00000000 __RAM_SIZE_MAX
+0000016c g     F .ram_code	00000018 _swire_set_fcs_low
+0000000e g       *ABS*	00000000 _ramcode_size_div_256_
+00000a54 g     F .ram_code	00000050 crcInit
+00841b50 g     O .bss	00000004 MCU_PROD__ID
+00000200 g     F .ram_code	00000854 main
+00000b60 g     F .ram_code	0000002c analog_write
+00841728 g     O .data	00000006 swire_cmd_cpu_stop
+00000d0c g     F .ram_code	0000003c swire_fifo_write
+00000b34 g     F .ram_code	0000002c analog_read
+000001e0 g     F .ram_code	00000020 swire_fcmd
+00000aa4 g     F .ram_code	0000007c crcFast
+00840e00 g       *ABS*	00000000 _ictag_start_
+00841f68 g     O .bss	00000200 crcTable
+00000184 g     F .ram_code	00000018 _swire_set_fcs_hi
+000000e0 g       *ABS*	00000000 _ramcode_size_div_16_
+00840f00 g       *ABS*	00000000 _ictag_end_
+00000dd4 g       *ABS*	00000000 _dstored_
+00841b54 g     O .bss	00000414 urxb
+00840000 g       *ABS*	00000000 __RAM_START_ADDR
+00000c98 g     F .ram_code	00000074 swire_read_bytes
+
+
+
+Disassembly of section .vectors:
+
+00000000 <__start>:
+   0:	800e      	tj.n	20 <__reset>
+   2:	00001234 	tandeq	r1, r0, r4, lsr r2
+   6:	4e4b0000 	undefined instruction 0x4e4b0000
+   a:	00e0544c 	trsubceq	r5, r0, ip, asr #8
+   e:	80060088 	tandhi	r0, r6, r8, lsl #1
+  12:	0000      	tands	r0, r0
+  14:	0000      	tands	r0, r0
+  16:	0000      	tands	r0, r0
+  18:	00000e04 	tandeq	r0, r0, r4, lsl #28
+  1c:	00000000 	tandeq	r0, r0, r0
+
+00000020 <__reset>:
+  20:	0825      	tloadr	r0, [pc, #148]	; (b8 <FLASH_RECOVER>)
+  22:	a100      	tmovs	r1, #0
+  24:	4041      	tstorerb	r1, [r0, #1]
+  26:	a1ab      	tmovs	r1, #171	; 0xab
+  28:	4001      	tstorerb	r1, [r0, #0]
+  2a:	a200      	tmovs	r2, #0
+  2c:	a306      	tmovs	r3, #6
+
+0000002e <TNOP>:
+  2e:	b201      	tadds	r2, #1
+  30:	029a      	tcmp	r2, r3
+  32:	cdfc      	tjle.n	2e <TNOP>
+  34:	a101      	tmovs	r1, #1
+  36:	4041      	tstorerb	r1, [r0, #1]
+  38:	a012      	tmovs	r0, #18
+  3a:	6bc0      	tmcsr	r0
+  3c:	0813      	tloadr	r0, [pc, #76]	; (8c <DAT0>)
+  3e:	0685      	tmov	sp, r0
+  40:	a013      	tmovs	r0, #19
+  42:	6bc0      	tmcsr	r0
+  44:	0812      	tloadr	r0, [pc, #72]	; (90 <DAT0+0x4>)
+  46:	0685      	tmov	sp, r0
+  48:	a000      	tmovs	r0, #0
+  4a:	0912      	tloadr	r1, [pc, #72]	; (94 <DAT0+0x8>)
+  4c:	0a12      	tloadr	r2, [pc, #72]	; (98 <DAT0+0xc>)
+
+0000004e <ZERO>:
+  4e:	0291      	tcmp	r1, r2
+  50:	ca02      	tjge.n	58 <ZERO_END>
+  52:	5008      	tstorer	r0, [r1, #0]
+  54:	b104      	tadds	r1, #4
+  56:	87fa      	tj.n	4e <ZERO>
+
+00000058 <ZERO_END>:
+  58:	a000      	tmovs	r0, #0
+  5a:	0912      	tloadr	r1, [pc, #72]	; (a4 <DAT0+0x18>)
+  5c:	0a12      	tloadr	r2, [pc, #72]	; (a8 <DAT0+0x1c>)
+
+0000005e <ZERO_TAG_BEGIN>:
+  5e:	0291      	tcmp	r1, r2
+  60:	ca02      	tjge.n	68 <SETIC>
+  62:	5008      	tstorer	r0, [r1, #0]
+  64:	b104      	tadds	r1, #4
+  66:	87fa      	tj.n	5e <ZERO_TAG_BEGIN>
+
+00000068 <SETIC>:
+  68:	090d      	tloadr	r1, [pc, #52]	; (a0 <DAT0+0x14>)
+  6a:	080c      	tloadr	r0, [pc, #48]	; (9c <DAT0+0x10>)
+  6c:	4008      	tstorerb	r0, [r1, #0]
+  6e:	b001      	tadds	r0, #1
+  70:	4048      	tstorerb	r0, [r1, #1]
+  72:	090e      	tloadr	r1, [pc, #56]	; (ac <DATA_I>)
+  74:	0a0e      	tloadr	r2, [pc, #56]	; (b0 <DATA_I+0x4>)
+  76:	0b0f      	tloadr	r3, [pc, #60]	; (b4 <DATA_I+0x8>)
+
+00000078 <COPY_DATA>:
+  78:	029a      	tcmp	r2, r3
+  7a:	ca04      	tjge.n	86 <COPY_DATA_END>
+  7c:	5808      	tloadr	r0, [r1, #0]
+  7e:	5010      	tstorer	r0, [r2, #0]
+  80:	b104      	tadds	r1, #4
+  82:	b204      	tadds	r2, #4
+  84:	87f8      	tj.n	78 <COPY_DATA>
+
+00000086 <COPY_DATA_END>:
+  86:	9000 98bb 	tjl	200 <main>
+  8a:	46c0      	tnop			; (mov r8, r8)
+
+0000008c <DAT0>:
+  8c:	00848000 	taddeq	r8, r4, r0
+  90:	00847e80 	taddeq	r7, r4, r0, lsl #29
+  94:	00841730 	taddeq	r1, r4, r0, lsr r7
+  98:	00842168 	taddeq	r2, r4, r8, ror #2
+  9c:	0000000e 	tandeq	r0, r0, lr
+  a0:	0080060c 	taddeq	r0, r0, ip, lsl #12
+  a4:	00840e00 	taddeq	r0, r4, r0, lsl #28
+  a8:	00840f00 	taddeq	r0, r4, r0, lsl #30
+
+000000ac <DATA_I>:
+  ac:	00000dd4 	undefined instruction 0x00000dd4
+  b0:	00841700 	taddeq	r1, r4, r0, lsl #14
+  b4:	00841730 	taddeq	r1, r4, r0, lsr r7
+
+000000b8 <FLASH_RECOVER>:
+  b8:	0080000c 	taddeq	r0, r0, ip
+
+Disassembly of section .ram_code:
+
+000000bc <uart_init>:
+uart_init():
+  bc:	0b19      	tloadr	r3, [pc, #100]	; (124 <_ramcode_size_div_16_+0x44>)
+  be:	4819      	tloadrb	r1, [r3, #0]
+  c0:	f08a      	tshftls	r2, r1, #2
+  c2:	e89a      	tadds	r2, r3, r2
+  c4:	4950      	tloadrb	r0, [r2, #5]
+  c6:	4912      	tloadrb	r2, [r2, #4]
+  c8:	0b17      	tloadr	r3, [pc, #92]	; (128 <_ramcode_size_div_16_+0x48>)
+  ca:	4019      	tstorerb	r1, [r3, #0]
+  cc:	a380      	tmovs	r3, #128	; 0x80
+  ce:	f21b      	tshftls	r3, r3, #8
+  d0:	0303      	tors	r3, r0
+  d2:	a10f      	tmovs	r1, #15
+  d4:	0011      	tands	r1, r2
+  d6:	0815      	tloadr	r0, [pc, #84]	; (12c <_ramcode_size_div_16_+0x4c>)
+  d8:	0301      	tors	r1, r0
+  da:	f409      	tshftls	r1, r1, #16
+  dc:	030b      	tors	r3, r1
+  de:	0914      	tloadr	r1, [pc, #80]	; (130 <_ramcode_size_div_16_+0x50>)
+  e0:	500b      	tstorer	r3, [r1, #0]
+  e2:	ec53      	tadds	r3, r2, #1
+  e4:	f05a      	tshftls	r2, r3, #1
+  e6:	e8d3      	tadds	r3, r2, r3
+  e8:	f09b      	tshftls	r3, r3, #2
+  ea:	a2ff      	tmovs	r2, #255	; 0xff
+  ec:	001a      	tands	r2, r3
+  ee:	a380      	tmovs	r3, #128	; 0x80
+  f0:	f05b      	tshftls	r3, r3, #1
+  f2:	0313      	tors	r3, r2
+  f4:	0a0f      	tloadr	r2, [pc, #60]	; (134 <_ramcode_size_div_16_+0x54>)
+  f6:	2013      	tstorerh	r3, [r2, #0]
+  f8:	0a0f      	tloadr	r2, [pc, #60]	; (138 <_ramcode_size_div_16_+0x58>)
+  fa:	f412      	tshftls	r2, r2, #16
+  fc:	fc12      	tshftrs	r2, r2, #16
+  fe:	0b0f      	tloadr	r3, [pc, #60]	; (13c <_ramcode_size_div_16_+0x5c>)
+ 100:	031a      	tors	r2, r3
+ 102:	0b0f      	tloadr	r3, [pc, #60]	; (140 <_ramcode_size_div_16_+0x60>)
+ 104:	501a      	tstorer	r2, [r3, #0]
+ 106:	0a0f      	tloadr	r2, [pc, #60]	; (144 <_ramcode_size_div_16_+0x64>)
+ 108:	f412      	tshftls	r2, r2, #16
+ 10a:	fc12      	tshftrs	r2, r2, #16
+ 10c:	a382      	tmovs	r3, #130	; 0x82
+ 10e:	f3db      	tshftls	r3, r3, #15
+ 110:	0313      	tors	r3, r2
+ 112:	0a0d      	tloadr	r2, [pc, #52]	; (148 <_ramcode_size_div_16_+0x68>)
+ 114:	5013      	tstorer	r3, [r2, #0]
+ 116:	0a0d      	tloadr	r2, [pc, #52]	; (14c <_ramcode_size_div_16_+0x6c>)
+ 118:	0b0d      	tloadr	r3, [pc, #52]	; (150 <_ramcode_size_div_16_+0x70>)
+ 11a:	501a      	tstorer	r2, [r3, #0]
+ 11c:	0a0d      	tloadr	r2, [pc, #52]	; (154 <_ramcode_size_div_16_+0x74>)
+ 11e:	bb20      	tsubs	r3, #32
+ 120:	201a      	tstorerh	r2, [r3, #0]
+ 122:	0770      	tjex	lr
+ 124:	00841700 	taddeq	r1, r4, r0, lsl #14
+ 128:	00841734 	taddeq	r1, r4, r4, lsr r7
+ 12c:	00001030 	tandeq	r1, r0, r0, lsr r0
+ 130:	00800094 	umulleq	r0, r0, r4, r0
+ 134:	0080009a 	umulleq	r0, r0, sl, r0
+ 138:	00841b54 	taddeq	r1, r4, r4, asr fp
+ 13c:	01410000 	tcmpeq	r1, r0
+ 140:	00800c00 	taddeq	r0, r0, r0, lsl #24
+ 144:	0084173c 	taddeq	r1, r4, ip, lsr r7
+ 148:	00800c04 	taddeq	r0, r0, r4, lsl #24
+ 14c:	04040404 	tstorereq	r0, [r4], #-1028	; 0x404
+ 150:	00800c40 	taddeq	r0, r0, r0, asr #24
+ 154:	00000303 	tandeq	r0, r0, r3, lsl #6
+
+00000158 <memcpy>:
+memcpy():
+ 158:	6510      	tpush	{r4, lr}
+ 15a:	aa00      	tcmp	r2, #0
+ 15c:	c005      	tjeq.n	16a <memcpy+0x12>
+ 15e:	a300      	tmovs	r3, #0
+ 160:	1ccc      	tloadrb	r4, [r1, r3]
+ 162:	14c4      	tstorerb	r4, [r0, r3]
+ 164:	b301      	tadds	r3, #1
+ 166:	0293      	tcmp	r3, r2
+ 168:	c1fa      	tjne.n	160 <memcpy+0x8>
+ 16a:	6d10      	tpop	{r4, pc}
+
+0000016c <_swire_set_fcs_low>:
+_swire_set_fcs_low():
+ 16c:	6500      	tpush	{lr}
+ 16e:	6081      	tsub	sp, #4
+ 170:	0669      	tmov	r1, sp
+ 172:	b103      	tadds	r1, #3
+ 174:	a300      	tmovs	r3, #0
+ 176:	400b      	tstorerb	r3, [r1, #0]
+ 178:	a00d      	tmovs	r0, #13
+ 17a:	a201      	tmovs	r2, #1
+ 17c:	9000 9d50 	tjl	c20 <swire_write_bytes>
+ 180:	6001      	tadd	sp, #4
+ 182:	6d00      	tpop	{pc}
+
+00000184 <_swire_set_fcs_hi>:
+_swire_set_fcs_hi():
+ 184:	6500      	tpush	{lr}
+ 186:	6081      	tsub	sp, #4
+ 188:	0669      	tmov	r1, sp
+ 18a:	b103      	tadds	r1, #3
+ 18c:	a301      	tmovs	r3, #1
+ 18e:	400b      	tstorerb	r3, [r1, #0]
+ 190:	a00d      	tmovs	r0, #13
+ 192:	a201      	tmovs	r2, #1
+ 194:	9000 9d44 	tjl	c20 <swire_write_bytes>
+ 198:	6001      	tadd	sp, #4
+ 19a:	6d00      	tpop	{pc}
+
+0000019c <_swire_fcmd_faddr>:
+_swire_fcmd_faddr():
+ 19c:	6530      	tpush	{r4, r5, lr}
+ 19e:	6081      	tsub	sp, #4
+ 1a0:	ec0d      	tadds	r5, r1, #0
+ 1a2:	f604      	tshftls	r4, r0, #24
+ 1a4:	fe24      	tshftrs	r4, r4, #24
+ 1a6:	97ff 9fe1 	tjl	16c <_swire_set_fcs_low>
+ 1aa:	3500      	tstorer	r5, [sp, #0]
+ 1ac:	0669      	tmov	r1, sp
+ 1ae:	b103      	tadds	r1, #3
+ 1b0:	400c      	tstorerb	r4, [r1, #0]
+ 1b2:	a00c      	tmovs	r0, #12
+ 1b4:	a201      	tmovs	r2, #1
+ 1b6:	9000 9d33 	tjl	c20 <swire_write_bytes>
+ 1ba:	a00c      	tmovs	r0, #12
+ 1bc:	0669      	tmov	r1, sp
+ 1be:	b102      	tadds	r1, #2
+ 1c0:	a201      	tmovs	r2, #1
+ 1c2:	9000 9d2d 	tjl	c20 <swire_write_bytes>
+ 1c6:	a00c      	tmovs	r0, #12
+ 1c8:	0669      	tmov	r1, sp
+ 1ca:	b101      	tadds	r1, #1
+ 1cc:	a201      	tmovs	r2, #1
+ 1ce:	9000 9d27 	tjl	c20 <swire_write_bytes>
+ 1d2:	a00c      	tmovs	r0, #12
+ 1d4:	0669      	tmov	r1, sp
+ 1d6:	a201      	tmovs	r2, #1
+ 1d8:	9000 9d22 	tjl	c20 <swire_write_bytes>
+ 1dc:	6001      	tadd	sp, #4
+ 1de:	6d30      	tpop	{r4, r5, pc}
+
+000001e0 <swire_fcmd>:
+swire_fcmd():
+ 1e0:	6510      	tpush	{r4, lr}
+ 1e2:	6081      	tsub	sp, #4
+ 1e4:	066c      	tmov	r4, sp
+ 1e6:	b403      	tadds	r4, #3
+ 1e8:	4020      	tstorerb	r0, [r4, #0]
+ 1ea:	97ff 9fbf 	tjl	16c <_swire_set_fcs_low>
+ 1ee:	a00c      	tmovs	r0, #12
+ 1f0:	ec21      	tadds	r1, r4, #0
+ 1f2:	a201      	tmovs	r2, #1
+ 1f4:	9000 9d14 	tjl	c20 <swire_write_bytes>
+ 1f8:	97ff 9fc4 	tjl	184 <_swire_set_fcs_hi>
+ 1fc:	6001      	tadd	sp, #4
+ 1fe:	6d10      	tpop	{r4, pc}
+
+00000200 <main>:
+main():
+ 200:	65f0      	tpush	{r4, r5, r6, r7, lr}
+ 202:	065f      	tmov	r7, fp
+ 204:	0656      	tmov	r6, sl
+ 206:	064d      	tmov	r5, r9
+ 208:	0644      	tmov	r4, r8
+ 20a:	64f0      	tpush	{r4, r5, r6, r7}
+ 20c:	6083      	tsub	sp, #12
+ 20e:	a400      	tmovs	r4, #0
+ 210:	0bd3      	tloadr	r3, [pc, #844]	; (560 <main+0x360>)
+ 212:	401c      	tstorerb	r4, [r3, #0]
+ 214:	a3ff      	tmovs	r3, #255	; 0xff
+ 216:	f61b      	tshftls	r3, r3, #24
+ 218:	0ad2      	tloadr	r2, [pc, #840]	; (564 <main+0x364>)
+ 21a:	5013      	tstorer	r3, [r2, #0]
+ 21c:	a301      	tmovs	r3, #1
+ 21e:	025b      	tnegs	r3, r3
+ 220:	b204      	tadds	r2, #4
+ 222:	2013      	tstorerh	r3, [r2, #0]
+ 224:	a082      	tmovs	r0, #130	; 0x82
+ 226:	a164      	tmovs	r1, #100	; 0x64
+ 228:	9000 9c9a 	tjl	b60 <analog_write>
+ 22c:	a052      	tmovs	r0, #82	; 0x52
+ 22e:	a180      	tmovs	r1, #128	; 0x80
+ 230:	9000 9c96 	tjl	b60 <analog_write>
+ 234:	a00b      	tmovs	r0, #11
+ 236:	a138      	tmovs	r1, #56	; 0x38
+ 238:	9000 9c92 	tjl	b60 <analog_write>
+ 23c:	a08c      	tmovs	r0, #140	; 0x8c
+ 23e:	a102      	tmovs	r1, #2
+ 240:	9000 9c8e 	tjl	b60 <analog_write>
+ 244:	a002      	tmovs	r0, #2
+ 246:	a1a2      	tmovs	r1, #162	; 0xa2
+ 248:	9000 9c8a 	tjl	b60 <analog_write>
+ 24c:	0bc6      	tloadr	r3, [pc, #792]	; (568 <main+0x368>)
+ 24e:	401c      	tstorerb	r4, [r3, #0]
+ 250:	a0c8      	tmovs	r0, #200	; 0xc8
+ 252:	a180      	tmovs	r1, #128	; 0x80
+ 254:	9000 9c84 	tjl	b60 <analog_write>
+ 258:	a030      	tmovs	r0, #48	; 0x30
+ 25a:	9000 9c6b 	tjl	b34 <analog_read>
+ 25e:	a380      	tmovs	r3, #128	; 0x80
+ 260:	025b      	tnegs	r3, r3
+ 262:	ec19      	tadds	r1, r3, #0
+ 264:	0301      	tors	r1, r0
+ 266:	f609      	tshftls	r1, r1, #24
+ 268:	fe09      	tshftrs	r1, r1, #24
+ 26a:	a030      	tmovs	r0, #48	; 0x30
+ 26c:	9000 9c78 	tjl	b60 <analog_write>
+ 270:	a0c7      	tmovs	r0, #199	; 0xc7
+ 272:	a10e      	tmovs	r1, #14
+ 274:	9000 9c74 	tjl	b60 <analog_write>
+ 278:	a0c7      	tmovs	r0, #199	; 0xc7
+ 27a:	a10f      	tmovs	r1, #15
+ 27c:	9000 9c70 	tjl	b60 <analog_write>
+ 280:	a0cf      	tmovs	r0, #207	; 0xcf
+ 282:	9000 9c57 	tjl	b34 <analog_read>
+ 286:	f601      	tshftls	r1, r0, #24
+ 288:	c5fa      	tjpl.n	280 <main+0x80>
+ 28a:	a0cb      	tmovs	r0, #203	; 0xcb
+ 28c:	9000 9c52 	tjl	b34 <analog_read>
+ 290:	ec01      	tadds	r1, r0, #0
+ 292:	a033      	tmovs	r0, #51	; 0x33
+ 294:	9000 9c64 	tjl	b60 <analog_write>
+ 298:	a030      	tmovs	r0, #48	; 0x30
+ 29a:	9000 9c4b 	tjl	b34 <analog_read>
+ 29e:	a17f      	tmovs	r1, #127	; 0x7f
+ 2a0:	0001      	tands	r1, r0
+ 2a2:	a030      	tmovs	r0, #48	; 0x30
+ 2a4:	9000 9c5c 	tjl	b60 <analog_write>
+ 2a8:	a0c7      	tmovs	r0, #199	; 0xc7
+ 2aa:	a10e      	tmovs	r1, #14
+ 2ac:	9000 9c58 	tjl	b60 <analog_write>
+ 2b0:	a385      	tmovs	r3, #133	; 0x85
+ 2b2:	f61b      	tshftls	r3, r3, #24
+ 2b4:	0aab      	tloadr	r2, [pc, #684]	; (564 <main+0x364>)
+ 2b6:	5013      	tstorer	r3, [r2, #0]
+ 2b8:	0aac      	tloadr	r2, [pc, #688]	; (56c <main+0x36c>)
+ 2ba:	0bad      	tloadr	r3, [pc, #692]	; (570 <main+0x370>)
+ 2bc:	201a      	tstorerh	r2, [r3, #0]
+ 2be:	a286      	tmovs	r2, #134	; 0x86
+ 2c0:	b302      	tadds	r3, #2
+ 2c2:	401a      	tstorerb	r2, [r3, #0]
+ 2c4:	a200      	tmovs	r2, #0
+ 2c6:	b30a      	tadds	r3, #10
+ 2c8:	401a      	tstorerb	r2, [r3, #0]
+ 2ca:	0baa      	tloadr	r3, [pc, #680]	; (574 <main+0x374>)
+ 2cc:	481a      	tloadrb	r2, [r3, #0]
+ 2ce:	a503      	tmovs	r5, #3
+ 2d0:	03aa      	tbclrs	r2, r5
+ 2d2:	401a      	tstorerb	r2, [r3, #0]
+ 2d4:	bb17      	tsubs	r3, #23
+ 2d6:	581a      	tloadr	r2, [r3, #0]
+ 2d8:	a110      	tmovs	r1, #16
+ 2da:	030a      	tors	r2, r1
+ 2dc:	501a      	tstorer	r2, [r3, #0]
+ 2de:	b306      	tadds	r3, #6
+ 2e0:	481a      	tloadrb	r2, [r3, #0]
+ 2e2:	038a      	tbclrs	r2, r1
+ 2e4:	401a      	tstorerb	r2, [r3, #0]
+ 2e6:	0aa4      	tloadr	r2, [pc, #656]	; (578 <main+0x378>)
+ 2e8:	4813      	tloadrb	r3, [r2, #0]
+ 2ea:	038b      	tbclrs	r3, r1
+ 2ec:	4013      	tstorerb	r3, [r2, #0]
+ 2ee:	0ba3      	tloadr	r3, [pc, #652]	; (57c <main+0x37c>)
+ 2f0:	4818      	tloadrb	r0, [r3, #0]
+ 2f2:	0388      	tbclrs	r0, r1
+ 2f4:	4018      	tstorerb	r0, [r3, #0]
+ 2f6:	4810      	tloadrb	r0, [r2, #0]
+ 2f8:	a108      	tmovs	r1, #8
+ 2fa:	0301      	tors	r1, r0
+ 2fc:	f609      	tshftls	r1, r1, #24
+ 2fe:	fe09      	tshftrs	r1, r1, #24
+ 300:	4011      	tstorerb	r1, [r2, #0]
+ 302:	481a      	tloadrb	r2, [r3, #0]
+ 304:	a108      	tmovs	r1, #8
+ 306:	038a      	tbclrs	r2, r1
+ 308:	401a      	tstorerb	r2, [r3, #0]
+ 30a:	a401      	tmovs	r4, #1
+ 30c:	a201      	tmovs	r2, #1
+ 30e:	b3b6      	tadds	r3, #182	; 0xb6
+ 310:	b3ff      	tadds	r3, #255	; 0xff
+ 312:	401a      	tstorerb	r2, [r3, #0]
+ 314:	9000 9b9e 	tjl	a54 <crcInit>
+ 318:	97ff 9ed0 	tjl	bc <uart_init>
+ 31c:	a00e      	tmovs	r0, #14
+ 31e:	9000 9c09 	tjl	b34 <analog_read>
+ 322:	ec01      	tadds	r1, r0, #0
+ 324:	03a9      	tbclrs	r1, r5
+ 326:	0321      	tors	r1, r4
+ 328:	f609      	tshftls	r1, r1, #24
+ 32a:	fe09      	tshftrs	r1, r1, #24
+ 32c:	a00e      	tmovs	r0, #14
+ 32e:	9000 9c17 	tjl	b60 <analog_write>
+ 332:	a27e      	tmovs	r2, #126	; 0x7e
+ 334:	0b92      	tloadr	r3, [pc, #584]	; (580 <main+0x380>)
+ 336:	401a      	tstorerb	r2, [r3, #0]
+ 338:	bb05      	tsubs	r3, #5
+ 33a:	481a      	tloadrb	r2, [r3, #0]
+ 33c:	0322      	tors	r2, r4
+ 33e:	f612      	tshftls	r2, r2, #24
+ 340:	fe12      	tshftrs	r2, r2, #24
+ 342:	401a      	tstorerb	r2, [r3, #0]
+ 344:	a202      	tmovs	r2, #2
+ 346:	b327      	tadds	r3, #39	; 0x27
+ 348:	401a      	tstorerb	r2, [r3, #0]
+ 34a:	bb1a      	tsubs	r3, #26
+ 34c:	4819      	tloadrb	r1, [r3, #0]
+ 34e:	0391      	tbclrs	r1, r2
+ 350:	4019      	tstorerb	r1, [r3, #0]
+ 352:	a0bd      	tmovs	r0, #189	; 0xbd
+ 354:	9000 9bee 	tjl	b34 <analog_read>
+ 358:	a302      	tmovs	r3, #2
+ 35a:	ec01      	tadds	r1, r0, #0
+ 35c:	0319      	tors	r1, r3
+ 35e:	f609      	tshftls	r1, r1, #24
+ 360:	fe09      	tshftrs	r1, r1, #24
+ 362:	a0bd      	tmovs	r0, #189	; 0xbd
+ 364:	9000 9bfc 	tjl	b60 <analog_write>
+ 368:	a204      	tmovs	r2, #4
+ 36a:	0b86      	tloadr	r3, [pc, #536]	; (584 <main+0x384>)
+ 36c:	401a      	tstorerb	r2, [r3, #0]
+ 36e:	0a86      	tloadr	r2, [pc, #536]	; (588 <main+0x388>)
+ 370:	0691      	tmov	r9, r2
+ 372:	0f86      	tloadr	r7, [pc, #536]	; (58c <main+0x38c>)
+ 374:	0b86      	tloadr	r3, [pc, #536]	; (590 <main+0x390>)
+ 376:	069b      	tmov	fp, r3
+ 378:	0e86      	tloadr	r6, [pc, #536]	; (594 <main+0x394>)
+ 37a:	0d87      	tloadr	r5, [pc, #540]	; (598 <main+0x398>)
+ 37c:	a402      	tmovs	r4, #2
+ 37e:	0887      	tloadr	r0, [pc, #540]	; (59c <main+0x39c>)
+ 380:	0680      	tmov	r8, r0
+ 382:	a101      	tmovs	r1, #1
+ 384:	068a      	tmov	sl, r1
+ 386:	482b      	tloadrb	r3, [r5, #0]
+ 388:	021c      	tnand	r4, r3
+ 38a:	c1fc      	tjne.n	386 <main+0x186>
+ 38c:	064a      	tmov	r2, r9
+ 38e:	4813      	tloadrb	r3, [r2, #0]
+ 390:	483a      	tloadrb	r2, [r7, #0]
+ 392:	029a      	tcmp	r2, r3
+ 394:	c005      	tjeq.n	3a2 <main+0x1a2>
+ 396:	403b      	tstorerb	r3, [r7, #0]
+ 398:	0881      	tloadr	r0, [pc, #516]	; (5a0 <main+0x3a0>)
+ 39a:	9000 9bc1 	tjl	b20 <sleep_us>
+ 39e:	97ff 9e8d 	tjl	bc <uart_init>
+ 3a2:	0640      	tmov	r0, r8
+ 3a4:	4803      	tloadrb	r3, [r0, #0]
+ 3a6:	0651      	tmov	r1, sl
+ 3a8:	0219      	tnand	r1, r3
+ 3aa:	c0ec      	tjeq.n	386 <main+0x186>
+ 3ac:	065a      	tmov	r2, fp
+ 3ae:	5812      	tloadr	r2, [r2, #0]
+ 3b0:	3200      	tstorer	r2, [sp, #0]
+ 3b2:	a304      	tmovs	r3, #4
+ 3b4:	5033      	tstorer	r3, [r6, #0]
+ 3b6:	0658      	tmov	r0, fp
+ 3b8:	4903      	tloadrb	r3, [r0, #4]
+ 3ba:	5073      	tstorer	r3, [r6, #4]
+ 3bc:	aa05      	tcmp	r2, #5
+ 3be:	c81c      	tjhi.n	3fa <main+0x1fa>
+ 3c0:	4174      	tstorerb	r4, [r6, #5]
+ 3c2:	a003      	tmovs	r0, #3
+ 3c4:	0643      	tmov	r3, r8
+ 3c6:	4018      	tstorerb	r0, [r3, #0]
+ 3c8:	5833      	tloadr	r3, [r6, #0]
+ 3ca:	ab00      	tcmp	r3, #0
+ 3cc:	c0db      	tjeq.n	386 <main+0x186>
+ 3ce:	ec30      	tadds	r0, r6, #0
+ 3d0:	d802      	tloadm	r0!, {r1}
+ 3d2:	9000 9b67 	tjl	aa4 <crcFast>
+ 3d6:	5833      	tloadr	r3, [r6, #0]
+ 3d8:	e8f2      	tadds	r2, r6, r3
+ 3da:	4110      	tstorerb	r0, [r2, #4]
+ 3dc:	b301      	tadds	r3, #1
+ 3de:	5033      	tstorer	r3, [r6, #0]
+ 3e0:	5833      	tloadr	r3, [r6, #0]
+ 3e2:	e8f2      	tadds	r2, r6, r3
+ 3e4:	fa00      	tshftrs	r0, r0, #8
+ 3e6:	4110      	tstorerb	r0, [r2, #4]
+ 3e8:	b301      	tadds	r3, #1
+ 3ea:	5033      	tstorer	r3, [r6, #0]
+ 3ec:	482a      	tloadrb	r2, [r5, #0]
+ 3ee:	a302      	tmovs	r3, #2
+ 3f0:	0313      	tors	r3, r2
+ 3f2:	f61b      	tshftls	r3, r3, #24
+ 3f4:	fe1b      	tshftrs	r3, r3, #24
+ 3f6:	402b      	tstorerb	r3, [r5, #0]
+ 3f8:	87c5      	tj.n	386 <main+0x186>
+ 3fa:	a104      	tmovs	r1, #4
+ 3fc:	ec08      	tadds	r0, r1, #0
+ 3fe:	0458      	tadd	r0, fp
+ 400:	3900      	tloadr	r1, [sp, #0]
+ 402:	9000 9b4f 	tjl	aa4 <crcFast>
+ 406:	a800      	tcmp	r0, #0
+ 408:	c004      	tjeq.n	414 <main+0x214>
+ 40a:	4932      	tloadrb	r2, [r6, #4]
+ 40c:	a305      	tmovs	r3, #5
+ 40e:	0313      	tors	r3, r2
+ 410:	4133      	tstorerb	r3, [r6, #4]
+ 412:	87d6      	tj.n	3c2 <main+0x1c2>
+ 414:	3a00      	tloadr	r2, [sp, #0]
+ 416:	ec13      	tadds	r3, r2, #0
+ 418:	045b      	tadd	r3, fp
+ 41a:	4118      	tstorerb	r0, [r3, #4]
+ 41c:	0658      	tmov	r0, fp
+ 41e:	5843      	tloadr	r3, [r0, #4]
+ 420:	fa1b      	tshftrs	r3, r3, #8
+ 422:	3301      	tstorer	r3, [sp, #4]
+ 424:	ec11      	tadds	r1, r2, #0
+ 426:	b906      	tsubs	r1, #6
+ 428:	3100      	tstorer	r1, [sp, #0]
+ 42a:	4903      	tloadrb	r3, [r0, #4]
+ 42c:	ab0d      	tcmp	r3, #13
+ 42e:	c904      	tjls.n	43a <main+0x23a>
+ 430:	0651      	tmov	r1, sl
+ 432:	4171      	tstorerb	r1, [r6, #5]
+ 434:	0652      	tmov	r2, sl
+ 436:	5032      	tstorer	r2, [r6, #0]
+ 438:	87c3      	tj.n	3c2 <main+0x1c2>
+ 43a:	f09b      	tshftls	r3, r3, #2
+ 43c:	0a59      	tloadr	r2, [pc, #356]	; (5a4 <main+0x3a4>)
+ 43e:	18d3      	tloadr	r3, [r2, r3]
+ 440:	069f      	tmov	pc, r3
+ 442:	3a00      	tloadr	r2, [sp, #0]
+ 444:	ba03      	tsubs	r2, #3
+ 446:	0b58      	tloadr	r3, [pc, #352]	; (5a8 <main+0x3a8>)
+ 448:	029a      	tcmp	r2, r3
+ 44a:	c900      	tjls.n	44e <main+0x24e>
+ 44c:	4174      	tstorerb	r4, [r6, #5]
+ 44e:	3a00      	tloadr	r2, [sp, #0]
+ 450:	ba02      	tsubs	r2, #2
+ 452:	3200      	tstorer	r2, [sp, #0]
+ 454:	a380      	tmovs	r3, #128	; 0x80
+ 456:	f0db      	tshftls	r3, r3, #3
+ 458:	0658      	tmov	r0, fp
+ 45a:	2902      	tloadrh	r2, [r0, #8]
+ 45c:	029a      	tcmp	r2, r3
+ 45e:	c901      	tjls.n	464 <main+0x264>
+ 460:	0659      	tmov	r1, fp
+ 462:	210b      	tstorerh	r3, [r1, #8]
+ 464:	97ff 9e82 	tjl	16c <_swire_set_fcs_low>
+ 468:	3a00      	tloadr	r2, [sp, #0]
+ 46a:	aa01      	tcmp	r2, #1
+ 46c:	c100      	tjne.n	470 <main+0x270>
+ 46e:	82d5      	tj.n	a1c <main+0x81c>
+ 470:	a00c      	tmovs	r0, #12
+ 472:	094e      	tloadr	r1, [pc, #312]	; (5ac <main+0x3ac>)
+ 474:	3a00      	tloadr	r2, [sp, #0]
+ 476:	9000 9c49 	tjl	d0c <swire_fifo_write>
+ 47a:	20f0      	tstorerh	r0, [r6, #6]
+ 47c:	0658      	tmov	r0, fp
+ 47e:	2903      	tloadrh	r3, [r0, #8]
+ 480:	ab00      	tcmp	r3, #0
+ 482:	c000      	tjeq.n	486 <main+0x286>
+ 484:	82a5      	tj.n	9d2 <main+0x7d2>
+ 486:	97ff 9e7d 	tjl	184 <_swire_set_fcs_hi>
+ 48a:	879a      	tj.n	3c2 <main+0x1c2>
+ 48c:	3a00      	tloadr	r2, [sp, #0]
+ 48e:	ba01      	tsubs	r2, #1
+ 490:	0b47      	tloadr	r3, [pc, #284]	; (5b0 <main+0x3b0>)
+ 492:	029a      	tcmp	r2, r3
+ 494:	c894      	tjhi.n	3c0 <main+0x1c0>
+ 496:	3801      	tloadr	r0, [sp, #4]
+ 498:	0946      	tloadr	r1, [pc, #280]	; (5b4 <main+0x3b4>)
+ 49a:	3a00      	tloadr	r2, [sp, #0]
+ 49c:	9000 9c36 	tjl	d0c <swire_fifo_write>
+ 4a0:	20f0      	tstorerh	r0, [r6, #6]
+ 4a2:	878e      	tj.n	3c2 <main+0x1c2>
+ 4a4:	3b00      	tloadr	r3, [sp, #0]
+ 4a6:	ab00      	tcmp	r3, #0
+ 4a8:	c005      	tjeq.n	4b6 <main+0x2b6>
+ 4aa:	a380      	tmovs	r3, #128	; 0x80
+ 4ac:	f0db      	tshftls	r3, r3, #3
+ 4ae:	0658      	tmov	r0, fp
+ 4b0:	2902      	tloadrh	r2, [r0, #8]
+ 4b2:	029a      	tcmp	r2, r3
+ 4b4:	c903      	tjls.n	4be <main+0x2be>
+ 4b6:	a380      	tmovs	r3, #128	; 0x80
+ 4b8:	f0db      	tshftls	r3, r3, #3
+ 4ba:	0659      	tmov	r1, fp
+ 4bc:	210b      	tstorerh	r3, [r1, #8]
+ 4be:	065b      	tmov	r3, fp
+ 4c0:	291a      	tloadrh	r2, [r3, #8]
+ 4c2:	3801      	tloadr	r0, [sp, #4]
+ 4c4:	093c      	tloadr	r1, [pc, #240]	; (5b8 <main+0x3b8>)
+ 4c6:	9000 9c3f 	tjl	d48 <swire_fifo_read>
+ 4ca:	f403      	tshftls	r3, r0, #16
+ 4cc:	fc1b      	tshftrs	r3, r3, #16
+ 4ce:	0a3a      	tloadr	r2, [pc, #232]	; (5b8 <main+0x3b8>)
+ 4d0:	ba08      	tsubs	r2, #8
+ 4d2:	20d3      	tstorerh	r3, [r2, #6]
+ 4d4:	0658      	tmov	r0, fp
+ 4d6:	2901      	tloadrh	r1, [r0, #8]
+ 4d8:	0299      	tcmp	r1, r3
+ 4da:	c001      	tjeq.n	4e0 <main+0x2e0>
+ 4dc:	a103      	tmovs	r1, #3
+ 4de:	4151      	tstorerb	r1, [r2, #5]
+ 4e0:	5832      	tloadr	r2, [r6, #0]
+ 4e2:	e89b      	tadds	r3, r3, r2
+ 4e4:	5033      	tstorer	r3, [r6, #0]
+ 4e6:	876c      	tj.n	3c2 <main+0x1c2>
+ 4e8:	066a      	tmov	r2, sp
+ 4ea:	ed13      	tadds	r3, r2, #4
+ 4ec:	481b      	tloadrb	r3, [r3, #0]
+ 4ee:	4213      	tstorerb	r3, [r2, #8]
+ 4f0:	3800      	tloadr	r0, [sp, #0]
+ 4f2:	a800      	tcmp	r0, #0
+ 4f4:	c062      	tjeq.n	5bc <main+0x3bc>
+ 4f6:	0659      	tmov	r1, fp
+ 4f8:	290b      	tloadrh	r3, [r1, #8]
+ 4fa:	abff      	tcmp	r3, #255	; 0xff
+ 4fc:	c85e      	tjhi.n	5bc <main+0x3bc>
+ 4fe:	ab01      	tcmp	r3, #1
+ 500:	c860      	tjhi.n	5c4 <main+0x3c4>
+ 502:	a340      	tmovs	r3, #64	; 0x40
+ 504:	066a      	tmov	r2, sp
+ 506:	4293      	tstorerb	r3, [r2, #10]
+ 508:	a0b8      	tmovs	r0, #184	; 0xb8
+ 50a:	7902      	tadd	r1, sp, #8
+ 50c:	a203      	tmovs	r2, #3
+ 50e:	9000 9b87 	tjl	c20 <swire_write_bytes>
+ 512:	a307      	tmovs	r3, #7
+ 514:	3302      	tstorer	r3, [sp, #8]
+ 516:	a0b9      	tmovs	r0, #185	; 0xb9
+ 518:	0927      	tloadr	r1, [pc, #156]	; (5b8 <main+0x3b8>)
+ 51a:	a202      	tmovs	r2, #2
+ 51c:	9000 9bbc 	tjl	c98 <swire_read_bytes>
+ 520:	a802      	tcmp	r0, #2
+ 522:	c000      	tjeq.n	526 <main+0x326>
+ 524:	8236      	tj.n	994 <main+0x794>
+ 526:	0b24      	tloadr	r3, [pc, #144]	; (5b8 <main+0x3b8>)
+ 528:	bb08      	tsubs	r3, #8
+ 52a:	581a      	tloadr	r2, [r3, #0]
+ 52c:	b201      	tadds	r2, #1
+ 52e:	501a      	tstorer	r2, [r3, #0]
+ 530:	0651      	tmov	r1, sl
+ 532:	20d9      	tstorerh	r1, [r3, #6]
+ 534:	a300      	tmovs	r3, #0
+ 536:	3302      	tstorer	r3, [sp, #8]
+ 538:	a0ba      	tmovs	r0, #186	; 0xba
+ 53a:	7902      	tadd	r1, sp, #8
+ 53c:	a201      	tmovs	r2, #1
+ 53e:	9000 9b6f 	tjl	c20 <swire_write_bytes>
+ 542:	873e      	tj.n	3c2 <main+0x1c2>
+ 544:	3a00      	tloadr	r2, [sp, #0]
+ 546:	ba01      	tsubs	r2, #1
+ 548:	0b19      	tloadr	r3, [pc, #100]	; (5b0 <main+0x3b0>)
+ 54a:	029a      	tcmp	r2, r3
+ 54c:	c900      	tjls.n	550 <main+0x350>
+ 54e:	8737      	tj.n	3c0 <main+0x1c0>
+ 550:	3801      	tloadr	r0, [sp, #4]
+ 552:	0918      	tloadr	r1, [pc, #96]	; (5b4 <main+0x3b4>)
+ 554:	3a00      	tloadr	r2, [sp, #0]
+ 556:	9000 9b63 	tjl	c20 <swire_write_bytes>
+ 55a:	20f0      	tstorerh	r0, [r6, #6]
+ 55c:	8731      	tj.n	3c2 <main+0x1c2>
+ 55e:	46c0      	tnop			; (mov r8, r8)
+ 560:	00800643 	taddeq	r0, r0, r3, asr #12
+ 564:	00800060 	taddeq	r0, r0, r0, rrx
+ 568:	00800c20 	taddeq	r0, r0, r0, lsr #24
+ 56c:	0000300f 	tandeq	r3, r0, pc
+ 570:	00800064 	taddeq	r0, r0, r4, rrx
+ 574:	008005af 	taddeq	r0, r0, pc, lsr #11
+ 578:	0080059b 	umulleq	r0, r0, fp, r5
+ 57c:	0080059a 	umulleq	r0, r0, sl, r5
+ 580:	00800586 	taddeq	r0, r0, r6, lsl #11
+ 584:	008005aa 	taddeq	r0, r0, sl, lsr #11
+ 588:	00841700 	taddeq	r1, r4, r0, lsl #14
+ 58c:	00841734 	taddeq	r1, r4, r4, lsr r7
+ 590:	00841b54 	taddeq	r1, r4, r4, asr fp
+ 594:	0084173c 	taddeq	r1, r4, ip, lsr r7
+ 598:	00800c24 	taddeq	r0, r0, r4, lsr #24
+ 59c:	00800c26 	taddeq	r0, r0, r6, lsr #24
+ 5a0:	0000015f 	tandeq	r0, r0, pc, asr r1
+ 5a4:	00000d84 	tandeq	r0, r0, r4, lsl #27
+ 5a8:	00000103 	tandeq	r0, r0, r3, lsl #2
+ 5ac:	00841b5e 	taddeq	r1, r4, lr, asr fp
+ 5b0:	000003ff 	undefined instruction 0x000003ff
+ 5b4:	00841b5c 	taddeq	r1, r4, ip, asr fp
+ 5b8:	00841744 	taddeq	r1, r4, r4, asr #14
+ 5bc:	a380      	tmovs	r3, #128	; 0x80
+ 5be:	f05b      	tshftls	r3, r3, #1
+ 5c0:	065a      	tmov	r2, fp
+ 5c2:	2113      	tstorerh	r3, [r2, #8]
+ 5c4:	a350      	tmovs	r3, #80	; 0x50
+ 5c6:	0668      	tmov	r0, sp
+ 5c8:	4283      	tstorerb	r3, [r0, #10]
+ 5ca:	a0b8      	tmovs	r0, #184	; 0xb8
+ 5cc:	7902      	tadd	r1, sp, #8
+ 5ce:	a203      	tmovs	r2, #3
+ 5d0:	9000 9b26 	tjl	c20 <swire_write_bytes>
+ 5d4:	0659      	tmov	r1, fp
+ 5d6:	290a      	tloadrh	r2, [r1, #8]
+ 5d8:	a0b9      	tmovs	r0, #185	; 0xb9
+ 5da:	09d0      	tloadr	r1, [pc, #832]	; (91c <main+0x71c>)
+ 5dc:	9000 9bb4 	tjl	d48 <swire_fifo_read>
+ 5e0:	f403      	tshftls	r3, r0, #16
+ 5e2:	fc1b      	tshftrs	r3, r3, #16
+ 5e4:	0acd      	tloadr	r2, [pc, #820]	; (91c <main+0x71c>)
+ 5e6:	ba08      	tsubs	r2, #8
+ 5e8:	20d3      	tstorerh	r3, [r2, #6]
+ 5ea:	0658      	tmov	r0, fp
+ 5ec:	2901      	tloadrh	r1, [r0, #8]
+ 5ee:	0299      	tcmp	r1, r3
+ 5f0:	c001      	tjeq.n	5f6 <main+0x3f6>
+ 5f2:	a103      	tmovs	r1, #3
+ 5f4:	4151      	tstorerb	r1, [r2, #5]
+ 5f6:	5832      	tloadr	r2, [r6, #0]
+ 5f8:	e89b      	tadds	r3, r3, r2
+ 5fa:	5033      	tstorer	r3, [r6, #0]
+ 5fc:	879a      	tj.n	534 <main+0x334>
+ 5fe:	3b00      	tloadr	r3, [sp, #0]
+ 600:	bb01      	tsubs	r3, #1
+ 602:	abff      	tcmp	r3, #255	; 0xff
+ 604:	c900      	tjls.n	608 <main+0x408>
+ 606:	86db      	tj.n	3c0 <main+0x1c0>
+ 608:	066a      	tmov	r2, sp
+ 60a:	ed13      	tadds	r3, r2, #4
+ 60c:	481b      	tloadrb	r3, [r3, #0]
+ 60e:	4213      	tstorerb	r3, [r2, #8]
+ 610:	4a33      	tloadrb	r3, [r6, #8]
+ 612:	4253      	tstorerb	r3, [r2, #9]
+ 614:	a300      	tmovs	r3, #0
+ 616:	42d3      	tstorerb	r3, [r2, #11]
+ 618:	3800      	tloadr	r0, [sp, #0]
+ 61a:	a801      	tcmp	r0, #1
+ 61c:	c100      	tjne.n	620 <main+0x420>
+ 61e:	81be      	tj.n	99e <main+0x79e>
+ 620:	a0b8      	tmovs	r0, #184	; 0xb8
+ 622:	7902      	tadd	r1, sp, #8
+ 624:	a201      	tmovs	r2, #1
+ 626:	9000 9afb 	tjl	c20 <swire_write_bytes>
+ 62a:	a370      	tmovs	r3, #112	; 0x70
+ 62c:	0669      	tmov	r1, sp
+ 62e:	428b      	tstorerb	r3, [r1, #10]
+ 630:	a209      	tmovs	r2, #9
+ 632:	e992      	tadds	r2, r2, r6
+ 634:	3201      	tstorer	r2, [sp, #4]
+ 636:	8011      	tj.n	65c <main+0x45c>
+ 638:	a0b9      	tmovs	r0, #185	; 0xb9
+ 63a:	0669      	tmov	r1, sp
+ 63c:	b109      	tadds	r1, #9
+ 63e:	a202      	tmovs	r2, #2
+ 640:	9000 9aee 	tjl	c20 <swire_write_bytes>
+ 644:	3801      	tloadr	r0, [sp, #4]
+ 646:	4803      	tloadrb	r3, [r0, #0]
+ 648:	0669      	tmov	r1, sp
+ 64a:	424b      	tstorerb	r3, [r1, #9]
+ 64c:	b001      	tadds	r0, #1
+ 64e:	3001      	tstorer	r0, [sp, #4]
+ 650:	28f3      	tloadrh	r3, [r6, #6]
+ 652:	b301      	tadds	r3, #1
+ 654:	20f3      	tstorerh	r3, [r6, #6]
+ 656:	3a00      	tloadr	r2, [sp, #0]
+ 658:	ba01      	tsubs	r2, #1
+ 65a:	3200      	tstorer	r2, [sp, #0]
+ 65c:	3b00      	tloadr	r3, [sp, #0]
+ 65e:	ab00      	tcmp	r3, #0
+ 660:	c1ea      	tjne.n	638 <main+0x438>
+ 662:	a0ba      	tmovs	r0, #186	; 0xba
+ 664:	0669      	tmov	r1, sp
+ 666:	b10b      	tadds	r1, #11
+ 668:	a201      	tmovs	r2, #1
+ 66a:	9000 9ad9 	tjl	c20 <swire_write_bytes>
+ 66e:	86a8      	tj.n	3c2 <main+0x1c2>
+ 670:	3b00      	tloadr	r3, [sp, #0]
+ 672:	ab00      	tcmp	r3, #0
+ 674:	c005      	tjeq.n	682 <main+0x482>
+ 676:	a380      	tmovs	r3, #128	; 0x80
+ 678:	f0db      	tshftls	r3, r3, #3
+ 67a:	0658      	tmov	r0, fp
+ 67c:	2902      	tloadrh	r2, [r0, #8]
+ 67e:	029a      	tcmp	r2, r3
+ 680:	c903      	tjls.n	68a <main+0x48a>
+ 682:	a380      	tmovs	r3, #128	; 0x80
+ 684:	f0db      	tshftls	r3, r3, #3
+ 686:	0659      	tmov	r1, fp
+ 688:	210b      	tstorerh	r3, [r1, #8]
+ 68a:	065b      	tmov	r3, fp
+ 68c:	291a      	tloadrh	r2, [r3, #8]
+ 68e:	3801      	tloadr	r0, [sp, #4]
+ 690:	09a2      	tloadr	r1, [pc, #648]	; (91c <main+0x71c>)
+ 692:	9000 9b01 	tjl	c98 <swire_read_bytes>
+ 696:	8718      	tj.n	4ca <main+0x2ca>
+ 698:	a305      	tmovs	r3, #5
+ 69a:	3302      	tstorer	r3, [sp, #8]
+ 69c:	97ff 9d66 	tjl	16c <_swire_set_fcs_low>
+ 6a0:	a00c      	tmovs	r0, #12
+ 6a2:	7902      	tadd	r1, sp, #8
+ 6a4:	a201      	tmovs	r2, #1
+ 6a6:	9000 9abb 	tjl	c20 <swire_write_bytes>
+ 6aa:	a3a0      	tmovs	r3, #160	; 0xa0
+ 6ac:	f11b      	tshftls	r3, r3, #4
+ 6ae:	3302      	tstorer	r3, [sp, #8]
+ 6b0:	a00c      	tmovs	r0, #12
+ 6b2:	7902      	tadd	r1, sp, #8
+ 6b4:	a202      	tmovs	r2, #2
+ 6b6:	9000 9ab3 	tjl	c20 <swire_write_bytes>
+ 6ba:	a00c      	tmovs	r0, #12
+ 6bc:	0997      	tloadr	r1, [pc, #604]	; (91c <main+0x71c>)
+ 6be:	a201      	tmovs	r2, #1
+ 6c0:	9000 9aea 	tjl	c98 <swire_read_bytes>
+ 6c4:	0a96      	tloadr	r2, [pc, #600]	; (920 <main+0x720>)
+ 6c6:	20d0      	tstorerh	r0, [r2, #6]
+ 6c8:	97ff 9d5c 	tjl	184 <_swire_set_fcs_hi>
+ 6cc:	0894      	tloadr	r0, [pc, #592]	; (920 <main+0x720>)
+ 6ce:	28c3      	tloadrh	r3, [r0, #6]
+ 6d0:	ab01      	tcmp	r3, #1
+ 6d2:	c100      	tjne.n	6d6 <main+0x4d6>
+ 6d4:	8704      	tj.n	4e0 <main+0x2e0>
+ 6d6:	a103      	tmovs	r1, #3
+ 6d8:	4141      	tstorerb	r1, [r0, #5]
+ 6da:	8701      	tj.n	4e0 <main+0x2e0>
+ 6dc:	a006      	tmovs	r0, #6
+ 6de:	97ff 9d7f 	tjl	1e0 <swire_fcmd>
+ 6e2:	a020      	tmovs	r0, #32
+ 6e4:	3901      	tloadr	r1, [sp, #4]
+ 6e6:	97ff 9d59 	tjl	19c <_swire_fcmd_faddr>
+ 6ea:	86cc      	tj.n	486 <main+0x286>
+ 6ec:	3b00      	tloadr	r3, [sp, #0]
+ 6ee:	bb01      	tsubs	r3, #1
+ 6f0:	abff      	tcmp	r3, #255	; 0xff
+ 6f2:	c900      	tjls.n	6f6 <main+0x4f6>
+ 6f4:	8664      	tj.n	3c0 <main+0x1c0>
+ 6f6:	a006      	tmovs	r0, #6
+ 6f8:	97ff 9d72 	tjl	1e0 <swire_fcmd>
+ 6fc:	a002      	tmovs	r0, #2
+ 6fe:	3901      	tloadr	r1, [sp, #4]
+ 700:	97ff 9d4c 	tjl	19c <_swire_fcmd_faddr>
+ 704:	3a00      	tloadr	r2, [sp, #0]
+ 706:	aa01      	tcmp	r2, #1
+ 708:	c100      	tjne.n	70c <main+0x50c>
+ 70a:	818d      	tj.n	a28 <main+0x828>
+ 70c:	a00c      	tmovs	r0, #12
+ 70e:	0985      	tloadr	r1, [pc, #532]	; (924 <main+0x724>)
+ 710:	3a00      	tloadr	r2, [sp, #0]
+ 712:	9000 9afb 	tjl	d0c <swire_fifo_write>
+ 716:	20f0      	tstorerh	r0, [r6, #6]
+ 718:	86b5      	tj.n	486 <main+0x286>
+ 71a:	3a00      	tloadr	r2, [sp, #0]
+ 71c:	aa00      	tcmp	r2, #0
+ 71e:	c005      	tjeq.n	72c <main+0x52c>
+ 720:	a380      	tmovs	r3, #128	; 0x80
+ 722:	f0db      	tshftls	r3, r3, #3
+ 724:	0658      	tmov	r0, fp
+ 726:	2902      	tloadrh	r2, [r0, #8]
+ 728:	029a      	tcmp	r2, r3
+ 72a:	c903      	tjls.n	734 <main+0x534>
+ 72c:	a380      	tmovs	r3, #128	; 0x80
+ 72e:	f0db      	tshftls	r3, r3, #3
+ 730:	0659      	tmov	r1, fp
+ 732:	210b      	tstorerh	r3, [r1, #8]
+ 734:	a003      	tmovs	r0, #3
+ 736:	3901      	tloadr	r1, [sp, #4]
+ 738:	97ff 9d30 	tjl	19c <_swire_fcmd_faddr>
+ 73c:	a3a0      	tmovs	r3, #160	; 0xa0
+ 73e:	f11b      	tshftls	r3, r3, #4
+ 740:	3302      	tstorer	r3, [sp, #8]
+ 742:	a00c      	tmovs	r0, #12
+ 744:	7902      	tadd	r1, sp, #8
+ 746:	a202      	tmovs	r2, #2
+ 748:	9000 9a6a 	tjl	c20 <swire_write_bytes>
+ 74c:	065a      	tmov	r2, fp
+ 74e:	2912      	tloadrh	r2, [r2, #8]
+ 750:	3200      	tstorer	r2, [sp, #0]
+ 752:	aa01      	tcmp	r2, #1
+ 754:	c100      	tjne.n	758 <main+0x558>
+ 756:	812e      	tj.n	9b6 <main+0x7b6>
+ 758:	a00c      	tmovs	r0, #12
+ 75a:	0970      	tloadr	r1, [pc, #448]	; (91c <main+0x71c>)
+ 75c:	3a00      	tloadr	r2, [sp, #0]
+ 75e:	9000 9af3 	tjl	d48 <swire_fifo_read>
+ 762:	0b6e      	tloadr	r3, [pc, #440]	; (91c <main+0x71c>)
+ 764:	bb08      	tsubs	r3, #8
+ 766:	20d8      	tstorerh	r0, [r3, #6]
+ 768:	97ff 9d0c 	tjl	184 <_swire_set_fcs_hi>
+ 76c:	28f3      	tloadrh	r3, [r6, #6]
+ 76e:	3800      	tloadr	r0, [sp, #0]
+ 770:	0283      	tcmp	r3, r0
+ 772:	c100      	tjne.n	776 <main+0x576>
+ 774:	86b4      	tj.n	4e0 <main+0x2e0>
+ 776:	a103      	tmovs	r1, #3
+ 778:	4171      	tstorerb	r1, [r6, #5]
+ 77a:	86b1      	tj.n	4e0 <main+0x2e0>
+ 77c:	3a01      	tloadr	r2, [sp, #4]
+ 77e:	fa12      	tshftrs	r2, r2, #8
+ 780:	3201      	tstorer	r2, [sp, #4]
+ 782:	0658      	tmov	r0, fp
+ 784:	4943      	tloadrb	r3, [r0, #5]
+ 786:	ab05      	tcmp	r3, #5
+ 788:	c92a      	tjls.n	7e0 <main+0x5e0>
+ 78a:	0650      	tmov	r0, sl
+ 78c:	4170      	tstorerb	r0, [r6, #5]
+ 78e:	8618      	tj.n	3c2 <main+0x1c2>
+ 790:	a39f      	tmovs	r3, #159	; 0x9f
+ 792:	3302      	tstorer	r3, [sp, #8]
+ 794:	97ff 9cea 	tjl	16c <_swire_set_fcs_low>
+ 798:	a00c      	tmovs	r0, #12
+ 79a:	7902      	tadd	r1, sp, #8
+ 79c:	a201      	tmovs	r2, #1
+ 79e:	9000 9a3f 	tjl	c20 <swire_write_bytes>
+ 7a2:	a3a0      	tmovs	r3, #160	; 0xa0
+ 7a4:	f11b      	tshftls	r3, r3, #4
+ 7a6:	3302      	tstorer	r3, [sp, #8]
+ 7a8:	a00c      	tmovs	r0, #12
+ 7aa:	7902      	tadd	r1, sp, #8
+ 7ac:	a202      	tmovs	r2, #2
+ 7ae:	9000 9a37 	tjl	c20 <swire_write_bytes>
+ 7b2:	a00c      	tmovs	r0, #12
+ 7b4:	0959      	tloadr	r1, [pc, #356]	; (91c <main+0x71c>)
+ 7b6:	a203      	tmovs	r2, #3
+ 7b8:	9000 9ac6 	tjl	d48 <swire_fifo_read>
+ 7bc:	0a58      	tloadr	r2, [pc, #352]	; (920 <main+0x720>)
+ 7be:	20d0      	tstorerh	r0, [r2, #6]
+ 7c0:	97ff 9ce0 	tjl	184 <_swire_set_fcs_hi>
+ 7c4:	0856      	tloadr	r0, [pc, #344]	; (920 <main+0x720>)
+ 7c6:	28c3      	tloadrh	r3, [r0, #6]
+ 7c8:	ab03      	tcmp	r3, #3
+ 7ca:	c184      	tjne.n	6d6 <main+0x4d6>
+ 7cc:	8688      	tj.n	4e0 <main+0x2e0>
+ 7ce:	a006      	tmovs	r0, #6
+ 7d0:	97ff 9d06 	tjl	1e0 <swire_fcmd>
+ 7d4:	a060      	tmovs	r0, #96	; 0x60
+ 7d6:	97ff 9d03 	tjl	1e0 <swire_fcmd>
+ 7da:	97ff 9cd3 	tjl	184 <_swire_set_fcs_hi>
+ 7de:	85f0      	tj.n	3c2 <main+0x1c2>
+ 7e0:	f09b      	tshftls	r3, r3, #2
+ 7e2:	0951      	tloadr	r1, [pc, #324]	; (928 <main+0x728>)
+ 7e4:	18cb      	tloadr	r3, [r1, r3]
+ 7e6:	069f      	tmov	pc, r3
+ 7e8:	0b50      	tloadr	r3, [pc, #320]	; (92c <main+0x72c>)
+ 7ea:	481a      	tloadrb	r2, [r3, #0]
+ 7ec:	a110      	tmovs	r1, #16
+ 7ee:	038a      	tbclrs	r2, r1
+ 7f0:	401a      	tstorerb	r2, [r3, #0]
+ 7f2:	bb03      	tsubs	r3, #3
+ 7f4:	4819      	tloadrb	r1, [r3, #0]
+ 7f6:	a208      	tmovs	r2, #8
+ 7f8:	030a      	tors	r2, r1
+ 7fa:	f612      	tshftls	r2, r2, #24
+ 7fc:	fe12      	tshftrs	r2, r2, #24
+ 7fe:	401a      	tstorerb	r2, [r3, #0]
+ 800:	a0ff      	tmovs	r0, #255	; 0xff
+ 802:	a105      	tmovs	r1, #5
+ 804:	9000 99c2 	tjl	b8c <swire_write>
+ 808:	a0ff      	tmovs	r0, #255	; 0xff
+ 80a:	a105      	tmovs	r1, #5
+ 80c:	9000 99be 	tjl	b8c <swire_write>
+ 810:	800e      	tj.n	830 <main+0x630>
+ 812:	0947      	tloadr	r1, [pc, #284]	; (930 <main+0x730>)
+ 814:	4848      	tloadrb	r0, [r1, #1]
+ 816:	f400      	tshftls	r0, r0, #16
+ 818:	488b      	tloadrb	r3, [r1, #2]
+ 81a:	f21b      	tshftls	r3, r3, #8
+ 81c:	0318      	tors	r0, r3
+ 81e:	48cb      	tloadrb	r3, [r1, #3]
+ 820:	0318      	tors	r0, r3
+ 822:	0944      	tloadr	r1, [pc, #272]	; (934 <main+0x734>)
+ 824:	a201      	tmovs	r2, #1
+ 826:	9000 99fb 	tjl	c20 <swire_write_bytes>
+ 82a:	3a01      	tloadr	r2, [sp, #4]
+ 82c:	ba01      	tsubs	r2, #1
+ 82e:	3201      	tstorer	r2, [sp, #4]
+ 830:	3b01      	tloadr	r3, [sp, #4]
+ 832:	ab00      	tcmp	r3, #0
+ 834:	c1ed      	tjne.n	812 <main+0x612>
+ 836:	0840      	tloadr	r0, [pc, #256]	; (938 <main+0x738>)
+ 838:	0938      	tloadr	r1, [pc, #224]	; (91c <main+0x71c>)
+ 83a:	a204      	tmovs	r2, #4
+ 83c:	9000 9a2c 	tjl	c98 <swire_read_bytes>
+ 840:	f403      	tshftls	r3, r0, #16
+ 842:	fc1b      	tshftrs	r3, r3, #16
+ 844:	0a35      	tloadr	r2, [pc, #212]	; (91c <main+0x71c>)
+ 846:	ba08      	tsubs	r2, #8
+ 848:	20d3      	tstorerh	r3, [r2, #6]
+ 84a:	ab04      	tcmp	r3, #4
+ 84c:	c100      	tjne.n	850 <main+0x650>
+ 84e:	8647      	tj.n	4e0 <main+0x2e0>
+ 850:	a003      	tmovs	r0, #3
+ 852:	4150      	tstorerb	r0, [r2, #5]
+ 854:	8644      	tj.n	4e0 <main+0x2e0>
+ 856:	3b01      	tloadr	r3, [sp, #4]
+ 858:	ab00      	tcmp	r3, #0
+ 85a:	c016      	tjeq.n	88a <main+0x68a>
+ 85c:	0b33      	tloadr	r3, [pc, #204]	; (92c <main+0x72c>)
+ 85e:	481a      	tloadrb	r2, [r3, #0]
+ 860:	a110      	tmovs	r1, #16
+ 862:	038a      	tbclrs	r2, r1
+ 864:	401a      	tstorerb	r2, [r3, #0]
+ 866:	bb03      	tsubs	r3, #3
+ 868:	4819      	tloadrb	r1, [r3, #0]
+ 86a:	a208      	tmovs	r2, #8
+ 86c:	030a      	tors	r2, r1
+ 86e:	f612      	tshftls	r2, r2, #24
+ 870:	fe12      	tshftrs	r2, r2, #24
+ 872:	401a      	tstorerb	r2, [r3, #0]
+ 874:	0b31      	tloadr	r3, [pc, #196]	; (93c <main+0x73c>)
+ 876:	481b      	tloadrb	r3, [r3, #0]
+ 878:	f71b      	tshftls	r3, r3, #28
+ 87a:	ffdb      	tshftrs	r3, r3, #31
+ 87c:	4233      	tstorerb	r3, [r6, #8]
+ 87e:	0650      	tmov	r0, sl
+ 880:	20f0      	tstorerh	r0, [r6, #6]
+ 882:	5833      	tloadr	r3, [r6, #0]
+ 884:	b301      	tadds	r3, #1
+ 886:	5033      	tstorer	r3, [r6, #0]
+ 888:	859b      	tj.n	3c2 <main+0x1c2>
+ 88a:	0b28      	tloadr	r3, [pc, #160]	; (92c <main+0x72c>)
+ 88c:	4819      	tloadrb	r1, [r3, #0]
+ 88e:	a210      	tmovs	r2, #16
+ 890:	030a      	tors	r2, r1
+ 892:	f612      	tshftls	r2, r2, #24
+ 894:	fe12      	tshftrs	r2, r2, #24
+ 896:	401a      	tstorerb	r2, [r3, #0]
+ 898:	bb03      	tsubs	r3, #3
+ 89a:	481a      	tloadrb	r2, [r3, #0]
+ 89c:	a108      	tmovs	r1, #8
+ 89e:	038a      	tbclrs	r2, r1
+ 8a0:	401a      	tstorerb	r2, [r3, #0]
+ 8a2:	87e7      	tj.n	874 <main+0x674>
+ 8a4:	3900      	tloadr	r1, [sp, #0]
+ 8a6:	a900      	tcmp	r1, #0
+ 8a8:	c01e      	tjeq.n	8e8 <main+0x6e8>
+ 8aa:	b901      	tsubs	r1, #1
+ 8ac:	065b      	tmov	r3, fp
+ 8ae:	4a1a      	tloadrb	r2, [r3, #8]
+ 8b0:	0b23      	tloadr	r3, [pc, #140]	; (940 <main+0x740>)
+ 8b2:	401a      	tstorerb	r2, [r3, #0]
+ 8b4:	a900      	tcmp	r1, #0
+ 8b6:	c017      	tjeq.n	8e8 <main+0x6e8>
+ 8b8:	0658      	tmov	r0, fp
+ 8ba:	4a43      	tloadrb	r3, [r0, #9]
+ 8bc:	ab02      	tcmp	r3, #2
+ 8be:	c025      	tjeq.n	90c <main+0x70c>
+ 8c0:	a003      	tmovs	r0, #3
+ 8c2:	0b20      	tloadr	r3, [pc, #128]	; (944 <main+0x744>)
+ 8c4:	4018      	tstorerb	r0, [r3, #0]
+ 8c6:	b901      	tsubs	r1, #1
+ 8c8:	a900      	tcmp	r1, #0
+ 8ca:	c00d      	tjeq.n	8e8 <main+0x6e8>
+ 8cc:	a906      	tcmp	r1, #6
+ 8ce:	c900      	tjls.n	8d2 <main+0x6d2>
+ 8d0:	a106      	tmovs	r1, #6
+ 8d2:	0a1d      	tloadr	r2, [pc, #116]	; (948 <main+0x748>)
+ 8d4:	a300      	tmovs	r3, #0
+ 8d6:	3100      	tstorer	r1, [sp, #0]
+ 8d8:	4811      	tloadrb	r1, [r2, #0]
+ 8da:	0815      	tloadr	r0, [pc, #84]	; (930 <main+0x730>)
+ 8dc:	14c1      	tstorerb	r1, [r0, r3]
+ 8de:	b201      	tadds	r2, #1
+ 8e0:	b301      	tadds	r3, #1
+ 8e2:	3900      	tloadr	r1, [sp, #0]
+ 8e4:	0299      	tcmp	r1, r3
+ 8e6:	c1f7      	tjne.n	8d8 <main+0x6d8>
+ 8e8:	0b15      	tloadr	r3, [pc, #84]	; (940 <main+0x740>)
+ 8ea:	481b      	tloadrb	r3, [r3, #0]
+ 8ec:	4233      	tstorerb	r3, [r6, #8]
+ 8ee:	0a15      	tloadr	r2, [pc, #84]	; (944 <main+0x744>)
+ 8f0:	4813      	tloadrb	r3, [r2, #0]
+ 8f2:	4273      	tstorerb	r3, [r6, #9]
+ 8f4:	ec30      	tadds	r0, r6, #0
+ 8f6:	b00a      	tadds	r0, #10
+ 8f8:	090d      	tloadr	r1, [pc, #52]	; (930 <main+0x730>)
+ 8fa:	a206      	tmovs	r2, #6
+ 8fc:	97ff 9c2c 	tjl	158 <memcpy>
+ 900:	a308      	tmovs	r3, #8
+ 902:	20f3      	tstorerh	r3, [r6, #6]
+ 904:	5833      	tloadr	r3, [r6, #0]
+ 906:	b308      	tadds	r3, #8
+ 908:	5033      	tstorer	r3, [r6, #0]
+ 90a:	855a      	tj.n	3c2 <main+0x1c2>
+ 90c:	0a0d      	tloadr	r2, [pc, #52]	; (944 <main+0x744>)
+ 90e:	4013      	tstorerb	r3, [r2, #0]
+ 910:	87d9      	tj.n	8c6 <main+0x6c6>
+ 912:	a220      	tmovs	r2, #32
+ 914:	0b0d      	tloadr	r3, [pc, #52]	; (94c <main+0x74c>)
+ 916:	401a      	tstorerb	r2, [r3, #0]
+ 918:	8553      	tj.n	3c2 <main+0x1c2>
+ 91a:	46c0      	tnop			; (mov r8, r8)
+ 91c:	00841744 	taddeq	r1, r4, r4, asr #14
+ 920:	0084173c 	taddeq	r1, r4, ip, lsr r7
+ 924:	00841b5c 	taddeq	r1, r4, ip, asr fp
+ 928:	00000dbc 	undefined instruction 0x00000dbc
+ 92c:	0080059e 	umulleq	r0, r0, lr, r5
+ 930:	00841728 	taddeq	r1, r4, r8, lsr #14
+ 934:	0084172d 	taddeq	r1, r4, sp, lsr #14
+ 938:	000006bc 	undefined instruction 0x000006bc
+ 93c:	00800598 	umulleq	r0, r0, r8, r5
+ 940:	008000b2 	tstorerheq	r0, [r0], r2
+ 944:	0084172e 	taddeq	r1, r4, lr, lsr #14
+ 948:	00841b5e 	taddeq	r1, r4, lr, asr fp
+ 94c:	0080006f 	taddeq	r0, r0, pc, rrx
+ 950:	0652      	tmov	r2, sl
+ 952:	2132      	tstorerh	r2, [r6, #8]
+ 954:	0b37      	tloadr	r3, [pc, #220]	; (a34 <main+0x834>)
+ 956:	281b      	tloadrh	r3, [r3, #0]
+ 958:	2173      	tstorerh	r3, [r6, #10]
+ 95a:	0b37      	tloadr	r3, [pc, #220]	; (a38 <main+0x838>)
+ 95c:	481b      	tloadrb	r3, [r3, #0]
+ 95e:	f71b      	tshftls	r3, r3, #28
+ 960:	ffdb      	tshftrs	r3, r3, #31
+ 962:	4333      	tstorerb	r3, [r6, #12]
+ 964:	0b35      	tloadr	r3, [pc, #212]	; (a3c <main+0x83c>)
+ 966:	481b      	tloadrb	r3, [r3, #0]
+ 968:	4373      	tstorerb	r3, [r6, #13]
+ 96a:	0835      	tloadr	r0, [pc, #212]	; (a40 <main+0x840>)
+ 96c:	4803      	tloadrb	r3, [r0, #0]
+ 96e:	43b3      	tstorerb	r3, [r6, #14]
+ 970:	ec30      	tadds	r0, r6, #0
+ 972:	b00f      	tadds	r0, #15
+ 974:	0933      	tloadr	r1, [pc, #204]	; (a44 <main+0x844>)
+ 976:	a206      	tmovs	r2, #6
+ 978:	97ff 9bee 	tjl	158 <memcpy>
+ 97c:	a30d      	tmovs	r3, #13
+ 97e:	20f3      	tstorerh	r3, [r6, #6]
+ 980:	5833      	tloadr	r3, [r6, #0]
+ 982:	b30d      	tadds	r3, #13
+ 984:	5033      	tstorer	r3, [r6, #0]
+ 986:	851c      	tj.n	3c2 <main+0x1c2>
+ 988:	3901      	tloadr	r1, [sp, #4]
+ 98a:	a908      	tcmp	r1, #8
+ 98c:	c91b      	tjls.n	9c6 <main+0x7c6>
+ 98e:	a306      	tmovs	r3, #6
+ 990:	4173      	tstorerb	r3, [r6, #5]
+ 992:	8516      	tj.n	3c2 <main+0x1c2>
+ 994:	0b2c      	tloadr	r3, [pc, #176]	; (a48 <main+0x848>)
+ 996:	bb08      	tsubs	r3, #8
+ 998:	a003      	tmovs	r0, #3
+ 99a:	4158      	tstorerb	r0, [r3, #5]
+ 99c:	85ca      	tj.n	534 <main+0x334>
+ 99e:	a340      	tmovs	r3, #64	; 0x40
+ 9a0:	0668      	tmov	r0, sp
+ 9a2:	4283      	tstorerb	r3, [r0, #10]
+ 9a4:	a0b8      	tmovs	r0, #184	; 0xb8
+ 9a6:	7902      	tadd	r1, sp, #8
+ 9a8:	a203      	tmovs	r2, #3
+ 9aa:	9000 9939 	tjl	c20 <swire_write_bytes>
+ 9ae:	0669      	tmov	r1, sp
+ 9b0:	2809      	tloadrh	r1, [r1, #0]
+ 9b2:	20f1      	tstorerh	r1, [r6, #6]
+ 9b4:	8655      	tj.n	662 <main+0x462>
+ 9b6:	a00c      	tmovs	r0, #12
+ 9b8:	0923      	tloadr	r1, [pc, #140]	; (a48 <main+0x848>)
+ 9ba:	9000 996d 	tjl	c98 <swire_read_bytes>
+ 9be:	0b22      	tloadr	r3, [pc, #136]	; (a48 <main+0x848>)
+ 9c0:	bb08      	tsubs	r3, #8
+ 9c2:	20d8      	tstorerh	r0, [r3, #6]
+ 9c4:	86d0      	tj.n	768 <main+0x568>
+ 9c6:	066a      	tmov	r2, sp
+ 9c8:	ed13      	tadds	r3, r2, #4
+ 9ca:	481b      	tloadrb	r3, [r3, #0]
+ 9cc:	064a      	tmov	r2, r9
+ 9ce:	4013      	tstorerb	r3, [r2, #0]
+ 9d0:	84f7      	tj.n	3c2 <main+0x1c2>
+ 9d2:	a3a0      	tmovs	r3, #160	; 0xa0
+ 9d4:	f11b      	tshftls	r3, r3, #4
+ 9d6:	3302      	tstorer	r3, [sp, #8]
+ 9d8:	a00c      	tmovs	r0, #12
+ 9da:	7902      	tadd	r1, sp, #8
+ 9dc:	a202      	tmovs	r2, #2
+ 9de:	9000 991f 	tjl	c20 <swire_write_bytes>
+ 9e2:	0659      	tmov	r1, fp
+ 9e4:	290a      	tloadrh	r2, [r1, #8]
+ 9e6:	aa01      	tcmp	r2, #1
+ 9e8:	c012      	tjeq.n	a10 <main+0x810>
+ 9ea:	a00c      	tmovs	r0, #12
+ 9ec:	0916      	tloadr	r1, [pc, #88]	; (a48 <main+0x848>)
+ 9ee:	9000 99ab 	tjl	d48 <swire_fifo_read>
+ 9f2:	3002      	tstorer	r0, [sp, #8]
+ 9f4:	3b02      	tloadr	r3, [sp, #8]
+ 9f6:	28f2      	tloadrh	r2, [r6, #6]
+ 9f8:	e89a      	tadds	r2, r3, r2
+ 9fa:	20f2      	tstorerh	r2, [r6, #6]
+ 9fc:	0658      	tmov	r0, fp
+ 9fe:	2902      	tloadrh	r2, [r0, #8]
+ a00:	0293      	tcmp	r3, r2
+ a02:	c001      	tjeq.n	a08 <main+0x808>
+ a04:	a103      	tmovs	r1, #3
+ a06:	4171      	tstorerb	r1, [r6, #5]
+ a08:	5832      	tloadr	r2, [r6, #0]
+ a0a:	e8d3      	tadds	r3, r2, r3
+ a0c:	5033      	tstorer	r3, [r6, #0]
+ a0e:	853a      	tj.n	486 <main+0x286>
+ a10:	a00c      	tmovs	r0, #12
+ a12:	090d      	tloadr	r1, [pc, #52]	; (a48 <main+0x848>)
+ a14:	9000 9940 	tjl	c98 <swire_read_bytes>
+ a18:	3002      	tstorer	r0, [sp, #8]
+ a1a:	87eb      	tj.n	9f4 <main+0x7f4>
+ a1c:	a00c      	tmovs	r0, #12
+ a1e:	090b      	tloadr	r1, [pc, #44]	; (a4c <main+0x84c>)
+ a20:	9000 98fe 	tjl	c20 <swire_write_bytes>
+ a24:	20f0      	tstorerh	r0, [r6, #6]
+ a26:	8529      	tj.n	47c <main+0x27c>
+ a28:	a00c      	tmovs	r0, #12
+ a2a:	0909      	tloadr	r1, [pc, #36]	; (a50 <main+0x850>)
+ a2c:	9000 98f8 	tjl	c20 <swire_write_bytes>
+ a30:	20f0      	tstorerh	r0, [r6, #6]
+ a32:	8528      	tj.n	486 <main+0x286>
+ a34:	0080007e 	taddeq	r0, r0, lr, ror r0
+ a38:	00800598 	umulleq	r0, r0, r8, r5
+ a3c:	008000b2 	tstorerheq	r0, [r0], r2
+ a40:	0084172e 	taddeq	r1, r4, lr, lsr #14
+ a44:	00841728 	taddeq	r1, r4, r8, lsr #14
+ a48:	00841744 	taddeq	r1, r4, r4, asr #14
+ a4c:	00841b5e 	taddeq	r1, r4, lr, asr fp
+ a50:	00841b5c 	taddeq	r1, r4, ip, asr fp
+
+00000a54 <crcInit>:
+crcInit():
+ a54:	6570      	tpush	{r4, r5, r6, lr}
+ a56:	0c11      	tloadr	r4, [pc, #68]	; (a9c <crcInit+0x48>)
+ a58:	a000      	tmovs	r0, #0
+ a5a:	0d11      	tloadr	r5, [pc, #68]	; (aa0 <crcInit+0x4c>)
+ a5c:	a680      	tmovs	r6, #128	; 0x80
+ a5e:	f076      	tshftls	r6, r6, #1
+ a60:	f603      	tshftls	r3, r0, #24
+ a62:	fc1b      	tshftrs	r3, r3, #16
+ a64:	a208      	tmovs	r2, #8
+ a66:	8006      	tj.n	a76 <crcInit+0x22>
+ a68:	f45b      	tshftls	r3, r3, #17
+ a6a:	fc1b      	tshftrs	r3, r3, #16
+ a6c:	ba01      	tsubs	r2, #1
+ a6e:	f612      	tshftls	r2, r2, #24
+ a70:	fe12      	tshftrs	r2, r2, #24
+ a72:	aa00      	tcmp	r2, #0
+ a74:	c00b      	tjeq.n	a8e <crcInit+0x3a>
+ a76:	f419      	tshftls	r1, r3, #16
+ a78:	a900      	tcmp	r1, #0
+ a7a:	caf5      	tjge.n	a68 <crcInit+0x14>
+ a7c:	f05b      	tshftls	r3, r3, #1
+ a7e:	006b      	txors	r3, r5
+ a80:	f41b      	tshftls	r3, r3, #16
+ a82:	fc1b      	tshftrs	r3, r3, #16
+ a84:	ba01      	tsubs	r2, #1
+ a86:	f612      	tshftls	r2, r2, #24
+ a88:	fe12      	tshftrs	r2, r2, #24
+ a8a:	aa00      	tcmp	r2, #0
+ a8c:	c1f3      	tjne.n	a76 <crcInit+0x22>
+ a8e:	2023      	tstorerh	r3, [r4, #0]
+ a90:	b001      	tadds	r0, #1
+ a92:	b402      	tadds	r4, #2
+ a94:	02b0      	tcmp	r0, r6
+ a96:	c1e3      	tjne.n	a60 <crcInit+0xc>
+ a98:	6d70      	tpop	{r4, r5, r6, pc}
+ a9a:	46c0      	tnop			; (mov r8, r8)
+ a9c:	00841f68 	taddeq	r1, r4, r8, ror #30
+ aa0:	ffff8005 	undefined instruction 0xffff8005
+
+00000aa4 <crcFast>:
+crcFast():
+ aa4:	65f0      	tpush	{r4, r5, r6, r7, lr}
+ aa6:	0647      	tmov	r7, r8
+ aa8:	6480      	tpush	{r7}
+ aaa:	068c      	tmov	ip, r1
+ aac:	a300      	tmovs	r3, #0
+ aae:	059c      	tcmp	ip, r3
+ ab0:	cd2f      	tjle.n	b12 <crcFast+0x6e>
+ ab2:	a700      	tmovs	r7, #0
+ ab4:	0918      	tloadr	r1, [pc, #96]	; (b18 <crcFast+0x74>)
+ ab6:	0b19      	tloadr	r3, [pc, #100]	; (b1c <crcFast+0x78>)
+ ab8:	0698      	tmov	r8, r3
+ aba:	a401      	tmovs	r4, #1
+ abc:	1dc2      	tloadrb	r2, [r0, r7]
+ abe:	a307      	tmovs	r3, #7
+ ac0:	a500      	tmovs	r5, #0
+ ac2:	8000      	tj.n	ac6 <crcFast+0x22>
+ ac4:	f852      	tshftrs	r2, r2, #1
+ ac6:	0214      	tnand	r4, r2
+ ac8:	c002      	tjeq.n	ad0 <crcFast+0x2c>
+ aca:	ec26      	tadds	r6, r4, #0
+ acc:	009e      	tshftls	r6, r3
+ ace:	0335      	tors	r5, r6
+ ad0:	bb01      	tsubs	r3, #1
+ ad2:	c2f7      	tjcs.n	ac4 <crcFast+0x20>
+ ad4:	fa0b      	tshftrs	r3, r1, #8
+ ad6:	005d      	txors	r5, r3
+ ad8:	f62d      	tshftls	r5, r5, #24
+ ada:	fded      	tshftrs	r5, r5, #23
+ adc:	f20a      	tshftls	r2, r1, #8
+ ade:	0643      	tmov	r3, r8
+ ae0:	1b59      	tloadrh	r1, [r3, r5]
+ ae2:	004a      	txors	r2, r1
+ ae4:	f412      	tshftls	r2, r2, #16
+ ae6:	fc11      	tshftrs	r1, r2, #16
+ ae8:	b701      	tadds	r7, #1
+ aea:	0567      	tcmp	r7, ip
+ aec:	c1e6      	tjne.n	abc <crcFast+0x18>
+ aee:	ec0a      	tadds	r2, r1, #0
+ af0:	a30f      	tmovs	r3, #15
+ af2:	a000      	tmovs	r0, #0
+ af4:	a101      	tmovs	r1, #1
+ af6:	8000      	tj.n	afa <crcFast+0x56>
+ af8:	f852      	tshftrs	r2, r2, #1
+ afa:	0211      	tnand	r1, r2
+ afc:	c002      	tjeq.n	b04 <crcFast+0x60>
+ afe:	ec0c      	tadds	r4, r1, #0
+ b00:	009c      	tshftls	r4, r3
+ b02:	0320      	tors	r0, r4
+ b04:	bb01      	tsubs	r3, #1
+ b06:	c2f7      	tjcs.n	af8 <crcFast+0x54>
+ b08:	f400      	tshftls	r0, r0, #16
+ b0a:	fc00      	tshftrs	r0, r0, #16
+ b0c:	6c04      	tpop	{r2}
+ b0e:	0690      	tmov	r8, r2
+ b10:	6df0      	tpop	{r4, r5, r6, r7, pc}
+ b12:	0a01      	tloadr	r2, [pc, #4]	; (b18 <crcFast+0x74>)
+ b14:	87ec      	tj.n	af0 <crcFast+0x4c>
+ b16:	46c0      	tnop			; (mov r8, r8)
+ b18:	0000ffff 	undefined instruction 0x0000ffff
+ b1c:	00841f68 	taddeq	r1, r4, r8, ror #30
+
+00000b20 <sleep_us>:
+sleep_us():
+ b20:	0a03      	tloadr	r2, [pc, #12]	; (b30 <sleep_us+0x10>)
+ b22:	5811      	tloadr	r1, [r2, #0]
+ b24:	f100      	tshftls	r0, r0, #4
+ b26:	5813      	tloadr	r3, [r2, #0]
+ b28:	ea5b      	tsubs	r3, r3, r1
+ b2a:	0298      	tcmp	r0, r3
+ b2c:	c2fb      	tjcs.n	b26 <sleep_us+0x6>
+ b2e:	0770      	tjex	lr
+ b30:	00800740 	taddeq	r0, r0, r0, asr #14
+
+00000b34 <analog_read>:
+analog_read():
+ b34:	f600      	tshftls	r0, r0, #24
+ b36:	fe00      	tshftrs	r0, r0, #24
+ b38:	0b06      	tloadr	r3, [pc, #24]	; (b54 <analog_read+0x20>)
+ b3a:	4018      	tstorerb	r0, [r3, #0]
+ b3c:	0906      	tloadr	r1, [pc, #24]	; (b58 <analog_read+0x24>)
+ b3e:	a340      	tmovs	r3, #64	; 0x40
+ b40:	400b      	tstorerb	r3, [r1, #0]
+ b42:	a201      	tmovs	r2, #1
+ b44:	480b      	tloadrb	r3, [r1, #0]
+ b46:	0013      	tands	r3, r2
+ b48:	c1fc      	tjne.n	b44 <analog_read+0x10>
+ b4a:	0a04      	tloadr	r2, [pc, #16]	; (b5c <analog_read+0x28>)
+ b4c:	4810      	tloadrb	r0, [r2, #0]
+ b4e:	b201      	tadds	r2, #1
+ b50:	4013      	tstorerb	r3, [r2, #0]
+ b52:	0770      	tjex	lr
+ b54:	008000b8 	tstorerheq	r0, [r0], r8
+ b58:	008000ba 	tstorerheq	r0, [r0], sl
+ b5c:	008000b9 	tstorerheq	r0, [r0], r9
+
+00000b60 <analog_write>:
+analog_write():
+ b60:	f600      	tshftls	r0, r0, #24
+ b62:	fe00      	tshftrs	r0, r0, #24
+ b64:	f609      	tshftls	r1, r1, #24
+ b66:	fe09      	tshftrs	r1, r1, #24
+ b68:	0b06      	tloadr	r3, [pc, #24]	; (b84 <analog_write+0x24>)
+ b6a:	4018      	tstorerb	r0, [r3, #0]
+ b6c:	b301      	tadds	r3, #1
+ b6e:	4019      	tstorerb	r1, [r3, #0]
+ b70:	0905      	tloadr	r1, [pc, #20]	; (b88 <analog_write+0x28>)
+ b72:	a360      	tmovs	r3, #96	; 0x60
+ b74:	400b      	tstorerb	r3, [r1, #0]
+ b76:	a201      	tmovs	r2, #1
+ b78:	480b      	tloadrb	r3, [r1, #0]
+ b7a:	0013      	tands	r3, r2
+ b7c:	c1fc      	tjne.n	b78 <analog_write+0x18>
+ b7e:	0a02      	tloadr	r2, [pc, #8]	; (b88 <analog_write+0x28>)
+ b80:	4013      	tstorerb	r3, [r2, #0]
+ b82:	0770      	tjex	lr
+ b84:	008000b8 	tstorerheq	r0, [r0], r8
+ b88:	008000ba 	tstorerheq	r0, [r0], sl
+
+00000b8c <swire_write>:
+swire_write():
+ b8c:	f600      	tshftls	r0, r0, #24
+ b8e:	fe00      	tshftrs	r0, r0, #24
+ b90:	f609      	tshftls	r1, r1, #24
+ b92:	fe09      	tshftrs	r1, r1, #24
+ b94:	0b09      	tloadr	r3, [pc, #36]	; (bbc <swire_write+0x30>)
+ b96:	481b      	tloadrb	r3, [r3, #0]
+ b98:	f11b      	tshftls	r3, r3, #4
+ b9a:	0a09      	tloadr	r2, [pc, #36]	; (bc0 <swire_write+0x34>)
+ b9c:	4010      	tstorerb	r0, [r2, #0]
+ b9e:	0809      	tloadr	r0, [pc, #36]	; (bc4 <swire_write+0x38>)
+ ba0:	4001      	tstorerb	r1, [r0, #0]
+ ba2:	a101      	tmovs	r1, #1
+ ba4:	8002      	tj.n	bac <swire_write+0x20>
+ ba6:	ab00      	tcmp	r3, #0
+ ba8:	c004      	tjeq.n	bb4 <swire_write+0x28>
+ baa:	bb01      	tsubs	r3, #1
+ bac:	4802      	tloadrb	r2, [r0, #0]
+ bae:	0211      	tnand	r1, r2
+ bb0:	c1f9      	tjne.n	ba6 <swire_write+0x1a>
+ bb2:	0770      	tjex	lr
+ bb4:	0a03      	tloadr	r2, [pc, #12]	; (bc4 <swire_write+0x38>)
+ bb6:	4013      	tstorerb	r3, [r2, #0]
+ bb8:	87fb      	tj.n	bb2 <swire_write+0x26>
+ bba:	46c0      	tnop			; (mov r8, r8)
+ bbc:	008000b2 	tstorerheq	r0, [r0], r2
+ bc0:	008000b0 	tstorerheq	r0, [r0], r0
+ bc4:	008000b1 	tstorerheq	r0, [r0], r1
+
+00000bc8 <swire_read>:
+swire_read():
+ bc8:	65f0      	tpush	{r4, r5, r6, r7, lr}
+ bca:	0647      	tmov	r7, r8
+ bcc:	6480      	tpush	{r7}
+ bce:	ec03      	tadds	r3, r0, #0
+ bd0:	a000      	tmovs	r0, #0
+ bd2:	a900      	tcmp	r1, #0
+ bd4:	c013      	tjeq.n	bfe <swire_read+0x36>
+ bd6:	0a0f      	tloadr	r2, [pc, #60]	; (c14 <swire_read+0x4c>)
+ bd8:	0694      	tmov	ip, r2
+ bda:	0d0f      	tloadr	r5, [pc, #60]	; (c18 <swire_read+0x50>)
+ bdc:	a602      	tmovs	r6, #2
+ bde:	a702      	tmovs	r7, #2
+ be0:	0c0e      	tloadr	r4, [pc, #56]	; (c1c <swire_read+0x54>)
+ be2:	06a0      	tmov	r8, r4
+ be4:	0664      	tmov	r4, ip
+ be6:	4822      	tloadrb	r2, [r4, #0]
+ be8:	f112      	tshftls	r2, r2, #4
+ bea:	402f      	tstorerb	r7, [r5, #0]
+ bec:	8000      	tj.n	bf0 <swire_read+0x28>
+ bee:	ba01      	tsubs	r2, #1
+ bf0:	482c      	tloadrb	r4, [r5, #0]
+ bf2:	0226      	tnand	r6, r4
+ bf4:	c006      	tjeq.n	c04 <swire_read+0x3c>
+ bf6:	aa00      	tcmp	r2, #0
+ bf8:	c1f9      	tjne.n	bee <swire_read+0x26>
+ bfa:	0b07      	tloadr	r3, [pc, #28]	; (c18 <swire_read+0x50>)
+ bfc:	401a      	tstorerb	r2, [r3, #0]
+ bfe:	6c04      	tpop	{r2}
+ c00:	0690      	tmov	r8, r2
+ c02:	6df0      	tpop	{r4, r5, r6, r7, pc}
+ c04:	0644      	tmov	r4, r8
+ c06:	4822      	tloadrb	r2, [r4, #0]
+ c08:	141a      	tstorerb	r2, [r3, r0]
+ c0a:	b001      	tadds	r0, #1
+ c0c:	0281      	tcmp	r1, r0
+ c0e:	c8e9      	tjhi.n	be4 <swire_read+0x1c>
+ c10:	87f5      	tj.n	bfe <swire_read+0x36>
+ c12:	46c0      	tnop			; (mov r8, r8)
+ c14:	008000b2 	tstorerheq	r0, [r0], r2
+ c18:	008000b1 	tstorerheq	r0, [r0], r1
+ c1c:	008000b0 	tstorerheq	r0, [r0], r0
+
+00000c20 <swire_write_bytes>:
+swire_write_bytes():
+ c20:	65f0      	tpush	{r4, r5, r6, r7, lr}
+ c22:	0647      	tmov	r7, r8
+ c24:	6480      	tpush	{r7}
+ c26:	ec07      	tadds	r7, r0, #0
+ c28:	ec0d      	tadds	r5, r1, #0
+ c2a:	ec14      	tadds	r4, r2, #0
+ c2c:	0e19      	tloadr	r6, [pc, #100]	; (c94 <swire_write_bytes+0x74>)
+ c2e:	49b3      	tloadrb	r3, [r6, #6]
+ c30:	e8f3      	tadds	r3, r6, r3
+ c32:	485b      	tloadrb	r3, [r3, #1]
+ c34:	a27f      	tmovs	r2, #127	; 0x7f
+ c36:	001a      	tands	r2, r3
+ c38:	0690      	tmov	r8, r2
+ c3a:	4830      	tloadrb	r0, [r6, #0]
+ c3c:	a105      	tmovs	r1, #5
+ c3e:	97ff 9fa5 	tjl	b8c <swire_write>
+ c42:	49b3      	tloadrb	r3, [r6, #6]
+ c44:	ab03      	tcmp	r3, #3
+ c46:	c01f      	tjeq.n	c88 <swire_write_bytes+0x68>
+ c48:	f438      	tshftls	r0, r7, #16
+ c4a:	fe00      	tshftrs	r0, r0, #24
+ c4c:	a101      	tmovs	r1, #1
+ c4e:	97ff 9f9d 	tjl	b8c <swire_write>
+ c52:	f63f      	tshftls	r7, r7, #24
+ c54:	fe38      	tshftrs	r0, r7, #24
+ c56:	a101      	tmovs	r1, #1
+ c58:	97ff 9f98 	tjl	b8c <swire_write>
+ c5c:	0640      	tmov	r0, r8
+ c5e:	a101      	tmovs	r1, #1
+ c60:	97ff 9f94 	tjl	b8c <swire_write>
+ c64:	ac00      	tcmp	r4, #0
+ c66:	c007      	tjeq.n	c78 <swire_write_bytes+0x58>
+ c68:	a600      	tmovs	r6, #0
+ c6a:	1da8      	tloadrb	r0, [r5, r6]
+ c6c:	a101      	tmovs	r1, #1
+ c6e:	97ff 9f8d 	tjl	b8c <swire_write>
+ c72:	b601      	tadds	r6, #1
+ c74:	02b4      	tcmp	r4, r6
+ c76:	c1f8      	tjne.n	c6a <swire_write_bytes+0x4a>
+ c78:	a0ff      	tmovs	r0, #255	; 0xff
+ c7a:	a105      	tmovs	r1, #5
+ c7c:	97ff 9f86 	tjl	b8c <swire_write>
+ c80:	ec20      	tadds	r0, r4, #0
+ c82:	6c04      	tpop	{r2}
+ c84:	0690      	tmov	r8, r2
+ c86:	6df0      	tpop	{r4, r5, r6, r7, pc}
+ c88:	f238      	tshftls	r0, r7, #8
+ c8a:	fe00      	tshftrs	r0, r0, #24
+ c8c:	a101      	tmovs	r1, #1
+ c8e:	97ff 9f7d 	tjl	b8c <swire_write>
+ c92:	87d9      	tj.n	c48 <swire_write_bytes+0x28>
+ c94:	00841728 	taddeq	r1, r4, r8, lsr #14
+
+00000c98 <swire_read_bytes>:
+swire_read_bytes():
+ c98:	65f0      	tpush	{r4, r5, r6, r7, lr}
+ c9a:	0647      	tmov	r7, r8
+ c9c:	6480      	tpush	{r7}
+ c9e:	ec05      	tadds	r5, r0, #0
+ ca0:	ec0f      	tadds	r7, r1, #0
+ ca2:	0690      	tmov	r8, r2
+ ca4:	0c18      	tloadr	r4, [pc, #96]	; (d08 <swire_read_bytes+0x70>)
+ ca6:	49a3      	tloadrb	r3, [r4, #6]
+ ca8:	e8e3      	tadds	r3, r4, r3
+ caa:	485e      	tloadrb	r6, [r3, #1]
+ cac:	a380      	tmovs	r3, #128	; 0x80
+ cae:	025b      	tnegs	r3, r3
+ cb0:	0333      	tors	r3, r6
+ cb2:	f61e      	tshftls	r6, r3, #24
+ cb4:	fe36      	tshftrs	r6, r6, #24
+ cb6:	4820      	tloadrb	r0, [r4, #0]
+ cb8:	a105      	tmovs	r1, #5
+ cba:	97ff 9f67 	tjl	b8c <swire_write>
+ cbe:	49a3      	tloadrb	r3, [r4, #6]
+ cc0:	ab03      	tcmp	r3, #3
+ cc2:	c01a      	tjeq.n	cfa <swire_read_bytes+0x62>
+ cc4:	f428      	tshftls	r0, r5, #16
+ cc6:	fe00      	tshftrs	r0, r0, #24
+ cc8:	a101      	tmovs	r1, #1
+ cca:	97ff 9f5f 	tjl	b8c <swire_write>
+ cce:	f62d      	tshftls	r5, r5, #24
+ cd0:	fe28      	tshftrs	r0, r5, #24
+ cd2:	a101      	tmovs	r1, #1
+ cd4:	97ff 9f5a 	tjl	b8c <swire_write>
+ cd8:	ec30      	tadds	r0, r6, #0
+ cda:	a101      	tmovs	r1, #1
+ cdc:	97ff 9f56 	tjl	b8c <swire_write>
+ ce0:	ec38      	tadds	r0, r7, #0
+ ce2:	0641      	tmov	r1, r8
+ ce4:	97ff 9f70 	tjl	bc8 <swire_read>
+ ce8:	ec04      	tadds	r4, r0, #0
+ cea:	a0ff      	tmovs	r0, #255	; 0xff
+ cec:	a105      	tmovs	r1, #5
+ cee:	97ff 9f4d 	tjl	b8c <swire_write>
+ cf2:	ec20      	tadds	r0, r4, #0
+ cf4:	6c04      	tpop	{r2}
+ cf6:	0690      	tmov	r8, r2
+ cf8:	6df0      	tpop	{r4, r5, r6, r7, pc}
+ cfa:	f228      	tshftls	r0, r5, #8
+ cfc:	fe00      	tshftrs	r0, r0, #24
+ cfe:	a101      	tmovs	r1, #1
+ d00:	97ff 9f44 	tjl	b8c <swire_write>
+ d04:	87de      	tj.n	cc4 <swire_read_bytes+0x2c>
+ d06:	46c0      	tnop			; (mov r8, r8)
+ d08:	00841728 	taddeq	r1, r4, r8, lsr #14
+
+00000d0c <swire_fifo_write>:
+swire_fifo_write():
+ d0c:	65f0      	tpush	{r4, r5, r6, r7, lr}
+ d0e:	6081      	tsub	sp, #4
+ d10:	ec06      	tadds	r6, r0, #0
+ d12:	ec0d      	tadds	r5, r1, #0
+ d14:	ec17      	tadds	r7, r2, #0
+ d16:	066c      	tmov	r4, sp
+ d18:	b403      	tadds	r4, #3
+ d1a:	a380      	tmovs	r3, #128	; 0x80
+ d1c:	4023      	tstorerb	r3, [r4, #0]
+ d1e:	a0b3      	tmovs	r0, #179	; 0xb3
+ d20:	ec21      	tadds	r1, r4, #0
+ d22:	a201      	tmovs	r2, #1
+ d24:	97ff 9f7c 	tjl	c20 <swire_write_bytes>
+ d28:	ec30      	tadds	r0, r6, #0
+ d2a:	ec29      	tadds	r1, r5, #0
+ d2c:	ec3a      	tadds	r2, r7, #0
+ d2e:	97ff 9f77 	tjl	c20 <swire_write_bytes>
+ d32:	ec05      	tadds	r5, r0, #0
+ d34:	a300      	tmovs	r3, #0
+ d36:	4023      	tstorerb	r3, [r4, #0]
+ d38:	a0b3      	tmovs	r0, #179	; 0xb3
+ d3a:	ec21      	tadds	r1, r4, #0
+ d3c:	a201      	tmovs	r2, #1
+ d3e:	97ff 9f6f 	tjl	c20 <swire_write_bytes>
+ d42:	ec28      	tadds	r0, r5, #0
+ d44:	6001      	tadd	sp, #4
+ d46:	6df0      	tpop	{r4, r5, r6, r7, pc}
+
+00000d48 <swire_fifo_read>:
+swire_fifo_read():
+ d48:	65f0      	tpush	{r4, r5, r6, r7, lr}
+ d4a:	6081      	tsub	sp, #4
+ d4c:	ec06      	tadds	r6, r0, #0
+ d4e:	ec0d      	tadds	r5, r1, #0
+ d50:	ec17      	tadds	r7, r2, #0
+ d52:	066c      	tmov	r4, sp
+ d54:	b403      	tadds	r4, #3
+ d56:	a380      	tmovs	r3, #128	; 0x80
+ d58:	4023      	tstorerb	r3, [r4, #0]
+ d5a:	a0b3      	tmovs	r0, #179	; 0xb3
+ d5c:	ec21      	tadds	r1, r4, #0
+ d5e:	a201      	tmovs	r2, #1
+ d60:	97ff 9f5e 	tjl	c20 <swire_write_bytes>
+ d64:	ec30      	tadds	r0, r6, #0
+ d66:	ec29      	tadds	r1, r5, #0
+ d68:	ec3a      	tadds	r2, r7, #0
+ d6a:	97ff 9f95 	tjl	c98 <swire_read_bytes>
+ d6e:	ec05      	tadds	r5, r0, #0
+ d70:	a300      	tmovs	r3, #0
+ d72:	4023      	tstorerb	r3, [r4, #0]
+ d74:	a0b3      	tmovs	r0, #179	; 0xb3
+ d76:	ec21      	tadds	r1, r4, #0
+ d78:	a201      	tmovs	r2, #1
+ d7a:	97ff 9f51 	tjl	c20 <swire_write_bytes>
+ d7e:	ec28      	tadds	r0, r5, #0
+ d80:	6001      	tadd	sp, #4
+ d82:	6df0      	tpop	{r4, r5, r6, r7, pc}
+
+Disassembly of section .rodata:
+
+00000d84 <.rodata>:
+ d84:	0000077c 	tandeq	r0, r0, ip, ror r7
+ d88:	0000071a 	tandeq	r0, r0, sl, lsl r7
+ d8c:	000006ec 	tandeq	r0, r0, ip, ror #13
+ d90:	000006dc 	undefined instruction 0x000006dc
+ d94:	000007ce 	tandeq	r0, r0, lr, asr #15
+ d98:	00000790 	tmuleq	r0, r0, r7
+ d9c:	00000698 	tmuleq	r0, r8, r6
+ da0:	00000670 	tandeq	r0, r0, r0, ror r6
+ da4:	00000544 	tandeq	r0, r0, r4, asr #10
+ da8:	000004e8 	tandeq	r0, r0, r8, ror #9
+ dac:	000005fe 	undefined instruction 0x000005fe
+ db0:	000004a4 	tandeq	r0, r0, r4, lsr #9
+ db4:	0000048c 	tandeq	r0, r0, ip, lsl #9
+ db8:	00000442 	tandeq	r0, r0, r2, asr #8
+ dbc:	00000950 	tandeq	r0, r0, r0, asr r9
+ dc0:	00000912 	tandeq	r0, r0, r2, lsl r9
+ dc4:	000008a4 	tandeq	r0, r0, r4, lsr #17
+ dc8:	00000856 	tandeq	r0, r0, r6, asr r8
+ dcc:	000007e8 	tandeq	r0, r0, r8, ror #15
+ dd0:	00000988 	tandeq	r0, r0, r8, lsl #19
+
+Disassembly of section .data:
+
+00841700 <_start_data_>:
+_start_data_():
+  841700:	00000001 	tandeq	r0, r0, r1
+
+00841704 <uart_tab_baud>:
+  841704:	00000f0c 	tandeq	r0, r0, ip, lsl #30
+  841708:	0000070c 	tandeq	r0, r0, ip, lsl #14
+  84170c:	0000020c 	tandeq	r0, r0, ip, lsl #4
+  841710:	00000507 	tandeq	r0, r0, r7, lsl #10
+  841714:	0000010c 	tandeq	r0, r0, ip, lsl #2
+  841718:	00000305 	tandeq	r0, r0, r5, lsl #6
+  84171c:	00000303 	tandeq	r0, r0, r3, lsl #6
+  841720:	00000203 	tandeq	r0, r0, r3, lsl #4
+  841724:	00000103 	tandeq	r0, r0, r3, lsl #2
+
+00841728 <swire_cmd_cpu_stop>:
+  841728:	0206005a 	tandeq	r0, r6, #90	; 0x5a
+  84172c:	00030500 	tandeq	r0, r3, r0, lsl #10
+
+0084172e <swire_addr_len>:
+  84172e:	Address 0x0084172e is out of bounds.
+
+
+Disassembly of section .bss:
+
+00841730 <MCU_PROD_ID>:
+_start_bss_():
+  841730:	00000000 	tandeq	r0, r0, r0
+
+00841734 <cur_uart_baud>:
+  841734:	00000000 	tandeq	r0, r0, r0
+
+00841738 <MCU_PROD__TID>:
+  841738:	00000000 	tandeq	r0, r0, r0
+
+0084173c <utxb>:
+	...
+
+00841b50 <MCU_PROD__ID>:
+  841b50:	00000000 	tandeq	r0, r0, r0
+
+00841b54 <urxb>:
+	...
+
+00841f68 <crcTable>:
+	...
+
+Disassembly of section .comment:
+
+00000000 <.comment>:
+   0:	3a434347 	tjcc	10d0d24 <_end_bss_+0x88ebbc>
+   4:	4e472820 	undefined instruction 0x4e472820
+   8:	34202955 	tstorertcc	r2, [r0], #-2389	; 0x955
+   c:	312e352e 	teqcc	lr, lr, lsr #10
+  10:	3363742d 	tcmpncc	r3, #754974720	; 0x2d000000
+  14:	2e312d32 	undefined instruction 0x2e312d32
+  18:	Address 0x00000018 is out of bounds.
+
+
+Disassembly of section .TC32.attributes:
+
+00000000 <.TC32.attributes>:
+   0:	00000f41 	tandeq	r0, r0, r1, asr #30
+   4:	61656100 	tcmpnvs	r5, r0, lsl #2
+   8:	01006962 	tnandeq	r0, r2, ror #18
+   c:	00000005 	tandeq	r0, r0, r5

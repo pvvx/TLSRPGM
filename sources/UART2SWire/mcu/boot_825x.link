@@ -1,0 +1,58 @@
+
+/* to tell the linker the program begin from __start label in cstartup.s, thus do not treat it as a unused symbol */
+ENTRY(__start)
+
+SECTIONS
+{
+    . = 0x0;
+        .vectors :
+        {
+        *(.vectors)
+        *(.vectors.*)	/* MUST as follows, when compile with -ffunction-sections -fdata-sections, session name may changed */
+        }
+        .ram_code :
+        {
+        *(.ram_code)
+        *(.ram_code.*)
+        }
+	
+        .text :
+        {
+        *(.text)
+        *(.text.*)
+        }
+        .rodata :
+        {
+        *(.rodata)
+        *(.rodata.*)
+        }
+    PROVIDE(_code_size_ = . );
+    PROVIDE(_dstored_ = . );
+    . = ((. + __RAM_START_ADDR + 255) / 256) * 256;
+    PROVIDE(_ramcode_size_div_16_ = (. - __RAM_START_ADDR) / 16);
+    PROVIDE(_ramcode_size_div_256_ = (. - __RAM_START_ADDR) / 256);
+	PROVIDE(_ictag_start_ = .);
+	. = . + 0x100;
+	PROVIDE(_ictag_end_ = .);
+	. = . + 0x800;
+        .data :
+          AT ( _dstored_ )
+         {
+    . = (((. + 3) / 4)*4);
+         PROVIDE(_start_data_ = . );
+         *(.data);
+         *(.data.*);
+         PROVIDE(_end_data_ = . );
+         }
+        .bss :
+        {
+	. = (((. + 3) / 4)*4);
+	PROVIDE(_start_bss_ = .);
+        *(.sbss)
+        *(.sbss.*)
+        *(.bss)
+        *(.bss.*)
+        }
+    PROVIDE(_end_bss_ = .);
+	PROVIDE(_bin_size_ = _code_size_ + _end_data_ - _start_data_);
+}
