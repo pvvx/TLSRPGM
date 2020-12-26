@@ -795,11 +795,11 @@ def main():
 	comport_def_name='COM1'
 	if sys.platform == "linux" or sys.platform == "linux2":
 		comport_def_name = '/dev/ttyS0'
-	#elif platform == "darwin":
-	elif platform == "win32":
+	elif sys.platform == "win32":
 		comport_def_name='COM1'
-	else:
-		print(sys.platform)
+	#elif sys.platform == "darwin":
+	#else:
+	#	print(sys.platform)
 	#
 	parser = argparse.ArgumentParser(description='%s version %s' % (__progname__, __version__), prog=__filename__)
 	parser.add_argument(
