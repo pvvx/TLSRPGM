@@ -1,9 +1,13 @@
 # TLSRPGM
 TLSR SWire programmer
 
-Used module TB-04-KIT or TLSR825x and USB-COM chip
 
-USB-COM chip: PL2303HX or CH430
+>** Option 1:
+Use TB-04-KIT or TB-04 / 03F module (TLSR8253 chip) and USB-COM PL2303HX or CH430 chip.
+
+>** Option 2:
+Use EBYTE E104-BT10-G / N module or (TLSR8269 chip) for direct USB connection
+ 
 
 The current version of the 'TlsrPgm.py' program only works with chips TLSR8251, TLSR8253, TLSR8258!
 The firmware for the module works with all types of TLSR82xx chips via SWM-SWS connection.
