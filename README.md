@@ -9,7 +9,7 @@ Use TB-04-KIT or TB-04 / 03F module (TLSR8253 chip) and USB-COM PL2303HX or CH43
 Use EBYTE E104-BT10-G / N module or (TLSR8269 chip) for direct USB connection
  
 
-The current version of the 'TlsrPgm.py' program only works with chips TLSR8251, TLSR8253, TLSR8258!
+The current version of the 'TlsrPgm.py' program is tested with chips only: TLSR8251, TLSR8253, TLSR8258, TLSR8266, TLSR8269.
 The firmware for the module works with all types of TLSR82xx chips via SWM-SWS connection.
 
 
@@ -19,10 +19,10 @@ Documentation under development...
 > **Options:** wsl /usr/bin/python3 TlsrPgm.py
 ```
 usage: TlsrPgm [-h] [-p PORT] [-b BAUD] [-t TRST] [-a ACT] [-s] [-c] [-r] [-g]
-               [-m] [-w]
+               [-m] [-w] [-u]
                {rf,we,wf,es,ea,rs,ra,wa,i,ds,df,da,dc} ...
 
-TLSR825x TlsrPgm version 25.11.20
+TLSR82xx TlsrPgm version 27.04.21
 
 positional arguments:
   {rf,we,wf,es,ea,rs,ra,wa,i,ds,df,da,dc}
@@ -43,7 +43,7 @@ positional arguments:
 
 optional arguments:
   -h, --help            show this help message and exit
-  -p PORT, --port PORT  Serial port device (default: /dev/ttyS0)
+  -p PORT, --port PORT  Serial port device (default: COM1)
   -b BAUD, --baud BAUD  UART Baud Rate (default: 230400)
   -t TRST, --trst TRST  Hard Reset Time ms (default: 0 ms)
   -a ACT, --act ACT     Activation Time ms (0-off, default: 0 ms)
@@ -53,6 +53,7 @@ optional arguments:
   -g, --go              CPU Go (post main processing)
   -m, --mrst            Soft Reset (MCU Reboot) (post main processing)
   -w, --wrktime         Show Worked Time
+  -u, --u2b             Use 2 bytes swire address (TLSR826x)
 ```
 
 #### Samples:

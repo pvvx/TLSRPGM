@@ -7,8 +7,8 @@ start address 0x00000000
 
 Program Header:
     LOAD off    0x00008000 vaddr 0x00000000 paddr 0x00000000 align 2**15
-         filesz 0x00000dd4 memsz 0x00000dd4 flags r-x
-    LOAD off    0x00009700 vaddr 0x00841700 paddr 0x00000dd4 align 2**15
+         filesz 0x00000dcc memsz 0x00000dcc flags r-x
+    LOAD off    0x00009700 vaddr 0x00841700 paddr 0x00000dcc align 2**15
          filesz 0x00000030 memsz 0x00000a68 flags rw-
 private flags = 0: [APCS-32] [FPA float format]
 
@@ -16,13 +16,13 @@ Sections:
 Idx Name          Size      VMA       LMA       File off  Algn
   0 .vectors      000000bc  00000000  00000000  00008000  2**2
                   CONTENTS, ALLOC, LOAD, READONLY, CODE
-  1 .ram_code     00000cc8  000000bc  000000bc  000080bc  2**2
+  1 .ram_code     00000cc0  000000bc  000000bc  000080bc  2**2
                   CONTENTS, ALLOC, LOAD, READONLY, CODE
-  2 .rodata       00000050  00000d84  00000d84  00008d84  2**2
+  2 .rodata       00000050  00000d7c  00000d7c  00008d7c  2**2
                   CONTENTS, ALLOC, LOAD, READONLY, DATA
-  3 .data         00000030  00841700  00000dd4  00009700  2**2
+  3 .data         00000030  00841700  00000dcc  00009700  2**2
                   CONTENTS, ALLOC, LOAD, DATA
-  4 .bss          00000a38  00841730  00000e04  00009730  2**2
+  4 .bss          00000a38  00841730  00000dfc  00009730  2**2
                   ALLOC
   5 .comment      0000001a  00000000  00000000  00009730  2**0
                   CONTENTS, READONLY
@@ -31,7 +31,7 @@ Idx Name          Size      VMA       LMA       File off  Algn
 SYMBOL TABLE:
 00000000 l    d  .vectors	00000000 .vectors
 000000bc l    d  .ram_code	00000000 .ram_code
-00000d84 l    d  .rodata	00000000 .rodata
+00000d7c l    d  .rodata	00000000 .rodata
 00841700 l    d  .data	00000000 .data
 00841730 l    d  .bss	00000000 .bss
 00000000 l    d  .comment	00000000 .comment
@@ -57,18 +57,18 @@ SYMBOL TABLE:
 00000000 l    df *ABS*	00000000 analog.c
 00000000 l    df *ABS*	00000000 swire.c
 00842168 g       *ABS*	00000000 _end_bss_
-00000e04 g       *ABS*	00000000 _bin_size_
+00000dfc g       *ABS*	00000000 _bin_size_
 00000020 g       .vectors	00000000 __reset
 0000019c g     F .ram_code	00000044 _swire_fcmd_faddr
 00000bc8 g     F .ram_code	00000058 swire_read
 00000158 g     F .ram_code	00000014 memcpy
-00000dd4 g       *ABS*	00000000 _code_size_
+00000dcc g       *ABS*	00000000 _code_size_
 00841730 g       .data	00000000 _end_data_
 00841730 g     O .bss	00000004 MCU_PROD_ID
-00000d48 g     F .ram_code	0000003c swire_fifo_read
+00000d40 g     F .ram_code	0000003c swire_fifo_read
 00841730 g       .bss	00000000 _start_bss_
 00841734 g     O .bss	00000001 cur_uart_baud
-00000c20 g     F .ram_code	00000078 swire_write_bytes
+00000c20 g     F .ram_code	00000074 swire_write_bytes
 0084172e g     O .data	00000001 swire_addr_len
 00841700 g     O .data	00000001 new_uart_baud
 00841738 g     O .bss	00000004 MCU_PROD__TID
@@ -87,7 +87,7 @@ SYMBOL TABLE:
 00000200 g     F .ram_code	00000854 main
 00000b60 g     F .ram_code	0000002c analog_write
 00841728 g     O .data	00000006 swire_cmd_cpu_stop
-00000d0c g     F .ram_code	0000003c swire_fifo_write
+00000d04 g     F .ram_code	0000003c swire_fifo_write
 00000b34 g     F .ram_code	0000002c analog_read
 000001e0 g     F .ram_code	00000020 swire_fcmd
 00000aa4 g     F .ram_code	0000007c crcFast
@@ -96,10 +96,10 @@ SYMBOL TABLE:
 00000184 g     F .ram_code	00000018 _swire_set_fcs_hi
 000000e0 g       *ABS*	00000000 _ramcode_size_div_16_
 00840f00 g       *ABS*	00000000 _ictag_end_
-00000dd4 g       *ABS*	00000000 _dstored_
+00000dcc g       *ABS*	00000000 _dstored_
 00841b54 g     O .bss	00000414 urxb
 00840000 g       *ABS*	00000000 __RAM_START_ADDR
-00000c98 g     F .ram_code	00000074 swire_read_bytes
+00000c94 g     F .ram_code	00000070 swire_read_bytes
 
 
 
@@ -114,7 +114,7 @@ Disassembly of section .vectors:
   12:	0000      	tands	r0, r0
   14:	0000      	tands	r0, r0
   16:	0000      	tands	r0, r0
-  18:	00000e04 	tandeq	r0, r0, r4, lsl #28
+  18:	00000dfc 	undefined instruction 0x00000dfc
   1c:	00000000 	tandeq	r0, r0, r0
 
 00000020 <__reset>:
@@ -197,7 +197,7 @@ Disassembly of section .vectors:
   a8:	00840f00 	taddeq	r0, r4, r0, lsl #30
 
 000000ac <DATA_I>:
-  ac:	00000dd4 	undefined instruction 0x00000dd4
+  ac:	00000dcc 	tandeq	r0, r0, ip, asr #27
   b0:	00841700 	taddeq	r1, r4, r0, lsl #14
   b4:	00841730 	taddeq	r1, r4, r0, lsr r7
 
@@ -653,7 +653,7 @@ main():
  470:	a00c      	tmovs	r0, #12
  472:	094e      	tloadr	r1, [pc, #312]	; (5ac <main+0x3ac>)
  474:	3a00      	tloadr	r2, [sp, #0]
- 476:	9000 9c49 	tjl	d0c <swire_fifo_write>
+ 476:	9000 9c45 	tjl	d04 <swire_fifo_write>
  47a:	20f0      	tstorerh	r0, [r6, #6]
  47c:	0658      	tmov	r0, fp
  47e:	2903      	tloadrh	r3, [r0, #8]
@@ -670,7 +670,7 @@ main():
  496:	3801      	tloadr	r0, [sp, #4]
  498:	0946      	tloadr	r1, [pc, #280]	; (5b4 <main+0x3b4>)
  49a:	3a00      	tloadr	r2, [sp, #0]
- 49c:	9000 9c36 	tjl	d0c <swire_fifo_write>
+ 49c:	9000 9c32 	tjl	d04 <swire_fifo_write>
  4a0:	20f0      	tstorerh	r0, [r6, #6]
  4a2:	878e      	tj.n	3c2 <main+0x1c2>
  4a4:	3b00      	tloadr	r3, [sp, #0]
@@ -690,7 +690,7 @@ main():
  4c0:	291a      	tloadrh	r2, [r3, #8]
  4c2:	3801      	tloadr	r0, [sp, #4]
  4c4:	093c      	tloadr	r1, [pc, #240]	; (5b8 <main+0x3b8>)
- 4c6:	9000 9c3f 	tjl	d48 <swire_fifo_read>
+ 4c6:	9000 9c3b 	tjl	d40 <swire_fifo_read>
  4ca:	f403      	tshftls	r3, r0, #16
  4cc:	fc1b      	tshftrs	r3, r3, #16
  4ce:	0a3a      	tloadr	r2, [pc, #232]	; (5b8 <main+0x3b8>)
@@ -731,7 +731,7 @@ main():
  516:	a0b9      	tmovs	r0, #185	; 0xb9
  518:	0927      	tloadr	r1, [pc, #156]	; (5b8 <main+0x3b8>)
  51a:	a202      	tmovs	r2, #2
- 51c:	9000 9bbc 	tjl	c98 <swire_read_bytes>
+ 51c:	9000 9bba 	tjl	c94 <swire_read_bytes>
  520:	a802      	tcmp	r0, #2
  522:	c000      	tjeq.n	526 <main+0x326>
  524:	8236      	tj.n	994 <main+0x794>
@@ -779,7 +779,7 @@ main():
  598:	00800c24 	taddeq	r0, r0, r4, lsr #24
  59c:	00800c26 	taddeq	r0, r0, r6, lsr #24
  5a0:	0000015f 	tandeq	r0, r0, pc, asr r1
- 5a4:	00000d84 	tandeq	r0, r0, r4, lsl #27
+ 5a4:	00000d7c 	tandeq	r0, r0, ip, ror sp
  5a8:	00000103 	tandeq	r0, r0, r3, lsl #2
  5ac:	00841b5e 	taddeq	r1, r4, lr, asr fp
  5b0:	000003ff 	undefined instruction 0x000003ff
@@ -800,7 +800,7 @@ main():
  5d6:	290a      	tloadrh	r2, [r1, #8]
  5d8:	a0b9      	tmovs	r0, #185	; 0xb9
  5da:	09d0      	tloadr	r1, [pc, #832]	; (91c <main+0x71c>)
- 5dc:	9000 9bb4 	tjl	d48 <swire_fifo_read>
+ 5dc:	9000 9bb0 	tjl	d40 <swire_fifo_read>
  5e0:	f403      	tshftls	r3, r0, #16
  5e2:	fc1b      	tshftrs	r3, r3, #16
  5e4:	0acd      	tloadr	r2, [pc, #820]	; (91c <main+0x71c>)
@@ -887,7 +887,7 @@ main():
  68c:	291a      	tloadrh	r2, [r3, #8]
  68e:	3801      	tloadr	r0, [sp, #4]
  690:	09a2      	tloadr	r1, [pc, #648]	; (91c <main+0x71c>)
- 692:	9000 9b01 	tjl	c98 <swire_read_bytes>
+ 692:	9000 9aff 	tjl	c94 <swire_read_bytes>
  696:	8718      	tj.n	4ca <main+0x2ca>
  698:	a305      	tmovs	r3, #5
  69a:	3302      	tstorer	r3, [sp, #8]
@@ -906,7 +906,7 @@ main():
  6ba:	a00c      	tmovs	r0, #12
  6bc:	0997      	tloadr	r1, [pc, #604]	; (91c <main+0x71c>)
  6be:	a201      	tmovs	r2, #1
- 6c0:	9000 9aea 	tjl	c98 <swire_read_bytes>
+ 6c0:	9000 9ae8 	tjl	c94 <swire_read_bytes>
  6c4:	0a96      	tloadr	r2, [pc, #600]	; (920 <main+0x720>)
  6c6:	20d0      	tstorerh	r0, [r2, #6]
  6c8:	97ff 9d5c 	tjl	184 <_swire_set_fcs_hi>
@@ -941,7 +941,7 @@ main():
  70c:	a00c      	tmovs	r0, #12
  70e:	0985      	tloadr	r1, [pc, #532]	; (924 <main+0x724>)
  710:	3a00      	tloadr	r2, [sp, #0]
- 712:	9000 9afb 	tjl	d0c <swire_fifo_write>
+ 712:	9000 9af7 	tjl	d04 <swire_fifo_write>
  716:	20f0      	tstorerh	r0, [r6, #6]
  718:	86b5      	tj.n	486 <main+0x286>
  71a:	3a00      	tloadr	r2, [sp, #0]
@@ -976,7 +976,7 @@ main():
  758:	a00c      	tmovs	r0, #12
  75a:	0970      	tloadr	r1, [pc, #448]	; (91c <main+0x71c>)
  75c:	3a00      	tloadr	r2, [sp, #0]
- 75e:	9000 9af3 	tjl	d48 <swire_fifo_read>
+ 75e:	9000 9aef 	tjl	d40 <swire_fifo_read>
  762:	0b6e      	tloadr	r3, [pc, #440]	; (91c <main+0x71c>)
  764:	bb08      	tsubs	r3, #8
  766:	20d8      	tstorerh	r0, [r3, #6]
@@ -1016,7 +1016,7 @@ main():
  7b2:	a00c      	tmovs	r0, #12
  7b4:	0959      	tloadr	r1, [pc, #356]	; (91c <main+0x71c>)
  7b6:	a203      	tmovs	r2, #3
- 7b8:	9000 9ac6 	tjl	d48 <swire_fifo_read>
+ 7b8:	9000 9ac2 	tjl	d40 <swire_fifo_read>
  7bc:	0a58      	tloadr	r2, [pc, #352]	; (920 <main+0x720>)
  7be:	20d0      	tstorerh	r0, [r2, #6]
  7c0:	97ff 9ce0 	tjl	184 <_swire_set_fcs_hi>
@@ -1074,7 +1074,7 @@ main():
  836:	0840      	tloadr	r0, [pc, #256]	; (938 <main+0x738>)
  838:	0938      	tloadr	r1, [pc, #224]	; (91c <main+0x71c>)
  83a:	a204      	tmovs	r2, #4
- 83c:	9000 9a2c 	tjl	c98 <swire_read_bytes>
+ 83c:	9000 9a2a 	tjl	c94 <swire_read_bytes>
  840:	f403      	tshftls	r3, r0, #16
  842:	fc1b      	tshftrs	r3, r3, #16
  844:	0a35      	tloadr	r2, [pc, #212]	; (91c <main+0x71c>)
@@ -1187,7 +1187,7 @@ main():
  91c:	00841744 	taddeq	r1, r4, r4, asr #14
  920:	0084173c 	taddeq	r1, r4, ip, lsr r7
  924:	00841b5c 	taddeq	r1, r4, ip, asr fp
- 928:	00000dbc 	undefined instruction 0x00000dbc
+ 928:	00000db4 	undefined instruction 0x00000db4
  92c:	0080059e 	umulleq	r0, r0, lr, r5
  930:	00841728 	taddeq	r1, r4, r8, lsr #14
  934:	0084172d 	taddeq	r1, r4, sp, lsr #14
@@ -1248,7 +1248,7 @@ main():
  9b4:	8655      	tj.n	662 <main+0x462>
  9b6:	a00c      	tmovs	r0, #12
  9b8:	0923      	tloadr	r1, [pc, #140]	; (a48 <main+0x848>)
- 9ba:	9000 996d 	tjl	c98 <swire_read_bytes>
+ 9ba:	9000 996b 	tjl	c94 <swire_read_bytes>
  9be:	0b22      	tloadr	r3, [pc, #136]	; (a48 <main+0x848>)
  9c0:	bb08      	tsubs	r3, #8
  9c2:	20d8      	tstorerh	r0, [r3, #6]
@@ -1272,7 +1272,7 @@ main():
  9e8:	c012      	tjeq.n	a10 <main+0x810>
  9ea:	a00c      	tmovs	r0, #12
  9ec:	0916      	tloadr	r1, [pc, #88]	; (a48 <main+0x848>)
- 9ee:	9000 99ab 	tjl	d48 <swire_fifo_read>
+ 9ee:	9000 99a7 	tjl	d40 <swire_fifo_read>
  9f2:	3002      	tstorer	r0, [sp, #8]
  9f4:	3b02      	tloadr	r3, [sp, #8]
  9f6:	28f2      	tloadrh	r2, [r6, #6]
@@ -1290,7 +1290,7 @@ main():
  a0e:	853a      	tj.n	486 <main+0x286>
  a10:	a00c      	tmovs	r0, #12
  a12:	090d      	tloadr	r1, [pc, #52]	; (a48 <main+0x848>)
- a14:	9000 9940 	tjl	c98 <swire_read_bytes>
+ a14:	9000 993e 	tjl	c94 <swire_read_bytes>
  a18:	3002      	tstorer	r0, [sp, #8]
  a1a:	87eb      	tj.n	9f4 <main+0x7f4>
  a1c:	a00c      	tmovs	r0, #12
@@ -1555,189 +1555,185 @@ swire_write_bytes():
  c26:	ec07      	tadds	r7, r0, #0
  c28:	ec0d      	tadds	r5, r1, #0
  c2a:	ec14      	tadds	r4, r2, #0
- c2c:	0e19      	tloadr	r6, [pc, #100]	; (c94 <swire_write_bytes+0x74>)
- c2e:	49b3      	tloadrb	r3, [r6, #6]
- c30:	e8f3      	tadds	r3, r6, r3
- c32:	485b      	tloadrb	r3, [r3, #1]
- c34:	a27f      	tmovs	r2, #127	; 0x7f
- c36:	001a      	tands	r2, r3
- c38:	0690      	tmov	r8, r2
- c3a:	4830      	tloadrb	r0, [r6, #0]
- c3c:	a105      	tmovs	r1, #5
- c3e:	97ff 9fa5 	tjl	b8c <swire_write>
- c42:	49b3      	tloadrb	r3, [r6, #6]
- c44:	ab03      	tcmp	r3, #3
- c46:	c01f      	tjeq.n	c88 <swire_write_bytes+0x68>
- c48:	f438      	tshftls	r0, r7, #16
- c4a:	fe00      	tshftrs	r0, r0, #24
- c4c:	a101      	tmovs	r1, #1
- c4e:	97ff 9f9d 	tjl	b8c <swire_write>
- c52:	f63f      	tshftls	r7, r7, #24
- c54:	fe38      	tshftrs	r0, r7, #24
- c56:	a101      	tmovs	r1, #1
- c58:	97ff 9f98 	tjl	b8c <swire_write>
- c5c:	0640      	tmov	r0, r8
- c5e:	a101      	tmovs	r1, #1
- c60:	97ff 9f94 	tjl	b8c <swire_write>
- c64:	ac00      	tcmp	r4, #0
- c66:	c007      	tjeq.n	c78 <swire_write_bytes+0x58>
- c68:	a600      	tmovs	r6, #0
- c6a:	1da8      	tloadrb	r0, [r5, r6]
- c6c:	a101      	tmovs	r1, #1
- c6e:	97ff 9f8d 	tjl	b8c <swire_write>
- c72:	b601      	tadds	r6, #1
- c74:	02b4      	tcmp	r4, r6
- c76:	c1f8      	tjne.n	c6a <swire_write_bytes+0x4a>
- c78:	a0ff      	tmovs	r0, #255	; 0xff
- c7a:	a105      	tmovs	r1, #5
- c7c:	97ff 9f86 	tjl	b8c <swire_write>
- c80:	ec20      	tadds	r0, r4, #0
- c82:	6c04      	tpop	{r2}
- c84:	0690      	tmov	r8, r2
- c86:	6df0      	tpop	{r4, r5, r6, r7, pc}
- c88:	f238      	tshftls	r0, r7, #8
- c8a:	fe00      	tshftrs	r0, r0, #24
- c8c:	a101      	tmovs	r1, #1
- c8e:	97ff 9f7d 	tjl	b8c <swire_write>
- c92:	87d9      	tj.n	c48 <swire_write_bytes+0x28>
- c94:	00841728 	taddeq	r1, r4, r8, lsr #14
+ c2c:	0e18      	tloadr	r6, [pc, #96]	; (c90 <swire_write_bytes+0x70>)
+ c2e:	4933      	tloadrb	r3, [r6, #4]
+ c30:	a27f      	tmovs	r2, #127	; 0x7f
+ c32:	001a      	tands	r2, r3
+ c34:	0690      	tmov	r8, r2
+ c36:	4830      	tloadrb	r0, [r6, #0]
+ c38:	a105      	tmovs	r1, #5
+ c3a:	97ff 9fa7 	tjl	b8c <swire_write>
+ c3e:	49b3      	tloadrb	r3, [r6, #6]
+ c40:	ab03      	tcmp	r3, #3
+ c42:	c01f      	tjeq.n	c84 <swire_write_bytes+0x64>
+ c44:	f438      	tshftls	r0, r7, #16
+ c46:	fe00      	tshftrs	r0, r0, #24
+ c48:	a101      	tmovs	r1, #1
+ c4a:	97ff 9f9f 	tjl	b8c <swire_write>
+ c4e:	f63f      	tshftls	r7, r7, #24
+ c50:	fe38      	tshftrs	r0, r7, #24
+ c52:	a101      	tmovs	r1, #1
+ c54:	97ff 9f9a 	tjl	b8c <swire_write>
+ c58:	0640      	tmov	r0, r8
+ c5a:	a101      	tmovs	r1, #1
+ c5c:	97ff 9f96 	tjl	b8c <swire_write>
+ c60:	ac00      	tcmp	r4, #0
+ c62:	c007      	tjeq.n	c74 <swire_write_bytes+0x54>
+ c64:	a600      	tmovs	r6, #0
+ c66:	1da8      	tloadrb	r0, [r5, r6]
+ c68:	a101      	tmovs	r1, #1
+ c6a:	97ff 9f8f 	tjl	b8c <swire_write>
+ c6e:	b601      	tadds	r6, #1
+ c70:	02b4      	tcmp	r4, r6
+ c72:	c1f8      	tjne.n	c66 <swire_write_bytes+0x46>
+ c74:	a0ff      	tmovs	r0, #255	; 0xff
+ c76:	a105      	tmovs	r1, #5
+ c78:	97ff 9f88 	tjl	b8c <swire_write>
+ c7c:	ec20      	tadds	r0, r4, #0
+ c7e:	6c04      	tpop	{r2}
+ c80:	0690      	tmov	r8, r2
+ c82:	6df0      	tpop	{r4, r5, r6, r7, pc}
+ c84:	f238      	tshftls	r0, r7, #8
+ c86:	fe00      	tshftrs	r0, r0, #24
+ c88:	a101      	tmovs	r1, #1
+ c8a:	97ff 9f7f 	tjl	b8c <swire_write>
+ c8e:	87d9      	tj.n	c44 <swire_write_bytes+0x24>
+ c90:	00841728 	taddeq	r1, r4, r8, lsr #14
 
-00000c98 <swire_read_bytes>:
+00000c94 <swire_read_bytes>:
 swire_read_bytes():
- c98:	65f0      	tpush	{r4, r5, r6, r7, lr}
- c9a:	0647      	tmov	r7, r8
- c9c:	6480      	tpush	{r7}
- c9e:	ec05      	tadds	r5, r0, #0
- ca0:	ec0f      	tadds	r7, r1, #0
- ca2:	0690      	tmov	r8, r2
- ca4:	0c18      	tloadr	r4, [pc, #96]	; (d08 <swire_read_bytes+0x70>)
- ca6:	49a3      	tloadrb	r3, [r4, #6]
- ca8:	e8e3      	tadds	r3, r4, r3
- caa:	485e      	tloadrb	r6, [r3, #1]
- cac:	a380      	tmovs	r3, #128	; 0x80
- cae:	025b      	tnegs	r3, r3
- cb0:	0333      	tors	r3, r6
- cb2:	f61e      	tshftls	r6, r3, #24
- cb4:	fe36      	tshftrs	r6, r6, #24
- cb6:	4820      	tloadrb	r0, [r4, #0]
- cb8:	a105      	tmovs	r1, #5
- cba:	97ff 9f67 	tjl	b8c <swire_write>
- cbe:	49a3      	tloadrb	r3, [r4, #6]
- cc0:	ab03      	tcmp	r3, #3
- cc2:	c01a      	tjeq.n	cfa <swire_read_bytes+0x62>
- cc4:	f428      	tshftls	r0, r5, #16
- cc6:	fe00      	tshftrs	r0, r0, #24
- cc8:	a101      	tmovs	r1, #1
- cca:	97ff 9f5f 	tjl	b8c <swire_write>
- cce:	f62d      	tshftls	r5, r5, #24
- cd0:	fe28      	tshftrs	r0, r5, #24
+ c94:	65f0      	tpush	{r4, r5, r6, r7, lr}
+ c96:	0647      	tmov	r7, r8
+ c98:	6480      	tpush	{r7}
+ c9a:	ec05      	tadds	r5, r0, #0
+ c9c:	ec0f      	tadds	r7, r1, #0
+ c9e:	0690      	tmov	r8, r2
+ ca0:	0c17      	tloadr	r4, [pc, #92]	; (d00 <swire_read_bytes+0x6c>)
+ ca2:	4926      	tloadrb	r6, [r4, #4]
+ ca4:	a380      	tmovs	r3, #128	; 0x80
+ ca6:	025b      	tnegs	r3, r3
+ ca8:	0333      	tors	r3, r6
+ caa:	f61e      	tshftls	r6, r3, #24
+ cac:	fe36      	tshftrs	r6, r6, #24
+ cae:	4820      	tloadrb	r0, [r4, #0]
+ cb0:	a105      	tmovs	r1, #5
+ cb2:	97ff 9f6b 	tjl	b8c <swire_write>
+ cb6:	49a3      	tloadrb	r3, [r4, #6]
+ cb8:	ab03      	tcmp	r3, #3
+ cba:	c01a      	tjeq.n	cf2 <swire_read_bytes+0x5e>
+ cbc:	f428      	tshftls	r0, r5, #16
+ cbe:	fe00      	tshftrs	r0, r0, #24
+ cc0:	a101      	tmovs	r1, #1
+ cc2:	97ff 9f63 	tjl	b8c <swire_write>
+ cc6:	f62d      	tshftls	r5, r5, #24
+ cc8:	fe28      	tshftrs	r0, r5, #24
+ cca:	a101      	tmovs	r1, #1
+ ccc:	97ff 9f5e 	tjl	b8c <swire_write>
+ cd0:	ec30      	tadds	r0, r6, #0
  cd2:	a101      	tmovs	r1, #1
  cd4:	97ff 9f5a 	tjl	b8c <swire_write>
- cd8:	ec30      	tadds	r0, r6, #0
- cda:	a101      	tmovs	r1, #1
- cdc:	97ff 9f56 	tjl	b8c <swire_write>
- ce0:	ec38      	tadds	r0, r7, #0
- ce2:	0641      	tmov	r1, r8
- ce4:	97ff 9f70 	tjl	bc8 <swire_read>
- ce8:	ec04      	tadds	r4, r0, #0
- cea:	a0ff      	tmovs	r0, #255	; 0xff
- cec:	a105      	tmovs	r1, #5
- cee:	97ff 9f4d 	tjl	b8c <swire_write>
- cf2:	ec20      	tadds	r0, r4, #0
- cf4:	6c04      	tpop	{r2}
- cf6:	0690      	tmov	r8, r2
- cf8:	6df0      	tpop	{r4, r5, r6, r7, pc}
- cfa:	f228      	tshftls	r0, r5, #8
- cfc:	fe00      	tshftrs	r0, r0, #24
- cfe:	a101      	tmovs	r1, #1
- d00:	97ff 9f44 	tjl	b8c <swire_write>
- d04:	87de      	tj.n	cc4 <swire_read_bytes+0x2c>
- d06:	46c0      	tnop			; (mov r8, r8)
- d08:	00841728 	taddeq	r1, r4, r8, lsr #14
+ cd8:	ec38      	tadds	r0, r7, #0
+ cda:	0641      	tmov	r1, r8
+ cdc:	97ff 9f74 	tjl	bc8 <swire_read>
+ ce0:	ec04      	tadds	r4, r0, #0
+ ce2:	a0ff      	tmovs	r0, #255	; 0xff
+ ce4:	a105      	tmovs	r1, #5
+ ce6:	97ff 9f51 	tjl	b8c <swire_write>
+ cea:	ec20      	tadds	r0, r4, #0
+ cec:	6c04      	tpop	{r2}
+ cee:	0690      	tmov	r8, r2
+ cf0:	6df0      	tpop	{r4, r5, r6, r7, pc}
+ cf2:	f228      	tshftls	r0, r5, #8
+ cf4:	fe00      	tshftrs	r0, r0, #24
+ cf6:	a101      	tmovs	r1, #1
+ cf8:	97ff 9f48 	tjl	b8c <swire_write>
+ cfc:	87de      	tj.n	cbc <swire_read_bytes+0x28>
+ cfe:	46c0      	tnop			; (mov r8, r8)
+ d00:	00841728 	taddeq	r1, r4, r8, lsr #14
 
-00000d0c <swire_fifo_write>:
+00000d04 <swire_fifo_write>:
 swire_fifo_write():
- d0c:	65f0      	tpush	{r4, r5, r6, r7, lr}
- d0e:	6081      	tsub	sp, #4
- d10:	ec06      	tadds	r6, r0, #0
- d12:	ec0d      	tadds	r5, r1, #0
- d14:	ec17      	tadds	r7, r2, #0
- d16:	066c      	tmov	r4, sp
- d18:	b403      	tadds	r4, #3
- d1a:	a380      	tmovs	r3, #128	; 0x80
- d1c:	4023      	tstorerb	r3, [r4, #0]
- d1e:	a0b3      	tmovs	r0, #179	; 0xb3
- d20:	ec21      	tadds	r1, r4, #0
- d22:	a201      	tmovs	r2, #1
- d24:	97ff 9f7c 	tjl	c20 <swire_write_bytes>
- d28:	ec30      	tadds	r0, r6, #0
- d2a:	ec29      	tadds	r1, r5, #0
- d2c:	ec3a      	tadds	r2, r7, #0
- d2e:	97ff 9f77 	tjl	c20 <swire_write_bytes>
- d32:	ec05      	tadds	r5, r0, #0
- d34:	a300      	tmovs	r3, #0
- d36:	4023      	tstorerb	r3, [r4, #0]
- d38:	a0b3      	tmovs	r0, #179	; 0xb3
- d3a:	ec21      	tadds	r1, r4, #0
- d3c:	a201      	tmovs	r2, #1
- d3e:	97ff 9f6f 	tjl	c20 <swire_write_bytes>
- d42:	ec28      	tadds	r0, r5, #0
- d44:	6001      	tadd	sp, #4
- d46:	6df0      	tpop	{r4, r5, r6, r7, pc}
+ d04:	65f0      	tpush	{r4, r5, r6, r7, lr}
+ d06:	6081      	tsub	sp, #4
+ d08:	ec06      	tadds	r6, r0, #0
+ d0a:	ec0d      	tadds	r5, r1, #0
+ d0c:	ec17      	tadds	r7, r2, #0
+ d0e:	066c      	tmov	r4, sp
+ d10:	b403      	tadds	r4, #3
+ d12:	a380      	tmovs	r3, #128	; 0x80
+ d14:	4023      	tstorerb	r3, [r4, #0]
+ d16:	a0b3      	tmovs	r0, #179	; 0xb3
+ d18:	ec21      	tadds	r1, r4, #0
+ d1a:	a201      	tmovs	r2, #1
+ d1c:	97ff 9f80 	tjl	c20 <swire_write_bytes>
+ d20:	ec30      	tadds	r0, r6, #0
+ d22:	ec29      	tadds	r1, r5, #0
+ d24:	ec3a      	tadds	r2, r7, #0
+ d26:	97ff 9f7b 	tjl	c20 <swire_write_bytes>
+ d2a:	ec05      	tadds	r5, r0, #0
+ d2c:	a300      	tmovs	r3, #0
+ d2e:	4023      	tstorerb	r3, [r4, #0]
+ d30:	a0b3      	tmovs	r0, #179	; 0xb3
+ d32:	ec21      	tadds	r1, r4, #0
+ d34:	a201      	tmovs	r2, #1
+ d36:	97ff 9f73 	tjl	c20 <swire_write_bytes>
+ d3a:	ec28      	tadds	r0, r5, #0
+ d3c:	6001      	tadd	sp, #4
+ d3e:	6df0      	tpop	{r4, r5, r6, r7, pc}
 
-00000d48 <swire_fifo_read>:
+00000d40 <swire_fifo_read>:
 swire_fifo_read():
- d48:	65f0      	tpush	{r4, r5, r6, r7, lr}
- d4a:	6081      	tsub	sp, #4
- d4c:	ec06      	tadds	r6, r0, #0
- d4e:	ec0d      	tadds	r5, r1, #0
- d50:	ec17      	tadds	r7, r2, #0
- d52:	066c      	tmov	r4, sp
- d54:	b403      	tadds	r4, #3
- d56:	a380      	tmovs	r3, #128	; 0x80
- d58:	4023      	tstorerb	r3, [r4, #0]
- d5a:	a0b3      	tmovs	r0, #179	; 0xb3
- d5c:	ec21      	tadds	r1, r4, #0
- d5e:	a201      	tmovs	r2, #1
- d60:	97ff 9f5e 	tjl	c20 <swire_write_bytes>
- d64:	ec30      	tadds	r0, r6, #0
- d66:	ec29      	tadds	r1, r5, #0
- d68:	ec3a      	tadds	r2, r7, #0
- d6a:	97ff 9f95 	tjl	c98 <swire_read_bytes>
- d6e:	ec05      	tadds	r5, r0, #0
- d70:	a300      	tmovs	r3, #0
- d72:	4023      	tstorerb	r3, [r4, #0]
- d74:	a0b3      	tmovs	r0, #179	; 0xb3
- d76:	ec21      	tadds	r1, r4, #0
- d78:	a201      	tmovs	r2, #1
- d7a:	97ff 9f51 	tjl	c20 <swire_write_bytes>
- d7e:	ec28      	tadds	r0, r5, #0
- d80:	6001      	tadd	sp, #4
- d82:	6df0      	tpop	{r4, r5, r6, r7, pc}
+ d40:	65f0      	tpush	{r4, r5, r6, r7, lr}
+ d42:	6081      	tsub	sp, #4
+ d44:	ec06      	tadds	r6, r0, #0
+ d46:	ec0d      	tadds	r5, r1, #0
+ d48:	ec17      	tadds	r7, r2, #0
+ d4a:	066c      	tmov	r4, sp
+ d4c:	b403      	tadds	r4, #3
+ d4e:	a380      	tmovs	r3, #128	; 0x80
+ d50:	4023      	tstorerb	r3, [r4, #0]
+ d52:	a0b3      	tmovs	r0, #179	; 0xb3
+ d54:	ec21      	tadds	r1, r4, #0
+ d56:	a201      	tmovs	r2, #1
+ d58:	97ff 9f62 	tjl	c20 <swire_write_bytes>
+ d5c:	ec30      	tadds	r0, r6, #0
+ d5e:	ec29      	tadds	r1, r5, #0
+ d60:	ec3a      	tadds	r2, r7, #0
+ d62:	97ff 9f97 	tjl	c94 <swire_read_bytes>
+ d66:	ec05      	tadds	r5, r0, #0
+ d68:	a300      	tmovs	r3, #0
+ d6a:	4023      	tstorerb	r3, [r4, #0]
+ d6c:	a0b3      	tmovs	r0, #179	; 0xb3
+ d6e:	ec21      	tadds	r1, r4, #0
+ d70:	a201      	tmovs	r2, #1
+ d72:	97ff 9f55 	tjl	c20 <swire_write_bytes>
+ d76:	ec28      	tadds	r0, r5, #0
+ d78:	6001      	tadd	sp, #4
+ d7a:	6df0      	tpop	{r4, r5, r6, r7, pc}
 
 Disassembly of section .rodata:
 
-00000d84 <.rodata>:
- d84:	0000077c 	tandeq	r0, r0, ip, ror r7
- d88:	0000071a 	tandeq	r0, r0, sl, lsl r7
- d8c:	000006ec 	tandeq	r0, r0, ip, ror #13
- d90:	000006dc 	undefined instruction 0x000006dc
- d94:	000007ce 	tandeq	r0, r0, lr, asr #15
- d98:	00000790 	tmuleq	r0, r0, r7
- d9c:	00000698 	tmuleq	r0, r8, r6
- da0:	00000670 	tandeq	r0, r0, r0, ror r6
- da4:	00000544 	tandeq	r0, r0, r4, asr #10
- da8:	000004e8 	tandeq	r0, r0, r8, ror #9
- dac:	000005fe 	undefined instruction 0x000005fe
- db0:	000004a4 	tandeq	r0, r0, r4, lsr #9
- db4:	0000048c 	tandeq	r0, r0, ip, lsl #9
- db8:	00000442 	tandeq	r0, r0, r2, asr #8
- dbc:	00000950 	tandeq	r0, r0, r0, asr r9
- dc0:	00000912 	tandeq	r0, r0, r2, lsl r9
- dc4:	000008a4 	tandeq	r0, r0, r4, lsr #17
- dc8:	00000856 	tandeq	r0, r0, r6, asr r8
- dcc:	000007e8 	tandeq	r0, r0, r8, ror #15
- dd0:	00000988 	tandeq	r0, r0, r8, lsl #19
+00000d7c <.rodata>:
+ d7c:	0000077c 	tandeq	r0, r0, ip, ror r7
+ d80:	0000071a 	tandeq	r0, r0, sl, lsl r7
+ d84:	000006ec 	tandeq	r0, r0, ip, ror #13
+ d88:	000006dc 	undefined instruction 0x000006dc
+ d8c:	000007ce 	tandeq	r0, r0, lr, asr #15
+ d90:	00000790 	tmuleq	r0, r0, r7
+ d94:	00000698 	tmuleq	r0, r8, r6
+ d98:	00000670 	tandeq	r0, r0, r0, ror r6
+ d9c:	00000544 	tandeq	r0, r0, r4, asr #10
+ da0:	000004e8 	tandeq	r0, r0, r8, ror #9
+ da4:	000005fe 	undefined instruction 0x000005fe
+ da8:	000004a4 	tandeq	r0, r0, r4, lsr #9
+ dac:	0000048c 	tandeq	r0, r0, ip, lsl #9
+ db0:	00000442 	tandeq	r0, r0, r2, asr #8
+ db4:	00000950 	tandeq	r0, r0, r0, asr r9
+ db8:	00000912 	tandeq	r0, r0, r2, lsl r9
+ dbc:	000008a4 	tandeq	r0, r0, r4, lsr #17
+ dc0:	00000856 	tandeq	r0, r0, r6, asr r8
+ dc4:	000007e8 	tandeq	r0, r0, r8, ror #15
+ dc8:	00000988 	tandeq	r0, r0, r8, lsl #19
 
 Disassembly of section .data:
 

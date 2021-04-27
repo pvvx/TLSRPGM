@@ -25,11 +25,11 @@ extern "C" {
 #define GPIO_RESET GPIO_PB1
 #define GPIO_POWER GPIO_PC4
 
-#define CLR_GPIO_RESET() BM_SET(reg_gpio_oen(GPIO_RESET), GPIO_RESET & 0xff) // Pin RST = "0"
-#define SET_GPIO_RESET() BM_CLR(reg_gpio_oen(GPIO_RESET), GPIO_RESET & 0xff) // Pin RST = "Z" (open drain)
+#define CLR_GPIO_RESET() BM_CLR(reg_gpio_oen(GPIO_RESET), GPIO_RESET & 0xff) // Pin RST = "0"
+#define SET_GPIO_RESET() BM_SET(reg_gpio_oen(GPIO_RESET), GPIO_RESET & 0xff) // Pin RST = "Z" (open drain)
 
-#define CLR_GPIO_POWER() BM_CLR(reg_gpio_out(GPIO_RESET), GPIO_RESET & 0xff) // Pin POW = "0"
-#define SET_GPIO_POWER() BM_SET(reg_gpio_out(GPIO_RESET), GPIO_RESET & 0xff) // Pin POW = "1"
+#define CLR_GPIO_POWER() BM_CLR(reg_gpio_out(GPIO_POWER), GPIO_POWER & 0xff) // Pin POW = "0"
+#define SET_GPIO_POWER() BM_SET(reg_gpio_out(GPIO_POWER), GPIO_POWER & 0xff) // Pin POW = "1"
 
 
 //-------- External Flash Config -------------//

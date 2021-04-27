@@ -365,7 +365,7 @@ _attribute_ram_code_ int main (void) {
 								//swire_write_bytes(0x0602, tmp.uc, 1); // [0x602]=0x05
 								_swire_fcmd_faddr(FLASH_READ_CMD, argv); 		// send flash read command + faddr
 								// spi read
-								tmp.ud = (FLD_MASTER_SPI_RD | FLD_MASTER_SPI_SDO) << 8;	// [0x0d]=x set auto read mode
+								tmp.ud = (FLD_MASTER_SPI_RD | FLD_MASTER_SPI_SDO) << 8;	// [0x0d]=0x0a set auto read mode
 								swire_write_bytes(0x000c, tmp.uc, 2); 	//[0x0c] = 0 launch first read, [0x0d]=x set auto read mode
 
 #if 1

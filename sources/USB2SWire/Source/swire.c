@@ -58,7 +58,7 @@ _attribute_ram_code_ unsigned int swire_read(unsigned char *data, unsigned int l
 /* swire write bytes */
 _attribute_ram_code_ unsigned int swire_write_bytes(unsigned int addr, unsigned char * pdata, unsigned int len) {
 	unsigned int cnt = len;
-	unsigned char bid = (swire_cmd_cpu_stop[swire_addr_len+1] & 0x7f);
+	unsigned char bid = (swire_cmd_cpu_stop[4] & 0x7f);
 	swire_write(swire_cmd_cpu_stop[0], FLD_SWIRE_WR | FLD_SWIRE_CMD); // 0x5a
 	if (swire_addr_len == 3) {
 		swire_write(addr>>16, FLD_SWIRE_WR);	// addrh
@@ -75,7 +75,7 @@ _attribute_ram_code_ unsigned int swire_write_bytes(unsigned int addr, unsigned 
 /* swire read bytes */
 _attribute_ram_code_ unsigned int swire_read_bytes(unsigned int addr, unsigned char *pdata, unsigned int len) {
 	unsigned int cnt;
-	unsigned char bid = (swire_cmd_cpu_stop[swire_addr_len+1] & 0x7f) | 0x80;
+	unsigned char bid = (swire_cmd_cpu_stop[4] & 0x7f) | 0x80;
 	swire_write(swire_cmd_cpu_stop[0], FLD_SWIRE_WR | FLD_SWIRE_CMD); // 0x5a
 	if (swire_addr_len == 3) {
 		swire_write(addr>>16, FLD_SWIRE_WR);	// addrh

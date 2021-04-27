@@ -7,8 +7,8 @@ SECTIONS
     . = 0x0;
         .vectors :
         {
-        *(.vectors)
-        *(.vectors.*)	/* MUST as follows, when compile with -ffunction-sections -fdata-sections, session name may changed */
+        KEEP(*(.vectors))
+        KEEP(*(.vectors.*))	/* MUST as follows, when compile with -ffunction-sections -fdata-sections, session name may changed */
         }
         .ram_code :
         {
