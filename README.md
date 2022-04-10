@@ -7,13 +7,13 @@ Use TB-04-KIT or TB-04 / 03F module (TLSR8253 chip) and USB-COM PL2303HX or CH43
 
 >** Option 2:
 Use EBYTE E104-BT10-G / N module or (TLSR8269 chip) for direct USB connection
- 
+
 
 The current version of the 'TlsrPgm.py' program is tested with chips only: TLSR8251, TLSR8253, TLSR8258, TLSR8266, TLSR8269.
 The firmware for the module works with all types of TLSR82xx chips via SWM-SWS connection.
 
-
-Documentation under development...
+1. [How to write TLSRPGM program to TB-03F-KIT or TB-04-KIT](https://github.com/pvvx/TLSRPGM/tree/main/sources/UART2SWire/tb-0x-pgm).
+2. TLSRPGM Usage Examples:
 
 #### Info: 
 > **Options:** wsl /usr/bin/python3 TlsrPgm.py

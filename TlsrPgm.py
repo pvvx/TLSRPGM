@@ -783,6 +783,7 @@ class TLSRPGM:
 		flgsleep = False
 		flgrun = False
 		i = 0
+		print('Read register addres 0x%06x:' % offset)
 		wblk = struct.pack('<BBHH', self.CMD_SWIRE_READ, offset & 0xff, (offset>>8) & 0xffff, 4) 
 		t1 = time.time()
 		while i < count:
@@ -801,8 +802,8 @@ class TLSRPGM:
 					if flgsleep:
 						t1 = t2
 						print()
-					self.ext_pc = struct.unpack('<I', rblk[4:8])
-					print('\rCPU PC=0x%08x' % self.ext_pc, end = '')
+					self.ext_reg = struct.unpack('<I', rblk[4:8])
+					print('\r0x%08x' % self.ext_reg, end = '')
 					if count != 1 or i != 0:
 						print(' (%.3f)' % (t2-t1), end = '')
 					#if flgsleep:
@@ -961,7 +962,8 @@ def main():
 	parser_read_flash.add_argument('size', help='Size of region', type=arg_auto_int)
 	parser_read_flash = subparsers.add_parser(
 			'dc',
-			help='Chow PC')
+			help='Chow uit32 register or SRAM addres')
+	parser_read_flash.add_argument('address', help='address', type=arg_auto_int)
 	parser_read_flash.add_argument('count', help='cycle count', type=arg_auto_int)
 
 	args = parser.parse_args()
@@ -1152,7 +1154,7 @@ def main():
 		#	pgm.close()
 		#	sys.exit(1)
 		#print('ok')
-		if not pgm.TestDebugPC(args.count):
+		if not pgm.TestDebugPC(args.count, args.address):
 			pgm.close()
 			sys.exit(1)
 	else:
