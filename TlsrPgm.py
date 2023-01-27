@@ -16,7 +16,7 @@ import io
 
 __progname__ = 'TLSR82xx TlsrPgm'
 __filename__ = 'TlsrPgm'
-__version__ = '14.01.23'
+__version__ = '27.01.23'
 
 DEFAULT_UART_BAUD = 230400
 
@@ -968,6 +968,12 @@ def main():
 	parser_read_flash.add_argument('address', help='Start address', type=arg_auto_int)
 	parser_read_flash.add_argument('size', help='Size of region', type=arg_auto_int)
 	parser_read_flash.add_argument('filename', help='Name of binary file')
+
+	parser_write_flash = subparsers.add_parser(
+			'ws',
+			help='Write file to Swire addres')
+	parser_write_flash.add_argument('address', help='Start address', type=arg_auto_int)
+	parser_write_flash.add_argument('filename', help='Name of binary file')
 
 	parser_read_flash = subparsers.add_parser(
 			'ra',
