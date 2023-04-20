@@ -24,7 +24,7 @@ CPU go Start...
 ChipID: 0x5562 (TLSR8253), Floader ver: 1.0
 Flash JEDEC ID: c86013, Size: 512 kbytes
 ------------------------------------------------
-Inputfile: ../urat2swire.bin
+Inputfile: ../uart2swire.bin
 Write Flash data 0x00000000 to 0x00000dfc...
 ------------------------------------------------
 (1) Warning

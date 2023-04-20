@@ -1,6 +1,6 @@
 #
 
-TARGET  = urat2swire
+TARGET  = uart2swire
 
 # This assumes that you install Telink toolchain for Windows, MacOS or Linux
 # Under Windows you will be using MingW/Msys environment
