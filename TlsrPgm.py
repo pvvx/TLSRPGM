@@ -16,7 +16,7 @@ import io
 
 __progname__ = 'TLSR82xx TlsrPgm'
 __filename__ = 'TlsrPgm'
-__version__ = '20.04.23'
+__version__ = '12.11.23'
 
 DEFAULT_UART_BAUD = 230400
 
@@ -911,7 +911,7 @@ def main():
 		default = 0)
 	parser.add_argument(
 		'-a', '--act',
-		help='Activation Time ms (0-off, default: 0 ms)',
+		help='Activation Time ms (0-off, default: 0 ms), if value < 0 - reInit SoC',
 		type=arg_auto_int,
 		default = 0)
 	parser.add_argument(
@@ -1095,12 +1095,14 @@ def main():
 				pgm.close()
 				sys.exit(1)
 	if args.act < 0: # No Hard reset (Pin RST set '0'), MCU Soft Reset + Activate 70 ms
+		if args.act > -70:
+			args.act = -70
 		print('MCU Reboot...', end = ' ')
 		if not pgm.WriteRegsData(0x6f, b'\x20'):
 			pgm.close()
 			sys.exit(1)
 		print('ok')
-		if not pgm.Activate(70): # Activate 70 ms
+		if not pgm.Activate(-args.act): # Activate 70 ms
 			pgm.close()
 			sys.exit(1)
 	if args.stopcpu:	# CPU Stop ?

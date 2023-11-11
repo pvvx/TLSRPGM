@@ -15,9 +15,9 @@ import io
 
 __progname__ = 'TLSR825x Floader'
 __filename__ = 'TlsrComProg'
-__version__ = "10.11.20"
+__version__ = "25.10.23"
 
-CMD_VER	 = b'\x00'	# Get version 
+CMD_VER	 = b'\x00'	# Get version, Reset, Write Flash Status reg
 CMD_RBF	 = b'\x01'	# Read Block Flash
 CMD_WBF	 = b'\x02'	# Write Block Flash
 CMD_EFS	 = b'\x03'	# Erase Flash Sectors
@@ -151,6 +151,15 @@ def EraseAllFlash(rs):
 		return 0
 	return ret
 #--------------------
+def UnlockFlash(rs):
+	blk = struct.pack('<BBH', ord(CMD_VER), 2, 0)
+	ret = rs.write(crc_blk(blk))
+	data = rs.read(6)
+	if len(data) != 6 or data[0] != ord(CMD_VER) or not crc_chk(data):
+		print('\rError Unlock Flash!')
+		return 0
+	return ret
+#--------------------
 def WriteBlockFlash(rs, stream, offset = 0, size = 0, erase = True):
 	cnt_err = 2
 	offset &= 0xffffff
@@ -254,6 +263,10 @@ def main():
 		help='UART Baud Rate (default: 230400)', 
 		type=arg_auto_int, 
 		default=230400)
+	parser.add_argument(
+		'--unlock','-u', 
+		help='Unlock Flash (option command Erase/Write)', 
+		action="store_true")
 	subparsers = parser.add_subparsers(
 			dest='operation',
 			help='Run '+__filename__+' {command} -h for additional help')
@@ -472,6 +485,11 @@ def main():
 		stream.close
 	elif args.operation == 'wf' or args.operation == 'we':
 		serialPort.timeout = 0.15
+		if args.unlock:
+			print('Unlock Flash...')
+			if not UnlockFlash(serialPort):
+				serialPort.close
+				sys.exit(11)
 		print('Inputfile: %s' % (args.filename))
 		try:
 			stream = open(args.filename, 'rb')
@@ -494,6 +512,11 @@ def main():
 		stream.close
 	elif args.operation == 'es':
 		serialPort.timeout = 0.15
+		if args.unlock:
+			print('Unlock Flash...')
+			if not UnlockFlash(serialPort):
+				serialPort.close
+				sys.exit(11)
 		count = int((args.size + FLASH_SECTOR_SIZE - 1) / FLASH_SECTOR_SIZE)
 		size = (count * FLASH_SECTOR_SIZE)
 		offset = args.address & (0xffffff^(FLASH_SECTOR_SIZE-1))
@@ -502,6 +525,12 @@ def main():
 			serialPort.close
 			sys.exit(6)
 	elif args.operation == 'ea':
+		serialPort.timeout = 0.15
+		if args.unlock:
+			print('Unlock Flash...')
+			if not UnlockFlash(serialPort):
+				serialPort.close
+				sys.exit(11)
 		serialPort.timeout = 2.5
 		print('Erase All Flash ...')
 		if not EraseAllFlash(serialPort):

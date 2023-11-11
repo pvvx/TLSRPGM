@@ -18,35 +18,40 @@ The firmware for the module works with all types of TLSR82xx chips via SWM-SWS c
 #### Info: 
 > **Options:** wsl /usr/bin/python3 TlsrPgm.py
 ```
-usage: TlsrPgm [-h] [-p PORT] [-b BAUD] [-t TRST] [-a ACT] [-s] [-c] [-r] [-g]
-               [-m] [-w] [-u]
-               {rf,we,wf,es,ea,rs,ra,wa,i,ds,df,da,dc} ...
+usage: TlsrPgm [-h] [-p PORT] [-b BAUD] [-t TRST] [-a ACT] [-z ZW] [-s] [-c]
+               [-r] [-g] [-m] [-w] [-u]
+               {rf,we,wf,es,ea,fsr,fsw,rs,ws,ra,wa,i,ds,df,da,dc} ...
 
-TLSR82xx TlsrPgm version 27.04.21
+TLSR82xx TlsrPgm version 29.10.23
 
 positional arguments:
-  {rf,we,wf,es,ea,rs,ra,wa,i,ds,df,da,dc}
+  {rf,we,wf,es,ea,fsr,fsw,rs,ws,ra,wa,i,ds,df,da,dc}
                         Run TlsrPgm {command} -h for additional help
     rf                  Read Flash to binary file
     we                  Write file to Flash with sectors erases
     wf                  Write file to Flash without sectors erases
     es                  Erase Region (sectors) of Flash
     ea                  Erase All Flash
+    fsr                 Read Flash Status Register
+    fsw                 Write Flash Status Register
     rs                  Read SWire address to binary file
+    ws                  Write file to Swire addres
     ra                  Read Analog Registers to binary file
     wa                  Write file to Analog Registers
     i                   External Chip Information
     ds                  Dump Swire (Registers or SRAM)
     df                  Dump Flash
     da                  Dump Analog Registers
-    dc                  Chow PC
+    dc                  Show uit32 register or SRAM addres
 
-optional arguments:
+options:
   -h, --help            show this help message and exit
   -p PORT, --port PORT  Serial port device (default: COM1)
   -b BAUD, --baud BAUD  UART Baud Rate (default: 230400)
   -t TRST, --trst TRST  Hard Reset Time ms (default: 0 ms)
   -a ACT, --act ACT     Activation Time ms (0-off, default: 0 ms)
+  -z ZW, --zw ZW        Wait Start CPU (default: 0 sec) (before main
+                        processing)
   -s, --stopcpu         CPU Stop (before main processing)
   -c, --cpustall        CPU Stall (before main processing)
   -r, --run             CPU Run (post main processing)
