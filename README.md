@@ -5,8 +5,13 @@ TLSR SWire programmer
 >** Option 1:
 Use TB-04-KIT or TB-04 / 03F module (TLSR8253 chip) and USB-COM PL2303HX or CH430 chip.
 
+Pin PD3 (OUT) --> RESET, Pin PD4 (SWM) <-> SWS
+
+
 >** Option 2:
 Use EBYTE E104-BT10-G / N module or (TLSR8269 chip) for direct USB connection
+
+Pin PB1 (OUT) --> RESET, Pin PA7 (SWM) <-> SWS, Pin PB4 (OUT) --> Power
 
 
 The current version of the 'TlsrPgm.py' program is tested with chips only: TLSR8251, TLSR8253, TLSR8258, TLSR8266, TLSR8269.

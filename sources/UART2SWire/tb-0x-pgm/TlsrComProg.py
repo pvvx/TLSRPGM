@@ -15,7 +15,7 @@ import io
 
 __progname__ = 'TLSR825x Floader'
 __filename__ = 'TlsrComProg'
-__version__ = "25.10.23"
+__version__ = "27.12.23"
 
 CMD_VER	 = b'\x00'	# Get version, Reset, Write Flash Status reg
 CMD_RBF	 = b'\x01'	# Read Block Flash
@@ -321,7 +321,10 @@ def main():
 		print ('Error: Open %s, %d baud!' % (args.port, args.baud))
 		sys.exit(1)
 	warn = 0
-	serialPort.timeout = 33*12/args.baud + 0.001
+	if platform.system() == "Linux":
+		serialPort.timeout = 0.2 
+	else:
+		serialPort.timeout = 33*12/args.baud + 0.001 
 	#--------------------------------
 	# Test Floader Already: Send BAD CMD
 	# 1F 34 56 78 79 BC -> 9F 34 56 78 50 7C ?
