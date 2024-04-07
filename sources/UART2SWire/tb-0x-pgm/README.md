@@ -1,8 +1,8 @@
 # tb-0x-kit-pgm
-How to write TLSRPGM program to TB-03F-KIT or TB-04-KIT.
+How to write TLSRPGM [program](https://github.com/pvvx/TLSRPGM/raw/main/sources/UART2SWire/uart2swire.bin) to TB-03F-KIT or TB-04-KIT.
 
 1. Connect the SWS pin to pin 2 of CH340.
-2. Execute the command, correcting the com port name.
+2. Execute the [command](https://github.com/pvvx/TlsrComProg825x), correcting the com port name.
 
 ![SCH](https://github.com/pvvx/TlsrComProg825x/blob/main/Doc/img/TB-03F-KIT-PGM.gif)
 
