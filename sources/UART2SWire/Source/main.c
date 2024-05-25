@@ -203,10 +203,17 @@ _attribute_ram_code_ int main (void) {
 	BM_CLR(reg_gpio_out(GPIO_PD4), GPIO_PD4 & 0xff); // pin SWM output lo level
 	BM_CLR(reg_gpio_oen(GPIO_PD4), GPIO_PD4 & 0xFF); // pin SWM enable output
 
+	// Pin Power Output = "1"
+	BM_SET(reg_gpio_out(GPIO_POWER), GPIO_POWER & 0xff); // Pin POW = "1"
+	//BM_SET(reg_gpio_func(GPIO_POWER), GPIO_POWER & 0xFF); // enable as gpio (default = enable)
+	BM_CLR(reg_gpio_oen(GPIO_POWER), GPIO_POWER & 0xFF); // enable output
+	BM_SET(reg_gpio_ds(GPIO_POWER), GPIO_POWER & 0xFF); // hi Drive strength
+
 	// Pin RST Output = "1"
 	// BM_SET(reg_gpio_func(GPIO_RESET), GPIO_RESET & 0xFF); // enable as gpio (default = enable)
 	BM_SET(reg_gpio_out(GPIO_RESET), GPIO_RESET & 0xff); // output hi level
 	BM_CLR(reg_gpio_oen(GPIO_RESET), GPIO_RESET & 0xFF); // enable output
+	BM_SET(reg_gpio_ds(GPIO_RESET), GPIO_RESET & 0xFF); // hi Drive strength
 
 #else // CHIP_TYPE
 #error "Only TLSR825x!"
@@ -528,10 +535,12 @@ _attribute_ram_code_ int main (void) {
 										if(argv) {
 											BM_CLR(reg_gpio_func(GPIO_PD4), GPIO_PD4 & 0xff); // Pin SWM disable as gpio
 											BM_SET(reg_gpio_out(GPIO_RESET), GPIO_RESET & 0xff); // Pin RST = "1"
+											BM_SET(reg_gpio_out(GPIO_POWER), GPIO_POWER & 0xff); // Pin POW = "1"
 										}
 										else {
 											BM_SET(reg_gpio_func(GPIO_PD4), GPIO_PD4 & 0xff); // Pin SWM = "0" (enable as gpio)
 											BM_CLR(reg_gpio_out(GPIO_RESET), GPIO_RESET & 0xff); // Pin RST = "0"
+											BM_CLR(reg_gpio_out(GPIO_POWER), GPIO_POWER & 0xff); // Pin POW = "0"
 										}
 										utxb.pkt.data[0] = (reg_gpio_in(GPIO_RESET) & GPIO_RESET) != 0;
 										utxb.pkt.head.count = 1;
@@ -540,6 +549,7 @@ _attribute_ram_code_ int main (void) {
 									case CMDF_SWIRE_ACTIVATE: // Activate
 										BM_CLR(reg_gpio_func(GPIO_PD4), GPIO_PD4 & 0xff); // Pin SWM disable as gpio
 										BM_SET(reg_gpio_out(GPIO_RESET), GPIO_RESET & 0xff); // Pin RST = "1"
+										BM_SET(reg_gpio_out(GPIO_POWER), GPIO_POWER & 0xff); // Pin POW = "1"
 										swire_write(0xff, FLD_SWIRE_WR | FLD_SWIRE_CMD); // cmd stop
 										swire_write(0xff, FLD_SWIRE_WR | FLD_SWIRE_CMD); // cmd stop
 										while(argv--)

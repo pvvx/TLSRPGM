@@ -263,6 +263,7 @@ int main (void) {
 		SET_GPIO_POWER(); // Pin POWER = "1"
 		BM_SET(reg_gpio_gpio_func(GPIO_POWER), GPIO_POWER & 0xff);
 		BM_CLR(reg_gpio_oen(GPIO_POWER), GPIO_POWER & 0xff);
+		BM_SET(reg_gpio_ds(GPIO_POWER), GPIO_POWER & 0xFF); // hi Drive strength
 		// Init GPIO_SWM
 		// reg_swire_clk_div = CLOCK_SYS_CLOCK_HZ/5/960000;
 		BM_CLR(reg_gpio_gpio_func(GPIO_SWM), GPIO_SWM & 0xff); // Pin SWM disable as gpio

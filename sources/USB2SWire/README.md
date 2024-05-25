@@ -1,4 +1,4 @@
-## USB2SWire Source Code
+## USB2SWire Source Code v 0.0.0.2
 
 Chip TLSR8269 
 
