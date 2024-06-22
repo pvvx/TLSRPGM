@@ -3,7 +3,7 @@ TLSR SWire programmer
 
 
 >** Option 1:
-Use TB-04-KIT or TB-04 / 03F module (TLSR8253 chip) and USB-COM PL2303HX or CH430 chip.
+Use TB-04-KIT or TB-04 / 03F module (TLSR8253 chip) and USB-COM (PL2303HX or CH340 chip).
 
 Pin PD3 (OUT) --> RESET, Pin PD4 (SWM) <-> SWS, Pin PB4 (OUT) --> Power (max 16 mA)
 
