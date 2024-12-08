@@ -15,7 +15,7 @@ Use EBYTE E104-BT10-G / N module or (TLSR8269 chip) for direct USB connection
 Pin PB1 (OUT) --> RESET, Pin PA7 (SWM) <-> SWS, Pin PB4 (OUT) --> Power
 
 
-The current version of the 'TlsrPgm.py' program is tested with chips only: TLSR8251, TLSR8253, TLSR8258, TLSR8266, TLSR8269.
+The current version of the 'TlsrPgm.py' program is tested with chips only: TLSR8250, TLSR8251, TLSR8253, TLSR8258, TLSR8266, TLSR8269.
 The firmware for the module works with all types of TLSR82xx chips via SWM-SWS connection.
 
 1. [How to write TLSRPGM program to TB-03F-KIT or TB-04-KIT](https://github.com/pvvx/TLSRPGM/tree/main/sources/UART2SWire/tb-0x-pgm).
