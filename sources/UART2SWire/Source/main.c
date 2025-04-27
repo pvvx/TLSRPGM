@@ -109,6 +109,24 @@ _attribute_ram_code_ void swire_fcmd(unsigned char fcmd) {
 	_swire_set_fcs_hi();
 }
 
+_attribute_ram_code_ unsigned int read_flash(unsigned int faddr, unsigned char *pbuf, unsigned int cnt) {
+
+	unsigned int rxlen;
+
+	_swire_fcmd_faddr(FLASH_READ_CMD, faddr); 		// send flash read command + faddr
+	// spi read
+	rxlen = (FLD_MASTER_SPI_RD | FLD_MASTER_SPI_SDO) << 8;	// [0x0d]=0x0a set auto read mode
+	swire_write_bytes(0x000c, (unsigned char *)&rxlen, 2); 	//[0x0c] = 0 launch first read, [0x0d]=x set auto read mode
+
+	if(cnt == 1)
+		rxlen = swire_read_bytes(0x000c, pbuf, cnt);
+	else // swire fifo read
+		rxlen = swire_fifo_read(0x000c, pbuf, cnt);
+
+	_swire_set_fcs_hi(); // flash chip select hi
+	return rxlen;
+}
+
 _attribute_ram_code_ int main (void) {
 	reg_irq_en = 0;
 	// Open clk for MCU running
@@ -370,12 +388,12 @@ _attribute_ram_code_ int main (void) {
 									urxb.pkt.rd.len = sizeof(utxb.pkt.data);
 								//tmp.ud = 0x05; 			// reset mcu
 								//swire_write_bytes(0x0602, tmp.uc, 1); // [0x602]=0x05
+#if 0
 								_swire_fcmd_faddr(FLASH_READ_CMD, argv); 		// send flash read command + faddr
 								// spi read
 								tmp.ud = (FLD_MASTER_SPI_RD | FLD_MASTER_SPI_SDO) << 8;	// [0x0d]=0x0a set auto read mode
 								swire_write_bytes(0x000c, tmp.uc, 2); 	//[0x0c] = 0 launch first read, [0x0d]=x set auto read mode
 
-#if 1
 								rxlen = urxb.pkt.rd.len;
 								if(rxlen == 1)
 									utxb.pkt.head.count = swire_read_bytes(0x000c, utxb.pkt.data, rxlen);
@@ -386,12 +404,9 @@ _attribute_ram_code_ int main (void) {
 									utxb.pkt.head.err = ERR_READ;
 								utxb.len += utxb.pkt.head.count;
 #else
-								if(urxb.pkt.rd.len == 1)
-									utxb.pkt.head.count = swire_read_bytes(0x000c, utxb.pkt.data, urxb.pkt.rd.len);
-								else // swire fifo read
-									utxb.pkt.head.count = swire_fifo_read(0x000c, utxb.pkt.data, urxb.pkt.rd.len);
-								_swire_set_fcs_hi(); // flash chip select hi
-								if(utxb.pkt.head.count != urxb.pkt.rd.len)
+								rxlen = urxb.pkt.rd.len;
+								utxb.pkt.head.count = read_flash(argv, utxb.pkt.data, rxlen);
+								if(utxb.pkt.head.count != rxlen)
 									utxb.pkt.head.err = ERR_READ;
 								utxb.len += utxb.pkt.head.count;
 #endif
@@ -493,6 +508,16 @@ _attribute_ram_code_ int main (void) {
 									utxb.len += tmp.ud;
 								}
 								_swire_set_fcs_hi(); // flash chip select hi
+								break;
+							case CMD_FLASH_RDCRC: // Flash read CRC (max 1024 bytes)
+								if(rxlen == 0
+									|| urxb.pkt.rd.len > sizeof(utxb.pkt.data))
+									urxb.pkt.rd.len = sizeof(utxb.pkt.data);
+								rxlen = urxb.pkt.rd.len;
+								if(read_flash(argv, utxb.pkt.data, rxlen) != rxlen)
+									utxb.pkt.head.err = ERR_READ;
+								else
+									utxb.pkt.head.count = crcFast(utxb.pkt.data, rxlen);
 								break;
 							case CMD_FUNCS: // ext. functions
 								argv >>= 8;

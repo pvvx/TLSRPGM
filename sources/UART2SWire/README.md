@@ -1,4 +1,4 @@
-## Uart2SWire Source Code v0.0.0.2
+## Uart2SWire Source Code v0.0.0.3
 
 Chip TLSR825x + USB-COM 
 

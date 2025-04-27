@@ -15,7 +15,7 @@ import io
 
 __progname__ = 'TLSR825x Floader'
 __filename__ = 'TlsrComProg'
-__version__ = "27.12.23"
+__version__ = "22.12.24"
 
 CMD_VER	 = b'\x00'	# Get version, Reset, Write Flash Status reg
 CMD_RBF	 = b'\x01'	# Read Block Flash
@@ -267,6 +267,9 @@ def main():
 		'--unlock','-u', 
 		help='Unlock Flash (option command Erase/Write)', 
 		action="store_true")
+	parser.add_argument(
+		'--rst','-r',
+		help='Reset (RTS low) (post main processing)')
 	subparsers = parser.add_subparsers(
 			dest='operation',
 			help='Run '+__filename__+' {command} -h for additional help')
@@ -299,6 +302,9 @@ def main():
 	parser_erase_all_flash = subparsers.add_parser(
 			'ea',
 			help='Erase All Flash')
+	parser_reset_rts = subparsers.add_parser(
+			'rst',
+			help='Reset (RTS low)')
 
 	args = parser.parse_args()
 	print('================================================')
@@ -321,6 +327,13 @@ def main():
 		print ('Error: Open %s, %d baud!' % (args.port, args.baud))
 		sys.exit(1)
 	warn = 0
+	if args.operation == 'rst':
+		print('Reset module (RTS low)...')
+		serialPort.setDTR(True)
+		serialPort.setRTS(True)
+		time.sleep(0.05)
+		serialPort.close
+		sys.exit(0)
 	if platform.system() == "Linux":
 		serialPort.timeout = 0.2 
 	else:
@@ -334,7 +347,7 @@ def main():
 		#--------------------------------
 		# Open Floader
 		try:
-			stream = open(args.fldr, 'rb')
+			stream = open(args.fldr, "rb")
 			size = os.path.getsize(args.fldr)
 		except:
 			serialPort.close
@@ -495,11 +508,11 @@ def main():
 				sys.exit(11)
 		print('Inputfile: %s' % (args.filename))
 		try:
-			stream = open(args.filename, 'rb')
+			stream = open(args.filename, "rb")
 			size = os.path.getsize(args.filename)
 		except:
 			serialPort.close
-			print('Error: Not open input file <%s>!' % args.fldr)
+			print('Error: Not open input file <%s>!' % args.filename)
 			sys.exit(2)
 		if size < 1:
 			stream.close
@@ -539,6 +552,11 @@ def main():
 		if not EraseAllFlash(serialPort):
 			serialPort.close
 			sys.exit(7)
+	if args.rst:
+		print('Reset module (RTS low)...')
+		serialPort.setDTR(True)
+		serialPort.setRTS(True)
+		time.sleep(0.05)
 	serialPort.close
 	print('------------------------------------------------')
 	if warn == 0:
