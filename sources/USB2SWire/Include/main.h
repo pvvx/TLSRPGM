@@ -8,7 +8,7 @@
 #ifndef MAIN_H_
 #define MAIN_H_
 //-------------------------------
-#define VERSION_BCD 0x0002 // 0x1234 -> Ver 1.2.3.4
+#define VERSION_BCD 0x0003 // 0x1234 -> Ver 1.2.3.4
 //-------------------------------
 #define USE_IO_CRC			1
 //-------------------------------
@@ -33,7 +33,8 @@ enum{
 	CMD_SWIRE_AWRITE,			//a
 	CMD_SWIRE_FIFO_READ,		//b
 	CMD_SWIRE_FIFO_FWRITE,		//c
-	CMD_FLASH_WRRD				//d
+	CMD_FLASH_WRRD,				//d
+	CMD_FLASH_RDCRC				//e Flash read CRC16 (blk max 1024 bytes)
 };
 
 enum{
