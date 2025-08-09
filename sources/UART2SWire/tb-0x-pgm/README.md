@@ -6,6 +6,8 @@ How to write TLSRPGM [program](https://github.com/pvvx/TLSRPGM/raw/main/sources/
 
 ![SCH](https://github.com/pvvx/TlsrComProg825x/blob/main/Doc/img/TB-03F-KIT-PGM.gif)
 
+3. After programming the module, the SWS pin to pin 2 of CH340 connection is not required.
+
 Sampling log:
 ```
 >TlsrComProg.py -p COM7 -t5000 we 0 ../urat2swire.bin
