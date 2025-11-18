@@ -13,6 +13,9 @@
 #include "main.h"
 #include "swire.h"
 
+#define  SDI_DOUBLE_BUF 1
+
+volatile unsigned char flg_sdi_print; // flag sdi_print enable
 /*
  * Calculator CRC-16/MODBUS: https://crccalc.com/
  */
@@ -39,6 +42,10 @@ uart_tab_baud_t uart_tab_baud[] = {
 dma_uart_buf_t urxb;
 dma_uart_buf_t utxb;
 
+#if SDI_DOUBLE_BUF
+dma_uart_sdi_buf_t sdi_txb[2];
+#endif
+
 _attribute_ram_code_
 //inline
 void uart_init(void) {
@@ -48,7 +55,7 @@ void uart_init(void) {
 	cur_uart_baud = new_uart_baud;
 	// reg_uart_clk_div/reg_uart_ctrl0
 	REG_ADDR32(0x094) = MASK_VAL(FLD_UART_CLK_DIV, uartCLKdiv, FLD_UART_CLK_DIV_EN, 1)
-		|	((MASK_VAL( FLD_UART_BWPC, bwpc) // set bit width
+		|	((MASK_VAL(FLD_UART_BWPC, bwpc) // set bit width
 			| MASK_VAL(FLD_UART_STOP_BIT, 1) // 00: 1 bit, 01: 1.5bit 1x: 2bits;
 			| FLD_UART_RX_DMA_EN | FLD_UART_TX_DMA_EN) // enable UART DMA mode
 		<< 16);
@@ -127,7 +134,38 @@ _attribute_ram_code_ unsigned int read_flash(unsigned int faddr, unsigned char *
 	return rxlen;
 }
 
+
+_attribute_ram_code_ unsigned int task_sdi_print(unsigned int argv, unsigned char *pbuf) {
+	unsigned int rxlen = 0;
+	unsigned char out = 0;
+	if(swire_read_bytes(argv, &out, 1)) {
+		if(out != 0 && out != 0xff){
+			rxlen = swire_read_bytes(argv+1, pbuf, out);
+			if(rxlen == out) {
+				out = 0;
+				swire_write_bytes(argv, &out, 1);
+			} else
+				rxlen = 0;
+		}
+	}
+	return rxlen;
+}
+
 _attribute_ram_code_ int main (void) {
+	union {
+		unsigned int  ud;
+		unsigned char uw[2];
+		unsigned char uc[4];
+	} tmp = {
+		.ud = 0
+	};
+	unsigned int rxlen = 0;
+	unsigned int argv = 0;
+#if SDI_DOUBLE_BUF
+	dma_uart_sdi_buf_t *psdi_txb = &sdi_txb[0];
+	dma_uart_sdi_buf_t *psdi_rxb = &sdi_txb[0];
+	dma_uart_sdi_buf_t *psdi_tmp;;
+#endif
 	reg_irq_en = 0;
 	// Open clk for MCU running
 	REG_ADDR32(0x60) = 0xff000000;
@@ -265,6 +303,56 @@ _attribute_ram_code_ int main (void) {
 	u16 crc16;
 #endif // USE_IO_CRC
 	while(1) {
+#if SDI_DOUBLE_BUF
+		if(flg_sdi_print) {
+			if((reg_dma_tx_rdy0 & FLD_DMA_CHN_UART_TX) == 0) {
+				reg_dma_irq_src |= FLD_DMA_IRQ_UART_TX;
+				while((reg_uart_status1 & FLD_UART_TX_DONE)==0);
+				while(flg_sdi_print) {
+					if((reg_dma_tx_rdy0 & FLD_DMA_CHN_UART_TX) == 0) {
+						if(psdi_txb->busy) {
+							psdi_txb->busy = 0;
+							if(psdi_txb == &sdi_txb[0])
+								psdi_txb = &sdi_txb[1];
+							else
+								psdi_txb = &sdi_txb[0];
+							reg_dma_irq_src = FLD_DMA_IRQ_UART_TX;
+							if(psdi_txb->busy) {
+								while((reg_uart_status1 & FLD_UART_TX_DONE)==0);
+								reg_dma1_addr = (unsigned short)((u32)(psdi_txb)); //set tx buffer address
+								reg_dma_tx_rdy0 = FLD_DMA_CHN_UART_TX; // start tx
+							}
+						}
+					}
+					if(psdi_rxb->busy == 0) {
+						psdi_rxb->len = task_sdi_print(argv, psdi_rxb->data);
+						if(psdi_rxb->len) {
+							psdi_rxb->busy = 1;
+							psdi_tmp = psdi_rxb;
+							if(psdi_rxb == &sdi_txb[0])
+								psdi_rxb = &sdi_txb[1];
+							else
+								psdi_rxb = &sdi_txb[0];
+							if(psdi_rxb->busy == 0) {
+								reg_dma_irq_src = FLD_DMA_IRQ_UART_TX;
+								while((reg_uart_status1 & FLD_UART_TX_DONE)==0);
+								reg_dma1_addr = (unsigned short)((u32)(psdi_tmp)); //set tx buffer address
+								reg_dma_tx_rdy0 = FLD_DMA_CHN_UART_TX; // start tx
+							}
+						}
+					}
+					if(reg_dma_irq_src & FLD_DMA_IRQ_UART_RX) {
+						if(urxb.len) { // new command?
+							flg_sdi_print = 0; // clear flag sdi_print
+							break;
+						} else {
+							reg_dma_irq_src = FLD_DMA_IRQ_UART_RX;
+						}
+					}
+				}
+			}
+		}
+#endif
 		if((reg_dma_tx_rdy0 & FLD_DMA_CHN_UART_TX) == 0) {
 			if(cur_uart_baud != new_uart_baud) {
 				cur_uart_baud = new_uart_baud;
@@ -272,12 +360,7 @@ _attribute_ram_code_ int main (void) {
 				uart_init();
 			}
 			if(reg_dma_irq_src & FLD_DMA_IRQ_UART_RX) { // new command?
-				union {
-					unsigned int  ud;
-					unsigned char uw[2];
-					unsigned char uc[4];
-				}tmp;
-				unsigned int rxlen = urxb.len;
+				rxlen = urxb.len;
 				utxb.len = sizeof(utxb.pkt.head);
 				utxb.pkt.head.ud = urxb.pkt.head.cmd;	// err = 0, len = 0
 				if(rxlen < sizeof(urxb.pkt.head)
@@ -296,7 +379,7 @@ _attribute_ram_code_ int main (void) {
 					{
 #endif // USE_IO_CRC
 						urxb.uc[rxlen] = 0;
-						u32 argv = urxb.pkt.head.b.argv;
+						argv = urxb.pkt.head.b.argv;
 #if USE_IO_CRC
 						rxlen -= sizeof(urxb.pkt.head) + 2;
 #else // USE_IO_CRC
@@ -519,6 +602,15 @@ _attribute_ram_code_ int main (void) {
 								else
 									utxb.pkt.head.count = crcFast(utxb.pkt.data, rxlen);
 								break;
+							case CMD_SDI_PRINT:
+								if(rxlen > sizeof(urxb.pkt.data))
+									utxb.pkt.head.err = ERR_LEN;
+								else {
+									if(rxlen != 0)
+										utxb.pkt.head.count = swire_write_bytes(argv, urxb.pkt.data, rxlen);
+									flg_sdi_print = 1;
+								}
+								break;
 							case CMD_FUNCS: // ext. functions
 								argv >>= 8;
 								switch(urxb.pkt.head.func) {
@@ -602,15 +694,27 @@ _attribute_ram_code_ int main (void) {
 						}
 					}
 				}
-				reg_dma_irq_src = FLD_DMA_IRQ_UART_RX | FLD_DMA_IRQ_UART_TX;
+				reg_dma_irq_src = FLD_DMA_IRQ_UART_RX;
 				if(utxb.len) {
 #if USE_IO_CRC
 					crc16 = crcFast(utxb.uc, utxb.len);
 					utxb.uc[utxb.len++] = crc16;
 					utxb.uc[utxb.len++] = crc16 >> 8;
 #endif // USE_IO_CRC
-					reg_dma_tx_rdy0 |= FLD_DMA_CHN_UART_TX; // start tx
+					while((reg_uart_status1 & FLD_UART_TX_DONE)==0);
+					reg_dma1_addr = (unsigned short)((u32)(&utxb)); //set tx buffer address
+					reg_dma_tx_rdy0 = FLD_DMA_CHN_UART_TX; // start tx
 				}
+#if !SDI_DOUBLE_BUF
+			} else { // no new command
+				if(flg_sdi_print) {
+					utxb.len = task_sdi_print(argv, (unsigned char *)&utxb.pkt.head);
+					if(utxb.len) {
+						reg_dma_irq_src = FLD_DMA_IRQ_UART_TX;
+						reg_dma_tx_rdy0 |= FLD_DMA_CHN_UART_TX; // start tx
+					}
+				}
+#endif
 			}
 		}
 	}

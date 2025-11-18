@@ -1,0 +1,1 @@
+python3 TlsrComProg.py -p COM6 -t500 -r 100 we 0 uart2swire.bin
