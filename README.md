@@ -156,6 +156,6 @@ Read Flash from 0x000000 to 0x080000...
 
 ---
 
-Диаграмма шины и описание регистров [Telink SWire](https://github.com/pvvx/TLSRPGM/tree/main/TelinkSWire) контроллера:  [SWM_S.pdf](https://github.com/pvvx/TLSRPGM/tree/main/TelinkSWire/TelinkSWire.pdf) 
+Диаграмма шины и описание регистров [Telink SWire](https://github.com/pvvx/TLSRPGM/tree/main/TelinkSWire) контроллера:  [TelinkSWire.pdf](https://github.com/pvvx/TLSRPGM/blob/main/TelinkSWire/TelinkSWire.pdf) 
 
 Это вырезка из ранней документации на чип TLSR8266 выложеной на сайте Telink много лет назад. В текущих версиях datasheet  на чипы TRLS82xx этот раздел удален.
