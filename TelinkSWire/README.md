@@ -14,7 +14,7 @@ The single wire communication protocol developed by Telink is as following:
 
 Figure 7-1 Sequence diagram for Swire bus communication protocol
 
-![figure7-1]((https://github.com/pvvx/TLSRPGM/TLSRPGM/TelinkSWire/figure7-1.gif)
+![figure7-1](https://raw.githubusercontent.com/pvvx/TLSRPGM/refs/heads/main/TelinkSWire/figure7-1.gif)
 
 One bit contains some units of low level and high level. Sending successively one unit of low level and four units of high level by master represents one bit of 0; while sending successively four units of low level and one unit of high level represents one bit of 1.
 
@@ -37,7 +37,7 @@ Regarding to the whole protocol:
 
 Table 7-1 Register configuration related to Swire communication
 
-![Table7-1]((https://github.com/pvvx/TLSRPGM/TelinkSWire/Table7-1.gif)
+![Table7-1](https://raw.githubusercontent.com/pvvx/TLSRPGM/refs/heads/main/TelinkSWire/Table7-1.gif)
 
 1) 0xb0 indicates sending 8-bit data;
 
