@@ -154,4 +154,8 @@ Read Flash from 0x000000 to 0x080000...
  
 Для скорости COM-порта ниже 115200 Baud уже следует увеличить время ожидания в “SWS_WAITING_TIMEOUT”.
 
+---
 
+Диаграмма шины и описание регистров [Telink SWire](https://github.com/pvvx/TLSRPGM/TelinkSWire) контроллера:  [SWM_S.pdf](https://github.com/pvvx/TLSRPGM/TelinkSWire/TelinkSWire.pdf) 
+
+Это вырезка из ранней документации на чип TLSR8266 выложеной на сайте Telink много лет назад. В текущих версиях datasheet  на чипы TRLS82xx этот раздел удален.
