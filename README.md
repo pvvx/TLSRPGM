@@ -182,6 +182,12 @@ CPU Go... ok
  
 Для скорости COM-порта ниже 115200 Baud уже следует увеличить время ожидания в “SWS_WAITING_TIMEOUT”.
 
+### Ускорение обработки ожидания выхода из сна
+
+В FW UART2SWire версии 0.0.0.5 программатора и “TlsrPgm.py” добавлена ускоренная функция чтения PC с остановкой или stall CPU.
+
+Ранее наблюдались пропуски при быстрых пробуждениях и засыпаниях SoC. Теперь это обрабатывается на максимальной скорости SWire, без пауз между командами.
+
 ---
 
 Диаграмма шины и описание регистров [Telink SWire](https://github.com/pvvx/TLSRPGM/tree/main/TelinkSWire) контроллера:  [TelinkSWire.pdf](https://github.com/pvvx/TLSRPGM/blob/main/TelinkSWire/TelinkSWire.pdf) 
