@@ -10,7 +10,7 @@
 //-------------------------------
 #define SWIRE_OFF 0
 //-------------------------------
-#define VERSION_BCD 0x0004 // 0x1234 -> Ver 1.2.3.4
+#define VERSION_BCD 0x0005 // 0x1234 -> Ver 1.2.3.4
 //------------------------------- Init UART ---
 #if 0
 #define UART_BAUD 921600 // 115200, 230400, 460800, 500000, 921600, 1000000, 1500000, 3000000
@@ -70,7 +70,8 @@ enum{
 	CMD_SWIRE_FIFO_FWRITE,		//c
 	CMD_FLASH_WRRD,				//d
 	CMD_FLASH_RDCRC,			//e Flash read CRC16 (blk max 1024 bytes)
-	CMD_SDI_PRINT				//f
+	CMD_SDI_PRINT,				//f
+	CMD_WAIT_RESP				//10
 };
 
 enum{
@@ -166,11 +167,11 @@ typedef struct _dma_uart_buf_t {
 	};
 }dma_uart_buf_t;
 
-typedef struct _dma_uart_sdi_buf_t {
+typedef struct _dma_uart_sws_pintf_buf_t {
 	volatile unsigned int len;
 	unsigned char data[254];
 	volatile unsigned char busy;
-}dma_uart_sdi_buf_t;
+}dma_uart_sws_pintf_buf_t;
 
 extern dma_uart_buf_t urxb;
 extern dma_uart_buf_t utxb;

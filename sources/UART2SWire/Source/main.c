@@ -13,9 +13,9 @@
 #include "main.h"
 #include "swire.h"
 
-#define  SDI_DOUBLE_BUF 1
+#define  SWS_DOUBLE_BUF 1
 
-volatile unsigned char flg_sdi_print; // flag sdi_print enable
+volatile unsigned char flg_wait_rx; // flag = 1 - SWS Print enable, = 2 Wait Response
 /*
  * Calculator CRC-16/MODBUS: https://crccalc.com/
  */
@@ -42,9 +42,15 @@ uart_tab_baud_t uart_tab_baud[] = {
 dma_uart_buf_t urxb;
 dma_uart_buf_t utxb;
 
-#if SDI_DOUBLE_BUF
-dma_uart_sdi_buf_t sdi_txb[2];
+#if SWS_DOUBLE_BUF
+dma_uart_sws_pintf_buf_t sws_pr_txb[2];
 #endif
+
+struct {
+	 u32 len;
+	 u32 addr;
+	 u8 data[4];
+}wrsp_buf;
 
 _attribute_ram_code_
 //inline
@@ -135,7 +141,7 @@ _attribute_ram_code_ unsigned int read_flash(unsigned int faddr, unsigned char *
 }
 
 
-_attribute_ram_code_ unsigned int task_sdi_print(unsigned int argv, unsigned char *pbuf) {
+_attribute_ram_code_ unsigned int task_sws_print(unsigned int argv, unsigned char *pbuf) {
 	unsigned int rxlen = 0;
 	unsigned char out = 0;
 	if(swire_read_bytes(argv, &out, 1)) {
@@ -161,10 +167,10 @@ _attribute_ram_code_ int main (void) {
 	};
 	unsigned int rxlen = 0;
 	unsigned int argv = 0;
-#if SDI_DOUBLE_BUF
-	dma_uart_sdi_buf_t *psdi_txb = &sdi_txb[0];
-	dma_uart_sdi_buf_t *psdi_rxb = &sdi_txb[0];
-	dma_uart_sdi_buf_t *psdi_tmp;;
+#if SWS_DOUBLE_BUF
+	dma_uart_sws_pintf_buf_t *psws_pr_txb = &sws_pr_txb[0];
+	dma_uart_sws_pintf_buf_t *psws_pr_rxb = &sws_pr_txb[0];
+	dma_uart_sws_pintf_buf_t *psws_pr_tmp;;
 #endif
 	reg_irq_en = 0;
 	// Open clk for MCU running
@@ -303,47 +309,73 @@ _attribute_ram_code_ int main (void) {
 	u16 crc16;
 #endif // USE_IO_CRC
 	while(1) {
-#if SDI_DOUBLE_BUF
-		if(flg_sdi_print) {
+#if SWS_DOUBLE_BUF
+		if(flg_wait_rx) {
 			if((reg_dma_tx_rdy0 & FLD_DMA_CHN_UART_TX) == 0) {
 				reg_dma_irq_src |= FLD_DMA_IRQ_UART_TX;
 				while((reg_uart_status1 & FLD_UART_TX_DONE)==0);
-				while(flg_sdi_print) {
+				while(flg_wait_rx == 1) {
 					if((reg_dma_tx_rdy0 & FLD_DMA_CHN_UART_TX) == 0) {
-						if(psdi_txb->busy) {
-							psdi_txb->busy = 0;
-							if(psdi_txb == &sdi_txb[0])
-								psdi_txb = &sdi_txb[1];
+						if(psws_pr_txb->busy) {
+							psws_pr_txb->busy = 0;
+							if(psws_pr_txb == &sws_pr_txb[0])
+								psws_pr_txb = &sws_pr_txb[1];
 							else
-								psdi_txb = &sdi_txb[0];
+								psws_pr_txb = &sws_pr_txb[0];
 							reg_dma_irq_src = FLD_DMA_IRQ_UART_TX;
-							if(psdi_txb->busy) {
+							if(psws_pr_txb->busy) {
 								while((reg_uart_status1 & FLD_UART_TX_DONE)==0);
-								reg_dma1_addr = (unsigned short)((u32)(psdi_txb)); //set tx buffer address
+								reg_dma1_addr = (unsigned short)((u32)(psws_pr_txb)); //set tx buffer address
 								reg_dma_tx_rdy0 = FLD_DMA_CHN_UART_TX; // start tx
 							}
 						}
 					}
-					if(psdi_rxb->busy == 0) {
-						psdi_rxb->len = task_sdi_print(argv, psdi_rxb->data);
-						if(psdi_rxb->len) {
-							psdi_rxb->busy = 1;
-							psdi_tmp = psdi_rxb;
-							if(psdi_rxb == &sdi_txb[0])
-								psdi_rxb = &sdi_txb[1];
+					if(psws_pr_rxb->busy == 0) {
+						psws_pr_rxb->len = task_sws_print(argv, psws_pr_rxb->data);
+						if(psws_pr_rxb->len) {
+							psws_pr_rxb->busy = 1;
+							psws_pr_tmp = psws_pr_rxb;
+							if(psws_pr_rxb == &sws_pr_txb[0])
+								psws_pr_rxb = &sws_pr_txb[1];
 							else
-								psdi_rxb = &sdi_txb[0];
-							if(psdi_rxb->busy == 0) {
+								psws_pr_rxb = &sws_pr_txb[0];
+							if(psws_pr_rxb->busy == 0) {
 								reg_dma_irq_src = FLD_DMA_IRQ_UART_TX;
 								while((reg_uart_status1 & FLD_UART_TX_DONE)==0);
-								reg_dma1_addr = (unsigned short)((u32)(psdi_tmp)); //set tx buffer address
+								reg_dma1_addr = (unsigned short)((u32)(psws_pr_tmp)); //set tx buffer address
 								reg_dma_tx_rdy0 = FLD_DMA_CHN_UART_TX; // start tx
 							}
 						}
 					}
 					if(reg_dma_irq_src & FLD_DMA_IRQ_UART_RX) {
 						if(urxb.len) { // new command?
-							flg_sdi_print = 0; // clear flag sdi_print
+							flg_wait_rx = 0; // clear flag sws_print
+							break;
+						} else {
+							reg_dma_irq_src = FLD_DMA_IRQ_UART_RX;
+						}
+					}
+				}
+				while(flg_wait_rx == 2) {
+					utxb.pkt.head.count = swire_read_bytes(argv, utxb.pkt.data, 4);
+					if(utxb.pkt.head.count == 4) {
+						if(wrsp_buf.len)
+							swire_write_bytes(wrsp_buf.addr, wrsp_buf.data, wrsp_buf.len);
+						flg_wait_rx = 0; // clear flag sws_print
+						// send 4 bytes
+						utxb.len = sizeof(utxb.pkt.head) + 4;
+#if USE_IO_CRC
+						crc16 = crcFast(utxb.uc, utxb.len);
+						utxb.uc[utxb.len++] = crc16;
+						utxb.uc[utxb.len++] = crc16 >> 8;
+#endif // USE_IO_CRC
+						while((reg_uart_status1 & FLD_UART_TX_DONE)==0);
+						reg_dma1_addr = (unsigned short)((u32)(&utxb)); //set tx buffer address
+						reg_dma_tx_rdy0 = FLD_DMA_CHN_UART_TX; // start tx
+					}
+					if(reg_dma_irq_src & FLD_DMA_IRQ_UART_RX) {
+						if(urxb.len) { // new command?
+							flg_wait_rx = 0; // clear flag
 							break;
 						} else {
 							reg_dma_irq_src = FLD_DMA_IRQ_UART_RX;
@@ -608,7 +640,20 @@ _attribute_ram_code_ int main (void) {
 								else {
 									if(rxlen != 0)
 										utxb.pkt.head.count = swire_write_bytes(argv, urxb.pkt.data, rxlen);
-									flg_sdi_print = 1;
+									flg_wait_rx = 1;
+								}
+								break;
+							case CMD_WAIT_RESP: // Waiting for a response & write
+								if(rxlen && (rxlen > 7 || rxlen < 4))
+									utxb.pkt.head.err = ERR_LEN;
+								else {
+									if(rxlen) {
+										memcpy(&wrsp_buf.addr, urxb.pkt.data, 3);
+										wrsp_buf.len = rxlen - 3;
+										memcpy(wrsp_buf.data, &urxb.pkt.data[3], wrsp_buf.len);
+									} else
+										wrsp_buf.len = 0;
+									flg_wait_rx = 2;
 								}
 								break;
 							case CMD_FUNCS: // ext. functions
@@ -705,10 +750,10 @@ _attribute_ram_code_ int main (void) {
 					reg_dma1_addr = (unsigned short)((u32)(&utxb)); //set tx buffer address
 					reg_dma_tx_rdy0 = FLD_DMA_CHN_UART_TX; // start tx
 				}
-#if !SDI_DOUBLE_BUF
+#if !SWS_DOUBLE_BUF
 			} else { // no new command
-				if(flg_sdi_print) {
-					utxb.len = task_sdi_print(argv, (unsigned char *)&utxb.pkt.head);
+				if(flg_wait_rx = 1) {
+					utxb.len = task_sws_print(argv, (unsigned char *)&utxb.pkt.head);
 					if(utxb.len) {
 						reg_dma_irq_src = FLD_DMA_IRQ_UART_TX;
 						reg_dma_tx_rdy0 |= FLD_DMA_CHN_UART_TX; // start tx
