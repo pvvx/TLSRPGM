@@ -26,12 +26,12 @@ The firmware for the module works with all types of TLSR82xx chips via SWM-SWS c
 ```
 usage: TlsrPgm [-h] [-p PORT] [-b BAUD] [-t TRST] [-a ACT] [-z ZW] [-s] [-c]
                [-r] [-g] [-m] [-w] [-u]
-               {rf,we,wf,es,ea,fsr,fsw,rs,ws,ra,wa,i,ds,df,da,dc} ...
+               {rf,we,wf,es,ea,fsr,fsw,rs,ws,wsb,wsw,wsd,ra,wa,i,ds,df,da,dc,sws} ...
 
-TLSR82xx TlsrPgm version 29.10.23
+TLSR82xx TlsrPgm version 03.12.25
 
 positional arguments:
-  {rf,we,wf,es,ea,fsr,fsw,rs,ws,ra,wa,i,ds,df,da,dc}
+  {rf,we,wf,es,ea,fsr,fsw,rs,ws,wsb,wsw,wsd,ra,wa,i,ds,df,da,dc,sws}
                         Run TlsrPgm {command} -h for additional help
     rf                  Read Flash to binary file
     we                  Write file to Flash with sectors erases
@@ -42,6 +42,9 @@ positional arguments:
     fsw                 Write Flash Status Register
     rs                  Read SWire address to binary file
     ws                  Write file to Swire addres
+    wsb                 Write byte to Swire addres
+    wsw                 Write 16-bit word to Swire address
+    wsd                 Write 32-bit word to Swire address
     ra                  Read Analog Registers to binary file
     wa                  Write file to Analog Registers
     i                   External Chip Information
@@ -49,14 +52,15 @@ positional arguments:
     df                  Dump Flash
     da                  Dump Analog Registers
     dc                  Show uit32 register or SRAM addres
+    sws                 SWS Printf (PGM version >= 0.0.0.4 is used)
 
 options:
   -h, --help            show this help message and exit
-  -p PORT, --port PORT  Serial port device (default: COM1)
-  -b BAUD, --baud BAUD  UART Baud Rate (default: 230400)
-  -t TRST, --trst TRST  Hard Reset Time ms (default: 0 ms)
-  -a ACT, --act ACT     Activation Time ms (0-off, default: 0 ms)
-  -z ZW, --zw ZW        Wait Start CPU (default: 0 sec) (before main
+  -p, --port PORT       Serial port device (default: COM1)
+  -b, --baud BAUD       UART Baud Rate (default: 230400)
+  -t, --trst TRST       Hard Reset Time ms (default: 0 ms)
+  -a, --act ACT         Activation Time ms (0-off, default: 0 ms)
+  -z, --zw ZW           Wait Start CPU (default: 0 sec) (before main
                         processing)
   -s, --stopcpu         CPU Stop (before main processing)
   -c, --cpustall        CPU Stall (before main processing)
@@ -136,6 +140,30 @@ Outfile: ff_512k.bin
 Read Flash from 0x000000 to 0x080000...
                                
  Worked Time: 11.305 sec
+```
+
+> **Read the dump of RAM (on the fly, waiting for the SoC to exit sleep):** TlsrPgm.py -pCOM6 -b1500000 -z10 -c -g ds 0x848000 0x10
+```
+=======================================================
+TLSR82xx TlsrPgm version 03.12.25
+-------------------------------------------------------
+Open COM6, 230400 bit/s... ok
+PGM: ChipID: 0x5562 (TLSR825x), ver: 0.0.0.5
+swdiv 5, addrlen 3, swbuf [5a 00 06 02 00 05], pwr On
+SWire bit rate: 0.9600 Mbits/s
+Set Speed UART PGM board 1500000 bits/s... ok
+ReOpen COM6, 1500000 bit/s... ok
+=== PreProcess ========================================
+
+CPU PC=0x00000574          
+CPU Stall ([0x0602] = 0x06)
+=== Process ===========================================
+-------------------------------------------------------
+
+REGISTERS:
+848000: 9c ad 90 b0 f6 ef ad fe 68 6d 1a b1 fd ef fe ed 
+=== Post-Process ======================================
+CPU Go... ok
 ```
 
 ### SWS_Printf()
