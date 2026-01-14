@@ -9,7 +9,7 @@ How to write TLSRPGM [FW](https://github.com/pvvx/TLSRPGM/raw/main/sources/UART2
 1. Connect the SWS pin to pin 2 of CH340.
 2. Execute the command, correcting the com port name.
 
-![TB-03F-KIT-PGM.gif](https://github.com/pvvx/TLSRPGM/blob/main/sources/UART2SWire/tb-0x-pgm/TB-03F-KIT-PGM.gif)
+![TB-03F-KIT-PGM.gif](https://github.com/pvvx/TLSRPGM/blob/main/sources/UART2SWire/tb-0x-pgm/TB-03F-Kit-pgm.jpg)
 
 ![TB-04-kit-pgm.jpg](https://github.com/pvvx/TLSRPGM/blob/main/sources/UART2SWire/tb-0x-pgm/TB-04-kit-pgm.jpg)
 
