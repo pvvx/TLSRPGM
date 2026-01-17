@@ -119,7 +119,7 @@ REGISTERS:
 000070: 00 04 00 04 00 00 00 00 00 00 00 64 00 02 62 55 
 ```
 
-> **Read Full Flash:** TlsrPgm.py -w -t 1 -a 20 -c -pCOM3 -b3000000 rf 0 0x80000 ff_512k.bin
+> **Read Full Flash:** TlsrPgm.py -w -t100 -a200 -c -pCOM3 -b3000000 rf 0 0x80000 ff_512k.bin
 ```
 =======================================================
 TLSR825x TlsrPgm version 25.11.20
