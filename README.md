@@ -7,7 +7,7 @@ Use TB-04-KIT or TB-04 / 03F module (TLSR8253 chip) and USB-COM (PL2303HX or CH3
 
 Pin PD3 (OUT) --> RESET, Pin PD4 (SWM) <-> SWS, Pin PB4 (OUT) --> Power (max 16 mA)
 
-![TB-03F-KIT-TLSRPGM.png](https://github.com/pvvx/TLSRPGM/blob/main/TB-03F-KIT-TLSRPGM.png)
+![TB-03F-KIT-TLSRPGM.png](https://github.com/pvvx/TLSRPGM/blob/main/TB-03F-KIT-TLSRPGM.png)   <img width="320" height="269" alt="image" src="https://github.com/user-attachments/assets/0dbcf502-898a-48b4-8801-2f276b43c327" />
 
 >** Option 2:
 Use EBYTE E104-BT10-G / N module or (TLSR8269 chip) for direct USB connection
