@@ -125,22 +125,8 @@ void USBCDC_ControlRequestProcesss(unsigned char bRequest, unsigned short wValue
         break;
     }
 }
+
 #if 0 // inline
-/**
- * @brief This function initializes the USB CDC device
- * @param   none
- * @return none
- */
-SECTION_USB_CODE
-void USBCDC_Init(void)
-{
-    cdc_vs.lastRecvIndex = 0;
-#ifdef USB_SET_CFG_UART
-    USB_SET_CFG_UART(LineEncoding);
-#endif
-}
-
-
 /**
  * @brief This function sets the USB CDC tx and rx callback function
  * @param[in]   rxFunc rx callback function
@@ -155,23 +141,7 @@ void USBCDC_CBSet(cdc_cbrxFn_t rxFunc, cdc_cbtxFn_t txCb)
 }
 #endif
 
-/*
-static int USBCDC_SendTimeoutCb(void* arg)
-{
-	(void) arg;
-	unsigned int r = irq_disable();
-	cdc_vs.txBuf = NULL;
-	cdc_vs.lenToSend = 0;
-	cdc_vs.lastSendIndex = 0;
-    if (cdc_vs.txCb) {
-        cdc_vs.txCb(0);
-    }
-	irq_restore(r);
-	return -1;	// больше не вызывать это событие (удалить callback)
-}
-*/
-
-#if	(USB_CDC_MAX_RX_BLK_SIZE > 64)
+#if (USB_CDC_MAX_RX_BLK_SIZE > 64)
 /*
  * USB rx TimeOuts
  * Called from Irq (!)
@@ -206,13 +176,12 @@ void USB_RxTimeOuts(void)
  * Called from Irq (!)
  */
 _attribute_ram_code_
-void USBCDC_DataRecv(void)
+void USBCDC_DataRecv(unsigned int len)
 {
     unsigned int i;
-    unsigned int len;
     unsigned char* p;
 
-    len = reg_usb_ep_ptr(CDC_RX_EPNUM);	// FIFO max 256 bytes
+    // FIFO max 256 bytes
     USBHW_EpPtrReset(CDC_RX_EPNUM);
     if (cdc_vs.rxBuf) {
     	for (i = 0; i < len; i++) {
@@ -232,7 +201,8 @@ void USBCDC_DataRecv(void)
     	|| cdc_vs.lastRecvIndex >= USB_CDC_MAX_RX_BLK_SIZE
     	|| (len & (CDC_TXRX_EPSIZE-1)) != 0
     	) {
-        reg_irq_mask3 &= ~BIT(0); // reg_irq_mask &= ~FLD_IRQ_USB_250US_EN
+        reg_irq_mask &= ~FLD_IRQ_USB_250US_EN;
+        reg_irq_src = FLD_IRQ_USB_250US_EN;
         usb_flg_rx_timeot = 0;
 #endif
     	len = cdc_vs.lastRecvIndex;
@@ -250,36 +220,18 @@ void USBCDC_DataRecv(void)
             cdc_vs.rxCb(p, len);
         }
 #endif
-#if	(USB_CDC_MAX_RX_BLK_SIZE > 64)
+#if (USB_CDC_MAX_RX_BLK_SIZE > 64)
     }
     else {
-        reg_irq_src3 = BIT(0); // Clear FLD_IRQ_USB_250US_EN flag
+    	reg_irq_mask &= ~FLD_IRQ_USB_250US_EN; // Clear FLD_IRQ_USB_250US_EN flag
+        reg_irq_src = FLD_IRQ_USB_250US_EN;
         // rx timeout = 3 -> 500..750 us (не работает на всех USB, надо больше!)
         // 1.75 ms (ModbusRTU?) -> USBCDC_RecvTimeoutCb
         usb_flg_rx_timeot = USB_RX_LAST64BLK_TIMEOUT/250;
-    	reg_irq_mask3 |= BIT(0); // reg_irq_mask |= FLD_IRQ_USB_250US_EN
+    	reg_irq_mask |= FLD_IRQ_USB_250US_EN;
     }
 #endif
     USBHW_DataEpAck(CDC_RX_EPNUM);
-}
-
-/**
- * @brief This function used to send one byte to host
- * @param   none
- * @return 1: send out successfully 0: the USB interface is busy
- */
-SECTION_USB_CODE
-unsigned char usbWriteByte(u8 byte){
-	if (USBHW_IsEpBusy(CDC_TX_EPNUM)) {
-		/* Return to wait IRQ come again */
-		return 0;
-	}
-	reg_usb_ep_ptr(CDC_TX_EPNUM) = 0;
-	reg_usb_ep_dat(CDC_TX_EPNUM) = byte;
-	/* Write ACK */
-	reg_usb_ep_ctrl(CDC_TX_EPNUM) = FLD_EP_DAT_ACK;        // ACK
-	while(USBHW_IsEpBusy(CDC_TX_EPNUM));
-	return 1;
 }
 
 /**
@@ -288,7 +240,8 @@ unsigned char usbWriteByte(u8 byte){
  * @return the length of the data send out
  * Called from Irq (!)
  */
-SECTION_USB_CODE
+//SECTION_USB_CODE
+_attribute_ram_code_
 unsigned int USBCDC_BulkDataSend(void)
 {
 	unsigned int i, len;
@@ -298,8 +251,10 @@ unsigned int USBCDC_BulkDataSend(void)
    		/* Return to wait IRQ come again */
         return 0;
     }
+
+    reg_usb_ep_ptr(CDC_TX_EPNUM) = 0;
+
     if (cdc_vs.txBuf == NULL) {
-		reg_usb_ep_ptr(CDC_TX_EPNUM) = 0;
 		reg_usb_ep_ctrl(CDC_TX_EPNUM) = FLD_EP_DAT_ACK;        // ACK
         return 0;
     }
@@ -308,11 +263,9 @@ unsigned int USBCDC_BulkDataSend(void)
 
     cdc_vs.lenToSend -= len;
 
-    reg_usb_ep_ptr(CDC_TX_EPNUM) = 0;
-    if (cdc_vs.txBuf)
-    	/* Write data to USB fifo */
-    	for (i = 0; i < len; i++) {
-    		reg_usb_ep_dat(CDC_TX_EPNUM) = cdc_vs.txBuf[cdc_vs.lastSendIndex++];
+   	/* Write data to USB fifo */
+   	for (i = 0; i < len; i++) {
+   		reg_usb_ep_dat(CDC_TX_EPNUM) = cdc_vs.txBuf[cdc_vs.lastSendIndex++];
     }
 
     /* Write ACK */
@@ -320,6 +273,7 @@ unsigned int USBCDC_BulkDataSend(void)
     /* TX transaction finish */
     if (cdc_vs.lenToSend == 0) {
    		cdc_vs.lastSendIndex = 0;
+  		cdc_vs.txBuf = NULL;
 #ifdef USB_TX_CALLBACK
    		USB_TX_CALLBACK;
 #else
@@ -327,7 +281,6 @@ unsigned int USBCDC_BulkDataSend(void)
    			cdc_vs.txCb(len);
    		}
 #endif
-  		cdc_vs.txBuf = NULL;
     }
     return len;
 }

@@ -1,8 +1,17 @@
-## USB2SWire Source Code v 0.0.0.2
+## USB2SWire Source Code ver 0.0.0.5
 
 Chip TLSR8269 
 
-[Module EBYTE E104-BT10-G/N](http://www.ebyte.com/en/product-view-news.aspx?id=616)
+[Module EBYTE ET180-Z6907A](https://www.ebyte.com/product/845.html)
+
+https://aliexpress.ru/item/1005008700896018.html
+
+[Module EBYTE E104-BT10-G/N](https://www.ebyte.com/news/602.html)
+
+
+PE2 - USB_DM
+
+PE3 - USB_DP
 
 PA7 - SWM
 

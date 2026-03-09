@@ -8,7 +8,7 @@
 #ifndef MAIN_H_
 #define MAIN_H_
 //-------------------------------
-#define VERSION_BCD 0x0003 // 0x1234 -> Ver 1.2.3.4
+#define VERSION_BCD 0x0005 // 0x1234 -> Ver 1.2.3.4
 //-------------------------------
 #define USE_IO_CRC			1
 //-------------------------------
@@ -19,10 +19,10 @@
 //-------------------------------
 
 
-enum{
+typedef enum {
 	CMD_FUNCS = 0,				//0
 	CMD_FLASH_READ,				//1
-	CMD_FLASH_WRITE,			//2
+	CMD_FLASH_WRITE,			//2  Flash write (max 256 bytes)
 	CMD_FLASH_SECT_ERASE,		//3
 	CMD_FLASH_ALL_ERASE,		//4
 	CMD_FLASH_GET_JEDEC_ID,		//5
@@ -34,19 +34,21 @@ enum{
 	CMD_SWIRE_FIFO_READ,		//b
 	CMD_SWIRE_FIFO_FWRITE,		//c
 	CMD_FLASH_WRRD,				//d
-	CMD_FLASH_RDCRC				//e Flash read CRC16 (blk max 1024 bytes)
-};
+	CMD_FLASH_RDCRC,			//e Flash read CRC16 (blk max 1024 bytes)
+	CMD_SDI_PRINT,				//f
+	CMD_WAIT_RESP				//10
+} E_CMD_t;
 
-enum{
+typedef enum {
 	CMDF_GET_VERSION = 0,		//0
 	CMDF_MCU_REBOOT,			//1
 	CMDF_SWIRE_CFG,				//2
 	CMDF_EXT_POWER,				//3
 	CMDF_SWIRE_ACTIVATE,		//4
-	CMDF_UART_BAUD				//5
-};
+	CMDF_UART_BAUD,				//5
+} E_CMDF_t;
 
-enum{
+typedef enum {
 	ERR_NONE = 0,	//0 Errors None
 	ERR_FUNC,		//1 Function number error
 	ERR_LEN,		//2 Data length error
@@ -54,7 +56,7 @@ enum{
 	ERR_BUSY, 		//4 Timeout flag while reading analog register
 	ERR_CRC,		//5 Error CRC
 	ERR_BAUD		//6 Invalid baud rate number
-};
+} E_ERR_t;
 
 typedef union __attribute__((packed)) _blk_head_t {
 	struct __attribute__((packed)) {
@@ -130,7 +132,16 @@ typedef struct _dma_uart_buf_t {
 	};
 }dma_uart_buf_t;
 
+typedef struct _sws_pintf_buf_t {
+	volatile unsigned int len;
+	unsigned char data[254];
+	volatile unsigned char busy;
+}sws_pintf_buf_t;
+
 extern dma_uart_buf_t urxb;
 extern dma_uart_buf_t utxb;
+
+void USBCDC_reset(void);
+void USBCDC_dtr_rts(unsigned short dtr_rts);
 
 #endif /* MAIN_H_ */

@@ -11,12 +11,12 @@
 #include "app_config.h"
 
 //------------- USB Config -------------------//
-#define USB_CDC_MAX_RX_BLK_SIZE (DATA_BUFF_SIZE+6)
+#define USB_CDC_MAX_RX_BLK_SIZE (DATA_BUFF_SIZE+8)
 
 //------- USB product Information ------------//
 #define STRING_VENDOR        L"Telink"
 #define STRING_PRODUCT       L"USB2SWIRE"
-#define STRING_SERIAL        L"ver_0002"
+#define STRING_SERIAL        L"ver_0005"
 #define USB_MAX_POWER		 50 // mA
 #define USB_VID		0x248a
 #define USB_PID		0x8269
@@ -35,6 +35,9 @@ void USBCDC_RxCb(unsigned char *data, unsigned int len);
 
 #define USB_RX_CALLBACK USBCDC_RxCb(p, len)
 #define USB_TX_CALLBACK {utxb.len = 0;}
+#define USB_RESET() USBCDC_reset();
+#define USB_PWDN() USBCDC_reset();
+#define USB_SET_CTRL_UART(a) USBCDC_dtr_rts(a);
 
 #define SECTION_USB_CODE _attribute_ram_code_
 #define SECTION_USB_CONST const

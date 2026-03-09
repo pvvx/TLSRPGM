@@ -35,6 +35,28 @@ uart_tab_baud_t uart_tab_baud[] = {
 	{3,3},	//7 2000000 // 32000000/(3+1)/(3+1)=2000000
 	{3,1}	//8 3200000 // 32000000/(4+1)/(1+1)=3200000
 };
+//----------------------- CMD_SDI_PRINT --------
+
+typedef enum {
+	FLG_CMD_DONE =	0,
+	FLG_CMD_SDI_PRINT,
+	FLG_CMD_WAIT_RESP
+} E_FLG_CMD_t;
+
+sws_pintf_buf_t sws_pr_txb;
+
+//----------------------- CMD_WAIT_RESP --------
+
+struct {
+	 u32 len;
+	 u32 addr;
+	 u8 data[4];
+} wrsp_buf;
+
+//--------- CMD_SDI_PRINT, CMD_WAIT_RESP --------
+
+volatile E_FLG_CMD_t flg_wait_rx; // flag = 1 - SWS Print enable, = 2 Wait Response
+
 //-------------------------------
 dma_uart_buf_t urxb = {.len = 0};
 dma_uart_buf_t utxb = {.len = 0};
@@ -79,6 +101,41 @@ _attribute_ram_code_ void swire_fcmd(unsigned char fcmd) {
 	swire_write_bytes(0x000c, &tmp, 1); //[0x0c] send fwrite enable command
 	_swire_set_fcs_hi();
 }
+
+_attribute_ram_code_ unsigned int read_flash(unsigned int faddr, unsigned char *pbuf, unsigned int cnt) {
+
+	unsigned int rxlen;
+
+	_swire_fcmd_faddr(FLASH_READ_CMD, faddr); 		// send flash read command + faddr
+	// spi read
+	rxlen = (FLD_MASTER_SPI_RD | FLD_MASTER_SPI_SDO) << 8;	// [0x0d]=0x0a set auto read mode
+	swire_write_bytes(0x000c, (unsigned char *)&rxlen, 2); 	//[0x0c] = 0 launch first read, [0x0d]=x set auto read mode
+
+	if(cnt == 1)
+		rxlen = swire_read_bytes(0x000c, pbuf, cnt);
+	else // swire fifo read
+		rxlen = swire_fifo_read(0x000c, pbuf, cnt);
+
+	_swire_set_fcs_hi(); // flash chip select hi
+	return rxlen;
+}
+
+_attribute_ram_code_ unsigned int task_sws_print(unsigned int argv, unsigned char *pbuf) {
+	unsigned int rxlen = 0;
+	unsigned char out = 0;
+	if(swire_read_bytes(argv, &out, 1)) {
+		if(out != 0 && out != 0xff){
+			rxlen = swire_read_bytes(argv+1, pbuf, out);
+			if(rxlen == out) {
+				out = 0;
+				swire_write_bytes(argv, &out, 1);
+			} else
+				rxlen = 0;
+		}
+	}
+	return rxlen;
+}
+
 //-------------------------------
 
 
@@ -120,7 +177,26 @@ void irq_handler(void){
 }
 #endif // USE_USB_CDC
 
+_attribute_ram_code_
+void USBCDC_reset(void) {
+	cdc_vs.txBuf = NULL;
+	cdc_vs.lastSendIndex = 0;
+	cdc_vs.lenToSend = 0;
+	utxb.len = 0;
+	cdc_vs.lastRecvIndex = 0;
+	urxb.len = 0;
+	cdc_vs.rxBuf = (unsigned char *)&urxb.uc;
+}
 
+_attribute_ram_code_
+void USBCDC_dtr_rts(unsigned short dtr_rts) {
+	if((dtr_rts & 2) == 0) {	// bit0: DTR,  bit1: RTS
+		USBCDC_reset();
+	}
+}
+
+
+/*
 _attribute_ram_code_
 void flash_write_sector(u32 addr, u32 len, u8 *buf) {
 	u32 sz = 256;
@@ -132,6 +208,8 @@ void flash_write_sector(u32 addr, u32 len, u8 *buf) {
 		len -= sz;
 	}
 }
+*/
+
 #if USE_INT_UART
 _attribute_ram_code_
 inline void uart_init(void) {
@@ -157,27 +235,22 @@ inline void uart_init(void) {
 }
 #endif
 
-_attribute_ram_code_ unsigned int read_flash(unsigned int faddr, unsigned char *pbuf, unsigned int cnt) {
-
-	unsigned int rxlen;
-
-	_swire_fcmd_faddr(FLASH_READ_CMD, faddr); 		// send flash read command + faddr
-	// spi read
-	rxlen = (FLD_MASTER_SPI_RD | FLD_MASTER_SPI_SDO) << 8;	// [0x0d]=0x0a set auto read mode
-	swire_write_bytes(0x000c, (unsigned char *)&rxlen, 2); 	//[0x0c] = 0 launch first read, [0x0d]=x set auto read mode
-
-	if(cnt == 1)
-		rxlen = swire_read_bytes(0x000c, pbuf, cnt);
-	else // swire fifo read
-		rxlen = swire_fifo_read(0x000c, pbuf, cnt);
-
-	_swire_set_fcs_hi(); // flash chip select hi
-	return rxlen;
-}
 
 
 _attribute_ram_code_
 int main (void) {
+	union {
+		unsigned int  ud;
+		unsigned char uw[2];
+		unsigned char uc[4];
+	} tmp = {
+		.ud = 0
+	};
+	unsigned int rxlen = 0;
+	unsigned int argv = 0;
+#if USE_IO_CRC
+	u16 crc16;
+#endif
 	reg_irq_en = 0;
 	// Open clk for MCU running
 	REG_ADDR8(0x60) = 0x00;
@@ -284,7 +357,7 @@ int main (void) {
 		BM_CLR(reg_gpio_oen(GPIO_POWER), GPIO_POWER & 0xff);
 		BM_SET(reg_gpio_ds(GPIO_POWER), GPIO_POWER & 0xFF); // hi Drive strength
 		// Init GPIO_SWM
-		// reg_swire_clk_div = CLOCK_SYS_CLOCK_HZ/5/960000;
+		reg_swire_clk_div = 6; // (CLOCK_SYS_CLOCK_HZ + ((5*960000)/2))/(5*960000);
 		BM_CLR(reg_gpio_gpio_func(GPIO_SWM), GPIO_SWM & 0xff); // Pin SWM disable as gpio
 		// usb_dp_pullup_disable();
 		// USB-DM: PULL_WAKEUP_SRC_PE2 PM_PIN_PULLDOWN_100K, PULL_WAKEUP_SRC_PE3 PM_PIN_UP_DOWN_FLOAT
@@ -316,14 +389,59 @@ int main (void) {
 	reg_irq_en = 1; // irq_enable();
 #endif // USE_USB_CDC
 	/////////////////////////// app floader /////////////////////////////
-#if USE_IO_CRC
-	u16 crc16;
-#endif
 	while(1) {
+		if(flg_wait_rx) {
+			if(utxb.len == 0) { // tx done
+				while(flg_wait_rx == FLG_CMD_SDI_PRINT) {
+					if(sws_pr_txb.len == 0) {
+						sws_pr_txb.len = task_sws_print(argv, sws_pr_txb.data);
+					}
+					if(utxb.len == 0) {
+						if(sws_pr_txb.len) {
+							memcpy(utxb.uc, sws_pr_txb.data, sws_pr_txb.len);
+							utxb.len = sws_pr_txb.len;
+							sws_pr_txb.len = 0;
+							USBCDC_DataSend((unsigned char *)&utxb.uc, utxb.len);
+						}
+					}
+					if(urxb.len) { // new command?
+						flg_wait_rx = FLG_CMD_DONE; // clear flag sws_print
+						break;
+					}
+				}
+				while(flg_wait_rx == FLG_CMD_WAIT_RESP) { // CMD_WAIT_RESP
+					utxb.pkt.head.count = swire_read_bytes(argv, utxb.pkt.data, 4);
+					if(utxb.pkt.head.count == 4) {
+						if(wrsp_buf.len)
+							swire_write_bytes(wrsp_buf.addr, wrsp_buf.data, wrsp_buf.len);
+						flg_wait_rx = FLG_CMD_DONE; // clear flag sws_print
+						// send 4 bytes
+						utxb.len = sizeof(utxb.pkt.head) + 4;
+#if USE_IO_CRC
+						crc16 = crcFast(utxb.uc, utxb.len);
+						utxb.uc[utxb.len++] = crc16;
+						utxb.uc[utxb.len++] = crc16 >> 8;
+#endif // USE_IO_CRC
+						USBCDC_DataSend((unsigned char *)&utxb.uc, utxb.len);
+						while(utxb.len == 0) { // wait tx done
+							if(urxb.len) {
+								flg_wait_rx = FLG_CMD_DONE; // clear flag
+								break;
+							}
+						}
+					}
+					if(urxb.len) { // new command?
+						flg_wait_rx = FLG_CMD_DONE; // clear flag
+						break;
+					}
+				}
+			}
+		}
+
 #if (USE_USB_CDC)
 //		if(usb_flg & 1) { // USB-COM Open: DTR = 1
 		{
-			if(utxb.len == 0 && urxb.len) { // new command?
+			if(utxb.len == 0 && urxb.len) { // tx done & new command?
 #endif // USE_USB_CDC
 #if	(USE_INT_UART)
 		if((reg_dma_tx_rdy0 & FLD_DMA_CHN_UART_TX) == 0) {
@@ -334,12 +452,7 @@ int main (void) {
 			}
 			if(reg_dma_irq_src & FLD_DMA_IRQ_UART_RX) { // new command?
 #endif // USE_INT_UART
-				union {
-					unsigned int  ud;
-					unsigned char uw[2];
-					unsigned char uc[4];
-				}tmp;
-				unsigned int rxlen = urxb.len;
+				rxlen = urxb.len;
 				utxb.len = sizeof(utxb.pkt.head);
 				utxb.pkt.head.ud = urxb.pkt.head.cmd;	// err = 0, len = 0
 				if(rxlen < sizeof(urxb.pkt.head)
@@ -358,7 +471,7 @@ int main (void) {
 					{
 #endif // USE_IO_CRC
 						urxb.uc[rxlen] = 0;
-						u32 argv = urxb.pkt.head.b.argv;
+						argv = urxb.pkt.head.b.argv;
 #if USE_IO_CRC
 						rxlen -= sizeof(urxb.pkt.head) + 2;
 #else // USE_IO_CRC
@@ -580,6 +693,29 @@ int main (void) {
 									utxb.pkt.head.err = ERR_READ;
 								else
 									utxb.pkt.head.count = crcFast(utxb.pkt.data, rxlen);
+								break;
+							case CMD_SDI_PRINT:
+								if(rxlen > sizeof(urxb.pkt.data))
+									utxb.pkt.head.err = ERR_LEN;
+								else {
+									if(rxlen != 0)
+										utxb.pkt.head.count = swire_write_bytes(argv, urxb.pkt.data, rxlen);
+									sws_pr_txb.len = 0;
+									flg_wait_rx = FLG_CMD_SDI_PRINT;
+								}
+								break;
+							case CMD_WAIT_RESP: // Waiting for a response & write
+								if(rxlen && (rxlen > 7 || rxlen < 4))
+									utxb.pkt.head.err = ERR_LEN;
+								else {
+									if(rxlen) {
+										memcpy(&wrsp_buf.addr, urxb.pkt.data, 3);
+										wrsp_buf.len = rxlen - 3;
+										memcpy(wrsp_buf.data, &urxb.pkt.data[3], wrsp_buf.len);
+									} else
+										wrsp_buf.len = 0;
+									flg_wait_rx = FLG_CMD_WAIT_RESP;
+								}
 								break;
 							case CMD_FUNCS: // ext. functions
 								argv >>= 8;

@@ -223,9 +223,9 @@ typedef struct {
 #endif
     unsigned char *txBuf; // если NULL - всё предано
     unsigned char *rxBuf; // если NULL - ?
-    unsigned short lastSendIndex; // указатель в txBuf на ещё не переданный байт
-    unsigned short lenToSend; // сколько байт ещё надо передать
-    unsigned short lastRecvIndex; // указатель в rxBuf на ещё не принятый байт
+    unsigned int lastSendIndex; // указатель в txBuf на ещё не переданный байт
+    unsigned int lenToSend; // сколько байт ещё надо передать
+    unsigned int lastRecvIndex; // указатель в rxBuf на ещё не принятый байт
 } USBCDC_Ctrl_t;
 
 extern USBCDC_Ctrl_t cdc_vs;
@@ -266,7 +266,7 @@ unsigned int USBCDC_BulkDataSend(void);
  * @param   none
  * @return none
  */
-void USBCDC_DataRecv(void);
+void USBCDC_DataRecv(unsigned int len);
 
 /**
  * @brief This function initializes the USB CDC device
@@ -312,18 +312,10 @@ static inline unsigned int USBCDC_IsAvailable(void) {
 }
 
 /**
- * @brief This function used to send one byte to host
- * @param   none
- * @return 1: send out successfully 0: the USB interface is busy
- */
-extern unsigned char usbWriteByte(u8 byte);
-
-/**
  * @brief This function used to check whether the Tx of the control endpoint is busy
  * @param   none
  * @return 1: the control endpoint is busy 0: the control endpoint is idle
  */
 extern unsigned char USBCDC_TxBusy(void);
-
 
 #endif // _USB_CDC_H_

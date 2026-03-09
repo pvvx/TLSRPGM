@@ -74,3 +74,6 @@ clean :
 	find $(SOURCE_DIR) -name "*.lst" -exec rm {} \;
 	find ./mcu -name "*.lst" -exec rm {} \;
 	touch Makefile
+
+flash:
+	python3.exe TlsrPgm.py -pCOM6 -u -m we 0 usb2swire.bin

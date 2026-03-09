@@ -10,9 +10,16 @@ Pin PD3 (OUT) --> RESET, Pin PD4 (SWM) <-> SWS, Pin PB4 (OUT) --> Power (max 16 
 ![TB-03F-KIT-TLSRPGM.png](https://github.com/pvvx/TLSRPGM/blob/main/TB-03F-KIT-TLSRPGM.png)   <img width="320" height="269" alt="image" src="https://github.com/user-attachments/assets/0dbcf502-898a-48b4-8801-2f276b43c327" />
 
 >** Option 2:
-Use EBYTE E104-BT10-G / N module or (TLSR8269 chip) for direct USB connection
 
-Pin PB1 (OUT) --> RESET, Pin PA7 (SWM) <-> SWS, Pin PB4 (OUT) --> Power
+TLSR8269 chip for direct USB connection
+
+[Module EBYTE ET180-Z6907A](https://www.ebyte.com/product/845.html)
+
+https://aliexpress.ru/item/1005008700896018.html
+
+[Module EBYTE E104-BT10-G/N](https://www.ebyte.com/news/602.html)
+
+Pin PB1 (OUT) --> RESET, Pin PA7 (SWM) <-> SWS, Pin PB4 (OUT) --> Power, Pin PE2 - USB_DM, PE3 - USB_DP
 
 
 The current version of the 'TlsrPgm.py' program is tested with chips only: TLSR8250, TLSR8251, TLSR8253, TLSR8258, TLSR8266, TLSR8269.
@@ -155,7 +162,7 @@ Set Speed UART PGM board 1500000 bits/s... ok
 ReOpen COM6, 1500000 bit/s... ok
 === PreProcess ========================================
 
-CPU PC=0x00000574          
+CPU PC=0x00000574
 CPU Stall ([0x0602] = 0x06)
 === Process ===========================================
 -------------------------------------------------------

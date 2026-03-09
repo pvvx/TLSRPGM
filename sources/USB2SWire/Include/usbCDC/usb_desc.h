@@ -48,12 +48,12 @@
 /** Size in bytes of the CDC data IN and OUT endpoints. */
 #define CDC_TXRX_EPSIZE                64
 
-enum {
+typedef enum {
     USB_STRING_LANGUAGE = 0,
     USB_STRING_VENDOR,
     USB_STRING_PRODUCT,
     USB_STRING_SERIAL,
-};
+} USB_STRING_E;
 
 // interface id
 typedef enum {
@@ -65,8 +65,8 @@ typedef enum {
 typedef struct {
     // CDC Control Interface
     USB_CDC_Descriptor_FunctionalHeader_t    CDC_Functional_Header;
-    USB_CDC_Descriptor_FunctionalACM_t       CDC_Functional_ACM;
     USB_CDC_Descriptor_FunctionalUnion_t     CDC_Functional_Union;
+    USB_CDC_Descriptor_FunctionalACM_t       CDC_Functional_ACM;
     USB_CDC_Descriptor_FunctionalUnion_t     CDC_Functional_CallManagement;
     USB_Descriptor_Endpoint_t                CDC_NotificationEndpoint;
 

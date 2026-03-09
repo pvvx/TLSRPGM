@@ -1,0 +1,1 @@
+python3 TlsrComProg.py -p /dev/ttyUSB0 -t500 we 0 ./uart2swire.bin
