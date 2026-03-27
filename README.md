@@ -13,20 +13,14 @@ Pin PD3 (OUT) --> RESET, Pin PD4 (SWM) <-> SWS, Pin PB4 (OUT) --> Power (max 16 
 
 TLSR8269 chip for direct USB connection
 
-[Module EBYTE ET180-Z6907A](https://www.ebyte.com/product/845.html)
-
-https://aliexpress.ru/item/1005008700896018.html
-
-<img width="444" height="586" alt="image" src="https://github.com/user-attachments/assets/9db2b5aa-7563-4f99-808e-9465d65ef6e1" />
-
-Pin PB1 (OUT) --> RESET, Pin PA7 (SWM) <-> SWS, Pin PB4 (OUT) --> Power, Pin PE2 - USB_DM, PE3 - USB_DP
+[Module EBYTE ET180-Z6907A](https://www.ebyte.com/product/845.html) https://aliexpress.ru/item/1005008700896018.html
 
 [Module EBYTE E104-BT10-G/N](https://www.ebyte.com/news/602.html)
 
+<img width="444" height="586" alt="image" src="https://github.com/user-attachments/assets/9db2b5aa-7563-4f99-808e-9465d65ef6e1" />
 <img width="430" height="469" alt="image" src="https://github.com/user-attachments/assets/2498fd8e-01fe-479d-9f38-b1e36d5f2ccb" />
 
 Pin PB1 (OUT) --> RESET, Pin PA7 (SWM) <-> SWS, Pin PB4 (OUT) --> Power, Pin PE2 - USB_DM, PE3 - USB_DP
-
 
 The current version of the 'TlsrPgm.py' program is tested with chips only: TLSR8250, TLSR8251, TLSR8253, TLSR8258, TLSR8266, TLSR8269.
 The firmware for the module works with all types of TLSR82xx chips via SWM-SWS connection.
