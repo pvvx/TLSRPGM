@@ -17,6 +17,10 @@ TLSR8269 chip for direct USB connection
 
 https://aliexpress.ru/item/1005008700896018.html
 
+<img width="444" height="586" alt="image" src="https://github.com/user-attachments/assets/9db2b5aa-7563-4f99-808e-9465d65ef6e1" />
+
+Pin PB1 (OUT) --> RESET, Pin PA7 (SWM) <-> SWS, Pin PB4 (OUT) --> Power, Pin PE2 - USB_DM, PE3 - USB_DP
+
 [Module EBYTE E104-BT10-G/N](https://www.ebyte.com/news/602.html)
 
 <img width="430" height="469" alt="image" src="https://github.com/user-attachments/assets/2498fd8e-01fe-479d-9f38-b1e36d5f2ccb" />
