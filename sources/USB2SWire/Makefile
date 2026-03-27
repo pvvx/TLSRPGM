@@ -1,79 +1,182 @@
-# Makefile
 
-TARGET  = usb2swire
+PROJECT_NAME ?= usb2sw_et104bt10
+VERSION_BIN ?=
 
-# This assumes that you install Telink toolchain for Windows, MacOS or Linux
-# Under Windows you will be using MingW/Msys environment
-#
-GCCPATH = /opt/tc32/bin/tc32
-AS      = $(GCCPATH)-elf-as
-CC      = $(GCCPATH)-elf-gcc
-LD      = $(GCCPATH)-elf-ld
-NM      = $(GCCPATH)-elf-nm
-OBJCOPY = $(GCCPATH)-elf-objcopy
-OBJDUMP = $(GCCPATH)-elf-objdump
-ARCH	= $(GCCPATH)-elf-ar
-SIZE	= $(GCCPATH)-elf-size
+# E104_BT10 set POJECT_DEF=-DSET_PLL=QUARTZ_12MHZ 
+# E180_Z6907A set POJECT_DEF=-DSET_PLL=QUARTZ_12MHZ 
+
+PGM_PORT?=COM15
+PGM_PORT_BAUD?=1500000
+
+PROJECT_PATH ?= .
+SRC_DIR ?= /src
+MAKE_PATH ?= ./make
+OUT_PATH ?=./build
+BIN_PATH ?=./bin
+LS_FLAGS ?= $(SRC_PATH)/boot.link
+LIBS ?=
+TEL_PATH ?= .
+
+SRC_PATH ?= $(PROJECT_PATH)$(SRC_DIR)
+
+OBJ_SRCS :=
+S_SRCS :=
+ASM_SRCS :=
+C_SRCS :=
+S_UPPER_SRCS :=
+O_SRCS :=
+FLASH_IMAGE :=
+ELFS :=
+OBJS :=
+LST :=
+OUT_DIR :=
+
+COMPILEOS = $(shell uname -o)
+LINUX_OS = GNU/Linux
+
+ifeq ($(COMPILEOS),$(LINUX_OS))
+	PYTHON ?= python3
+	CUR_OS := linux
+	TOOLS_PATH := $(TEL_PATH)/tools/linux
+else
+	PYTHON ?= python
+	CUR_OS := windows
+	TOOLS_PATH := $(TEL_PATH)/tools/windows
+ifeq ($(TOOLS_PATH)tc32/bin/tc32-elf-gcc.exe, $(wildcard $(TOOLS_PATH)tc32/bin/tc32-elf-gcc.exe))
+	TC32_PATH := $(TOOLS_PATH)tc32/bin/
+endif
+endif
+
+LNK_FLAGS := --gc-sections -nostartfiles
+
+GCC_FLAGS := \
+-O2 \
+-ffunction-sections \
+-fdata-sections \
+-Wall \
+-fpack-struct \
+-fshort-enums \
+-finline-small-functions \
+-std=gnu99 \
+-funsigned-char \
+-fshort-wchar \
+-fms-extensions \
+-nostartfiles \
+-nostdlib
+
+ASM_FLAGS := \
+-fomit-frame-pointer \
+-fshort-enums \
+-Wall \
+-Wpacked \
+-Wcast-align \
+-fdata-sections \
+-ffunction-sections \
+-fno-use-cxa-atexit \
+-fno-rtti \
+-fno-threadsafe-statics
 
 
-CRT0=./mcu/cstartup_826x.S
+GCC_FLAGS += $(POJECT_DEF)
 
-WARNINGS=-Wall -Wextra -Wshadow -Wpointer-arith -Wbad-function-cast -Wcast-align -Wsign-compare \
-		-Waggregate-return -Wunused
+-include $(SRC_PATH)/src.mk
 
-OTHER_CFLAGS= -fdata-sections -ffunction-sections \
--fpack-struct -fshort-enums -finline-small-functions -fshort-wchar -fms-extensions
+INCLUDE_PATHS := -I$(INC_PATH) 
 
-CFLAGS= -O2 $(WARNINGS) $(OTHER_CFLAGS) -std=gnu99 -I. -I./Include
-	
-LDFLAGS = --gc-sections -T ./boot.link
+# Add inputs and outputs from these tool invocations to the build variables
+LST_FILE := $(OUT_PATH)/$(PROJECT_NAME).lst
+BIN_FILE := $(BIN_PATH)/$(PROJECT_NAME)$(VERSION_BIN).bin
+ELF_FILE := $(OUT_PATH)/$(PROJECT_NAME).elf
 
-SOURCE_DIR=./Source
+SIZEDUMMY := sizedummy
 
-TC32_SRC = \
-$(SOURCE_DIR)/main.c \
-$(SOURCE_DIR)/swire.c \
-$(SOURCE_DIR)/crc.c \
-$(SOURCE_DIR)/utils.c \
-$(SOURCE_DIR)/analog.c \
-$(SOURCE_DIR)/flash.c \
-$(SOURCE_DIR)/usbCDC/usb_cdc.c \
-$(SOURCE_DIR)/usbCDC/usb_ctrl.c \
-$(SOURCE_DIR)/usbCDC/usb_desc.c \
-$(SOURCE_DIR)/usbCDC/usb_hw.c 
+# All Target
+all: pre-build main-build
 
-#
-# Define all object files.
-#
-TC32_OBJ = $(TC32_SRC:.c=.o)
-CRT0_OBJ = $(CRT0:.S=.o)
+# Main-build Target
+main-build: $(ELF_FILE) secondary-outputs
 
-shws: $(TARGET).elf
-	python TlsrMemInfo.py $<
+OBJ_LIST := $(OBJS) $(USER_OBJS)
+# Tool invocations
+$(ELF_FILE): $(OBJ_LIST)
+	@echo 'Building Standard target: $@'
+	@$(TC32_PATH)tc32-elf-ld $(LNK_FLAGS) $(LS_INCLUDE) -T$(LS_FLAGS) -o $(ELF_FILE) $(OBJ_LIST) $(LIBS)
+	@echo 'Finished building target: $@'
+	@echo ' '
 
-all: $(TARGET).elf shws
+$(LST_FILE): $(ELF_FILE)
+	@echo 'Invoking: TC32 Create Extended Listing'
+	@$(TC32_PATH)tc32-elf-objdump -x -D -l -S  $(ELF_FILE)  > $(LST_FILE)
+	@echo 'Finished building: $@'
+	@echo ' '
 
-$(TARGET).elf : $(TC32_OBJ) $(CRT0_OBJ)
-	$(LD) $(LDFLAGS) -o $(TARGET).elf $(TC32_OBJ) $(CRT0_OBJ)
-	$(OBJCOPY) -O binary $(TARGET).elf $(TARGET).bin
-	$(OBJDUMP) -x -D -l -S $(TARGET).elf > $(TARGET).lst
-	$(SIZE) --format=SysV -x $(TARGET).elf
+$(BIN_FILE): $(ELF_FILE)
+	@echo 'Create Flash image (binary format)'
+	@echo ' '
+	@$(TC32_PATH)tc32-elf-objcopy -v -O binary $(ELF_FILE) $(BIN_FILE)
+	@echo 'Finished building: $@'
+	@echo ' '
 
-$(TC32_OBJ) : %.o : %.c
-	$(CC) -c $(CFLAGS) $< -o $@
-	$(OBJDUMP) -x -D -l -S $*.o > $*.lst
-	
-$(CRT0_OBJ) : %.o : %.S
-	$(AS) $< -o $@
-	$(OBJDUMP) -x -D -l -S $*.o > $*.lst
-	
-print-%  : ; @echo $* = $($*)
+sizedummy: $(ELF_FILE)
+	@$(PYTHON) $(MAKE_PATH)/TlsrMemInfo.py $(ELF_FILE)
+	@echo ' '
 
-clean :
-	rm -rf $(TC32_OBJ) $(CRT0_OBJ) *.map *.elf 
-	find $(SOURCE_DIR) -name "*.lst" -exec rm {} \;
-	find ./mcu -name "*.lst" -exec rm {} \;
-	touch Makefile
+clean:
+	@$(RM) $(FLASH_IMAGE) $(ELFS) $(OBJS) $(LST) $(SIZEDUMMY) $(ELF_FILE) $(BIN_FILE) $(LST_FILE)
+	@echo 'Clean ...'
+	@echo ' '
 
-flash:
-	python3.exe TlsrPgm.py -pCOM6 -u -m we 0 usb2swire.bin
+pre-build:
+	@mkdir -p $(foreach s,$(OUT_DIR),$(OUT_PATH)$(s))
+	@mkdir -p $(BIN_PATH)
+	@echo ' '
+
+secondary-outputs: $(BIN_FILE) $(OTA_FILE) $(LST_FILE) $(SIZEDUMMY)
+
+
+flash: $(BIN_FILE)
+	@$(PYTHON) $(MAKE_PATH)/TlsrPgm.py -p$(PGM_PORT) -b$(PGM_PORT_BAUD) -u -z15 -a-50 -s we 0 $(BIN_FILE)
+	@$(PYTHON) $(MAKE_PATH)/TlsrPgm.py -p$(PGM_PORT) -b$(PGM_PORT_BAUD) -u -m i
+
+reset:
+	@$(PYTHON) $(MAKE_PATH)/TlsrPgm.py -p$(PGM_PORT) -b$(PGM_PORT_BAUD) -u -z15 -m -w i
+
+erase:
+	@$(PYTHON) $(MAKE_PATH)/TlsrPgm.py -p$(PGM_PORT) -b$(PGM_PORT_BAUD) -u -z15 -s ea
+
+info:
+	@$(PYTHON) $(MAKE_PATH)/TlsrPgm.py -p$(PGM_PORT) -b$(PGM_PORT_BAUD) -u -z15 i
+
+stop:
+	@$(PYTHON) $(MAKE_PATH)/TlsrPgm.py -p$(PGM_PORT) -b$(PGM_PORT_BAUD) -u -z15 -s i
+
+go:
+	@$(PYTHON) $(MAKE_PATH)/TlsrPgm.py -p$(PGM_PORT) -b$(PGM_PORT_BAUD) -u -m
+
+TADDR?=0x20000
+TLEN?=128
+test_damp:
+	@$(PYTHON) $(MAKE_PATH)/TlsrPgm.py -p$(PGM_PORT) -b$(PGM_PORT_BAUD) -u -z10 -c -g ds $(TADDR) $(TLEN)
+
+install: $(SDK_FLAGS) $(TC32_PATH)
+	@echo "SDK & TC32 installed."
+	@echo "Use: make clean"
+	@echo "     make all"
+
+$(TC32_PATH): $(TOOLS_PATH)
+ifneq ($(TC32_PATH),$(wildcard $(TC32_PATH)))
+ifeq (linux,$(CUR_OS))
+	#@wget -P $(TOOLS_PATH) http://shyboy.oss-cn-shenzhen.aliyuncs.com/readonly/tc32_gcc_v2.0.tar.bz2 
+	@tar -xvjf $(TOOLS_PATH)/tc32_gcc_v2.0.tar.bz2 -C $(TOOLS_PATH)
+else
+	@unzip -o $(TOOLS_PATH)/tc32.zip -d $(TOOLS_PATH)
+	@echo Use "Telink IoT Studio"! - http://wiki.telink-semi.cn/wiki/IDE-and-Tools/Telink_IoT_Studio/
+endif
+endif
+
+$(TOOLS_PATH):
+	mkdir -p $(TOOLS_PATH)
+
+
+.PHONY: all clean
+.SECONDARY: main-build
