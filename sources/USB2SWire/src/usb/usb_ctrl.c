@@ -358,6 +358,7 @@ static inline void USB_InterruptInit(void)
 		;
 }
 
+
 /**
  * @brief This function initializes the USB interface
  * @param   none

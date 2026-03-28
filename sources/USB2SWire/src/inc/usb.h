@@ -15,9 +15,13 @@
 
 //------- USB product Information ------------//
 #define STRING_VENDOR        L"Telink"
-#define STRING_PRODUCT       L"USB2SWIRE"
-#define STRING_SERIAL        L"ver_0005"
-#define USB_MAX_POWER		 50 // mA
+#define STRING_PRODUCT       L"TLSRPGM"
+#if SET_PLL == QUARTZ_12MHZ
+#define STRING_SERIAL        L"v0.0.0.6_12MHz"
+#else
+#define STRING_SERIAL        L"v0.0.0.6_16MHz"
+#endif
+#define USB_MAX_POWER		 250 // mA
 #define USB_VID		0x248a
 #define USB_PID		0x8269
 

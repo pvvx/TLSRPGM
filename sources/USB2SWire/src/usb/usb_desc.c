@@ -30,7 +30,7 @@
 #define USB_PID		0x8267
 #endif
 #ifndef USB_MAX_POWER
-#define USB_MAX_POWER 	50 // mA
+#define USB_MAX_POWER 	200 // mA
 #endif
 
 
@@ -58,17 +58,10 @@ SECTION_USB_CONST
 USB_Descriptor_Device_t device_desc = {
     { sizeof(USB_Descriptor_Device_t), DTYPE_Device }, // Header
     
-#if 0
-    0x0110, // USBSpecification, USB 1.1
-    0xEF, // Class
-    0x02, // SubClass
-    0x01, // Protocol
-#else
-    0x0200, // USBSpecification, USB 2.0
+    0x0110, // USBSpecification, USB 2.0
     0x02, // Class: Communications and CDC Control
     0x00, // SubClass
     0x00, // Protocol: No class specific protocol required
-#endif
     8, // Endpoint0 Size, Maximum Packet Size for Zero Endpoint. Valid Sizes are 8, 16, 32, 64
 	USB_VID, // VendorID
 	USB_PID, // Product ID

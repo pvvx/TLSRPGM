@@ -10,10 +10,9 @@ extern "C" {
 #define USE_USB_CDC			1
 #define USE_INT_UART		(!USE_USB_CDC)
 //-------------------------------
-#define SWIRE_OFF 0
-
+#define SWIRE_OFF 	0
 //-------------- UART Config -----------------//
-#define UART_BAUD 			230400 	// 115200 or 230400
+#define UART_BAUD 	230400 	// 115200 or 230400
 
 //-------- GPIO Config -------------//
 #define GPIO_DM    GPIO_PE2
@@ -23,6 +22,11 @@ extern "C" {
 #define GPIO_TX    GPIO_PC2
 #define GPIO_RX    GPIO_PC3
 #define GPIO_RESET GPIO_PB1
+/* GPIO_POWER:
+ * All the pins support maximum drive level of 4mA (“DS”=1) and minimal drive
+ * level of 0.7mA (“DS”=0) with the following exceptions:
+ * PE1 and PE0: maximum=16mA (“DS”=1), minimum=12mA (“DS”=0)
+ * PE3 and PE2: maximum=12mA (“DS”=1), minimum=8mA (“DS”=0) */
 #define GPIO_POWER GPIO_PC4
 
 #define CLR_GPIO_RESET() BM_CLR(reg_gpio_oen(GPIO_RESET), GPIO_RESET & 0xff) // Pin RST = "0"
@@ -53,7 +57,7 @@ extern "C" {
 // E104_BT10-N/G module Quartz = 16 MHz!
 // E180_Z6907A module Quartz = 12 MHz!
 #ifndef SET_PLL
-#define SET_PLL  QUARTZ_16MHZ	// QUARTZ_16MHZ, QUARTZ_12MHZ
+#define SET_PLL  QUARTZ_12MHZ	// QUARTZ_16MHZ, QUARTZ_12MHZ
 #endif
 
 /////////////////// watchdog  ///////////////////////
