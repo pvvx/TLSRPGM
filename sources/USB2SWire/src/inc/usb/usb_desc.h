@@ -86,7 +86,11 @@ typedef struct {
 extern SECTION_USB_CONST USB_Descriptor_String_t language_desc;
 extern SECTION_USB_CONST USB_Descriptor_String_t vendor_desc;
 extern SECTION_USB_CONST USB_Descriptor_String_t product_desc;
+#if USE_FLASH_SERIAL_UID
+extern USB_Descriptor_String_t serial_desc;
+#else
 extern SECTION_USB_CONST USB_Descriptor_String_t serial_desc;
+#endif
 extern SECTION_USB_CONST USB_Descriptor_Device_t device_desc;
 extern SECTION_USB_CONST USB_Descriptor_Configuration_t configuration_desc;
 
@@ -122,5 +126,7 @@ inline unsigned char *USBDESC_CdcInfGet(void)
 {
 	return (unsigned char*) (&configuration_desc.cdc_interface);
 }
+
+void set_usb_serial(void);
 
 #endif // _USB_DESC_H_

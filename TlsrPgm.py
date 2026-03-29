@@ -17,7 +17,7 @@ import io
 
 __progname__ = 'TLSR82xx TlsrPgm'
 __filename__ = 'TlsrPgm'
-__version__ = '23.03.26'
+__version__ = '29.03.26'
 
 DEFAULT_UART_BAUD = 230400
 
@@ -464,24 +464,36 @@ class TLSRPGM:
 		print('CPU PC=0x%08x' % self.ext_pc, '([0x0602] = 0x%02x)' % data[4])
 		return True
 	# Dump Ext. Chip regs
-	def DumpChipRegs(self, offset = 0x60, rdsize = 0x20):
-		data = self.command(struct.pack('<BBHH', self.CMD_SWIRE_READ, offset & 0xff, (offset>>8) & 0xffff, rdsize), rdsize+6)
-		if data == None or self.wcnt != rdsize:
-			print('\rError Read SWire data! (%d)' % self.err, file=sys.stderr) 
-			return False
+	def DumpChipRegs(self, offset = 0x60, size = 0x20):
 		print('-------------------------------------------------------')
 		print('\rREGISTERS:')
-		hex_dump(offset, data[4:rdsize+4])
+		rdsize = self.MAX_BUF_READ_SIZE
+		while size > 0:
+			if rdsize > size:
+				rdsize = size
+			data = self.command(struct.pack('<BBHH', self.CMD_SWIRE_READ, offset & 0xff, (offset>>8) & 0xffff, rdsize), rdsize+6)
+			if data == None or self.wcnt != rdsize:
+				print('\rError Read SWire data! (%d)' % self.err, file=sys.stderr) 
+				return False
+			hex_dump(offset, data[4:rdsize+4])
+			offset += rdsize
+			size -= rdsize
 		return True
 	# Dump Ext. Chip Flash
-	def DumpChipFlash(self, offset = 0x0, rdsize = 0x20):
-		data = self.command(struct.pack('<BBHH', self.CMD_FLASH_READ, offset & 0xff, (offset>>8) & 0xffff, rdsize), rdsize+6)
-		if data == None or self.wcnt != rdsize:
-			print('\rError Read SWire data! (%d)' % self.err, file=sys.stderr) 
-			return False
+	def DumpChipFlash(self, offset = 0x0, size = 0x20):
 		print('-------------------------------------------------------')
 		print('\rFLASH:')
-		hex_dump(offset, data[4:rdsize+4])
+		rdsize = self.MAX_BUF_READ_SIZE
+		while size > 0:
+			if rdsize > size:
+				rdsize = size
+			data = self.command(struct.pack('<BBHH', self.CMD_FLASH_READ, offset & 0xff, (offset>>8) & 0xffff, rdsize), rdsize+6)
+			if data == None or self.wcnt != rdsize:
+				print('\rError Read SWire data! (%d)' % self.err, file=sys.stderr) 
+				return False
+			hex_dump(offset, data[4:rdsize+4])
+			offset += rdsize
+			size -= rdsize
 		return True
 	# Dump Ext. Chip Ana regs
 	def DumpChipARegs(self, offset = 0x0, rdsize = None):
@@ -1095,17 +1107,22 @@ def main():
 		help='Soft Reset (MCU Reboot) (post main processing)',
 		action="store_true")
 	parser.add_argument(
-		'-w', '--wrktime',
-		help='Show Worked Time',
-		action="store_true")
-	parser.add_argument(
 		'-d', '--div',
 		help='Set the SWire transfer rate divisor',
 		type=arg_auto_int,
 		default = 0)
 	parser.add_argument(
+		'-o', '--osws',
+		help='Open SWS Printf (post main processing)',
+		type=arg_auto_int,
+		default = 0)
+	parser.add_argument(
 		'-u', '--u2b',
 		help='Use 2 bytes swire address (TLSR826x)',
+		action="store_true")
+	parser.add_argument(
+		'-w', '--wrktime',
+		help='Show Worked Time',
 		action="store_true")
 	subparsers = parser.add_subparsers(
 			dest='operation',
@@ -1349,7 +1366,7 @@ def main():
 			stream = open(args.filename, 'rb')
 			size = os.path.getsize(args.filename)
 		except:
-			print('Error: Not open input file <%s>!' % args.fldr, file=sys.stderr)
+			print('Error: Not open input file <%s>!' % args.filename, file=sys.stderr)
 			pgm.close()
 			sys.exit(1)
 		ret = False
@@ -1473,9 +1490,13 @@ def main():
 			sys.exit(1)
 	else:
 		print('No action assigned.')
-	if args.run or args.go or args.mrst:
+	if args.run or args.go or args.mrst or args.osws != 0:
 		print('=== Post-Process ======================================')
 	# Commands / flags post main processing
+	if args.osws != 0:
+		if not pgm.SwsPrintf(args.osws):
+			pgm.close()
+			sys.exit(1)
 	if args.run:
 		print('CPU Run...', end = ' ')
 		if not pgm.WriteRegsData(0x602, b'\x88'): # CPU ReBoot

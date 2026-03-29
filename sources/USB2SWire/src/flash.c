@@ -176,13 +176,14 @@ _attribute_ram_code_ void flash_get_jedec_id(u8 *p){
 }
 #endif
 
-#if 0 // USE_FLASH_SERIAL_UID
+#if USE_FLASH_SERIAL_UID
 /**
  * @brief	  Read UID.
  * @param[in] buf   - store UID of flash
  * @return    none.
  */
-_attribute_ram_code_ void flash_read_uid(unsigned char *buf)
+//_attribute_ram_code_
+void flash_read_uid(unsigned char *buf)
 {
 	unsigned char j = 0;
 	unsigned char r = irq_disable();

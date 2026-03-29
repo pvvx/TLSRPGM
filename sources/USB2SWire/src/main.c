@@ -177,7 +177,7 @@ void irq_handler(void){
 }
 #endif // USE_USB_CDC
 
-_attribute_ram_code_
+//_attribute_ram_code_
 void USBCDC_reset(void) {
 	cdc_vs.txBuf = NULL;
 	cdc_vs.lastSendIndex = 0;
@@ -186,12 +186,15 @@ void USBCDC_reset(void) {
 	cdc_vs.lastRecvIndex = 0;
 	urxb.len = 0;
 	cdc_vs.rxBuf = (unsigned char *)&urxb.uc;
+	DISABLE_SWM(); // Pin SWM disable
 }
 
-_attribute_ram_code_
+//_attribute_ram_code_
 void USBCDC_dtr_rts(unsigned short dtr_rts) {
 	if((dtr_rts & 2) == 0) {	// bit0: DTR,  bit1: RTS
 		USBCDC_reset();
+	} else {
+		ENABLE_SWM(); // Pin SWM enable
 	}
 }
 
@@ -347,18 +350,22 @@ int main (void) {
 #define PULL_WAKEUP_SRC_PE3           	PM_PIN_PULLDOWN_100K // PM_PIN_PULLUP_1M  // USB DP
 #endif
 #endif // USE_USB_CDC
-		// Init GPIO_RESET
+		// Init GPIO_RESET (RST = "Z")
 		SET_GPIO_POWER();
 		BM_SET(reg_gpio_gpio_func(GPIO_RESET), GPIO_RESET & 0xff);
 		SET_GPIO_RESET(); // Pin RST = "Z"
-		// Init GPIO_POWER
+		// Init GPIO_POWER (POWER = "1")
 		SET_GPIO_POWER(); // Pin POWER = "1"
 		BM_SET(reg_gpio_gpio_func(GPIO_POWER), GPIO_POWER & 0xff);
 		BM_CLR(reg_gpio_oen(GPIO_POWER), GPIO_POWER & 0xff);
 		BM_SET(reg_gpio_ds(GPIO_POWER), GPIO_POWER & 0xFF); // hi Drive strength
 		// Init GPIO_SWM
 		reg_swire_clk_div = 6; // (CLOCK_SYS_CLOCK_HZ + ((5*960000)/2))/(5*960000);
-		BM_CLR(reg_gpio_gpio_func(GPIO_SWM), GPIO_SWM & 0xff); // Pin SWM disable as gpio
+		DISABLE_SWM(); // Pin SWM disable
+		gpio_setup_up_down_resistor(GPIO_SWM, PULL_UP_10K); // PULL_UP_1M ?
+		// Init GPIO_SWS
+		gpio_setup_up_down_resistor(GPIO_SWS, PULL_UP_10K); // PULL_UP_1M ?
+		// Init USB pins
 		// usb_dp_pullup_disable();
 		// USB-DM: PULL_WAKEUP_SRC_PE2 PM_PIN_PULLDOWN_100K, PULL_WAKEUP_SRC_PE3 PM_PIN_UP_DOWN_FLOAT
 		analog_write(0x08, (analog_read (0x08) & 0x0f) | PM_PIN_PULLDOWN_100K<<4);
@@ -391,6 +398,7 @@ int main (void) {
 	/////////////////////////// app floader /////////////////////////////
 	while(1) {
 		if(flg_wait_rx) {
+			ENABLE_SWM(); // Pin SWM enable
 			if(utxb.len == 0) { // tx done
 				while(flg_wait_rx == FLG_CMD_SDI_PRINT) {
 					if(sws_pr_txb.len == 0) {
@@ -438,6 +446,8 @@ int main (void) {
 			}
 		}
 
+		// BM_SET(reg_gpio_gpio_func(GPIO_SWM), GPIO_SWM & 0xff); // Pin SWM disable
+
 #if (USE_USB_CDC)
 //		if(usb_flg & 1) { // USB-COM Open: DTR = 1
 		{
@@ -477,7 +487,8 @@ int main (void) {
 #else // USE_IO_CRC
 						rxlen -= sizeof(urxb.pkt.head);
 #endif // USE_IO_CRC
-
+						if(urxb.pkt.head.cmd != CMD_FUNCS)
+							ENABLE_SWM(); // Pin SWM enable
 						switch(urxb.pkt.head.cmd) {
 							case CMD_SWIRE_READ: // regs read (1024 bytes - 11.4 ms)
 								if(rxlen == 0
@@ -756,7 +767,7 @@ int main (void) {
 										break;
 									case CMDF_EXT_POWER: // External Power On/Off or RST = "1"/"0"
 										if(argv) {
-											BM_CLR(reg_gpio_gpio_func(GPIO_SWM), GPIO_SWM & 0xff); // Pin SWM disable as gpio
+											BM_CLR(reg_gpio_gpio_func(GPIO_SWM), GPIO_SWM & 0xff); // Pin SWM activate
 											SET_GPIO_RESET(); // Pin RST = "Z"
 											SET_GPIO_POWER(); // Pin POWER = "1"
 										}
@@ -770,7 +781,7 @@ int main (void) {
 										utxb.len++;
 										break;
 									case CMDF_SWIRE_ACTIVATE: // Activate
-										BM_CLR(reg_gpio_gpio_func(GPIO_SWM), GPIO_SWM & 0xff); // Pin SWM disable as gpio
+										BM_CLR(reg_gpio_gpio_func(GPIO_SWM), GPIO_SWM & 0xff); // Pin SWM activate
 										SET_GPIO_RESET(); // Pin RST = "Z"
 										SET_GPIO_POWER(); // Pin POWER = "1"
 										swire_write(0xff, FLD_SWIRE_WR | FLD_SWIRE_CMD); // cmd stop
@@ -798,6 +809,8 @@ int main (void) {
 								utxb.len = 1;
 								break;
 						}
+						if(flg_wait_rx == FLG_CMD_DONE)
+							DISABLE_SWM(); // Pin SWM disable
 					}
 				}
 #if (USE_USB_CDC)

@@ -340,7 +340,7 @@ void USB_IrqHandle(unsigned int irq_src) {
 #endif
 }
 
-SECTION_USB_CODE
+//SECTION_USB_CODE
 static inline void USB_InterruptInit(void)
 {
     USBHW_ManualInterruptEnable(FLD_CTRL_EP_AUTO_STD | FLD_CTRL_EP_AUTO_DESC);
@@ -364,10 +364,13 @@ static inline void USB_InterruptInit(void)
  * @param   none
  * @return none
  */
-SECTION_USB_CODE
+//SECTION_USB_CODE
 void USB_Init(void)
 {
 	reg_usb_ep_max_size = 64;
+#if USE_FLASH_SERIAL_UID
+	set_usb_serial();
+#endif
 	USBCDC_Init();
 #ifdef USB_SET_CFG_UART
     USB_SET_CFG_UART(LineEncoding);

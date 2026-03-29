@@ -8,7 +8,7 @@
 #ifndef MAIN_H_
 #define MAIN_H_
 //-------------------------------
-#define VERSION_BCD 0x0005 // 0x1234 -> Ver 1.2.3.4
+#define VERSION_BCD 0x0007 // 0x1234 -> Ver 1.2.3.4
 //-------------------------------
 #define USE_IO_CRC			1
 //-------------------------------

@@ -9,11 +9,11 @@ extern "C" {
 // USE_USB_CDC or USE_INT_UART (!)
 #define USE_USB_CDC			1
 #define USE_INT_UART		(!USE_USB_CDC)
+#define USE_FLASH_SERIAL_UID 1
 //-------------------------------
 #define SWIRE_OFF 	0
 //-------------- UART Config -----------------//
 #define UART_BAUD 	230400 	// 115200 or 230400
-
 //-------- GPIO Config -------------//
 #define GPIO_DM    GPIO_PE2
 #define GPIO_DP    GPIO_PE3
@@ -35,6 +35,8 @@ extern "C" {
 #define CLR_GPIO_POWER() BM_CLR(reg_gpio_out(GPIO_POWER), GPIO_POWER & 0xff) // Pin POW = "0"
 #define SET_GPIO_POWER() BM_SET(reg_gpio_out(GPIO_POWER), GPIO_POWER & 0xff) // Pin POW = "1"
 
+#define DISABLE_SWM() BM_SET(reg_gpio_gpio_func(GPIO_SWM), GPIO_SWM & 0xff); // Pin SWM disable
+#define ENABLE_SWM()  BM_CLR(reg_gpio_gpio_func(GPIO_SWM), GPIO_SWM & 0xff); // Pin SWM enable
 
 //-------- External Flash Config -------------//
 #define USE_EXT_FLASH 0	// not used in this project!

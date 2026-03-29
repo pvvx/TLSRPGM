@@ -48,11 +48,13 @@ SECTION_USB_CONST
 USB_Descriptor_String_t product_desc = {
     {sizeof(USB_Descriptor_Header_t) + sizeof(STRING_PRODUCT) - 2, DTYPE_String}, // Header
     STRING_PRODUCT};
-
+#if USE_FLASH_SERIAL_UID
+#else
 SECTION_USB_CONST
 USB_Descriptor_String_t serial_desc = {
     {sizeof(USB_Descriptor_Header_t) + sizeof(STRING_SERIAL) - 2, DTYPE_String}, // Header
     STRING_SERIAL};
+#endif
 
 SECTION_USB_CONST
 USB_Descriptor_Device_t device_desc = {
@@ -197,5 +199,33 @@ USB_Descriptor_Configuration_t configuration_desc = {
     },
 };
 
+#if USE_FLASH_SERIAL_UID
+
+#include "flash.h"
+
+#define STRING_FSERIAL L"00000000"
+
+USB_Descriptor_String_t serial_desc = {
+    {sizeof(USB_Descriptor_Header_t) + sizeof(STRING_FSERIAL) - 2, DTYPE_String}, // Header
+    STRING_FSERIAL};
+
+/*
+ * #define STRING_FSERIAL L"00000000"
+ */
+void set_usb_serial(void) {
+	u32 buf[4];
+	flash_read_uid((u8 *)buf);
+	u16 * p = &serial_desc.UnicodeString[7];
+	u32 x = buf[0]^buf[1]^buf[2]^buf[3];
+	for(int i = 0; i < 8; i++) {
+		u16 u = x & 0x0f;
+		if(u > 9) u += 'A' - 10;
+		else u += '0';
+		*p-- = u;
+		x >>= 4;
+	};
+	*p = (DTYPE_String << 8) | (sizeof(USB_Descriptor_Header_t) + sizeof(STRING_FSERIAL) - 2);
+}
+#endif
 
 #endif // USE_USB_CDC
