@@ -9,11 +9,14 @@
 #include "app_config.h"
 #include "sws_printf.h"
 
-void user_init(void)
+void user_init(int deepRetWakeUp)
 {
-	printf("*******************************************************************************************************\n");
-	printf("* Test SWS Printf\n");
-	printf("*******************************************************************************************************\n");
+	if(deepRetWakeUp) {
+		sws_init();
+		printf("*******************************************************************************************************\n");
+		printf("* Test SWS Printf\n");
+		printf("*******************************************************************************************************\n");
+	}
 }
 
 /////////////////////////////////////////////////////////////////////
@@ -24,8 +27,7 @@ void user_init(void)
 void main_loop (void)
 {
 	static int count;
-//	if(sdi_buffer.len == )
-//		count = 0;
+
 	printf("\rMain loop count: %d", count);
 	count++;
 	if(count > 5000) {
@@ -34,8 +36,6 @@ void main_loop (void)
 		sws_buffer_flush();
 		cpu_sleep_wakeup(DEEPSLEEP_MODE_RET_SRAM_LOW32K , PM_WAKEUP_TIMER,(clock_time() + 500*CLOCK_16M_SYS_TIMER_CLK_1MS));
 	}
-
-
 }
 
 

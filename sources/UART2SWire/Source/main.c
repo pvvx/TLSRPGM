@@ -13,9 +13,6 @@
 #include "main.h"
 #include "swire.h"
 
-#define  SWS_DOUBLE_BUF 1
-
-volatile unsigned char flg_wait_rx; // flag = 1 - SWS Print enable, = 2 Wait Response
 /*
  * Calculator CRC-16/MODBUS: https://crccalc.com/
  */
@@ -42,15 +39,30 @@ uart_tab_baud_t uart_tab_baud[] = {
 dma_uart_buf_t urxb;
 dma_uart_buf_t utxb;
 
+//----------------------- CMD_SDI_PRINT --------
+#define  SWS_DOUBLE_BUF 1
+
+typedef enum {
+	FLG_CMD_DONE =	0,
+	FLG_CMD_SDI_PRINT,
+	FLG_CMD_WAIT_RESP
+} E_FLG_CMD_t;
+
 #if SWS_DOUBLE_BUF
 dma_uart_sws_pintf_buf_t sws_pr_txb[2];
 #endif
+
+//----------------------- CMD_WAIT_RESP --------
 
 struct {
 	 u32 len;
 	 u32 addr;
 	 u8 data[4];
-}wrsp_buf;
+} wrsp_buf;
+
+//--------- CMD_SDI_PRINT, CMD_WAIT_RESP --------
+
+volatile E_FLG_CMD_t flg_wait_rx; // flag = 1 - SWS Print enable, = 2 Wait Response
 
 _attribute_ram_code_
 //inline
@@ -91,17 +103,20 @@ _attribute_ram_code_  void * memcpy (void * to, const void * from, size_t size) 
 	return to;
 }
 /* flash chip select low */
-_attribute_ram_code_ void _swire_set_fcs_low(void) {
+_attribute_ram_code_
+void _swire_set_fcs_low(void) {
 	unsigned char tmp = 0; //[0x0d] set csn low
 	swire_write_bytes(0x000d, &tmp, 1);
 }
 /* flash chip select hi */
-_attribute_ram_code_ void _swire_set_fcs_hi(void) {
+_attribute_ram_code_
+void _swire_set_fcs_hi(void) {
 	unsigned char tmp = FLD_MASTER_SPI_CS; // [0x0d] set csn high
 	swire_write_bytes(0x000d, &tmp, 1);
 }
 /* flash send fcmd + faddr */
-_attribute_ram_code_ void _swire_fcmd_faddr(unsigned char cmd, unsigned int addr) {
+_attribute_ram_code_
+void _swire_fcmd_faddr(unsigned char cmd, unsigned int addr) {
 	union {
 		unsigned int  ud;
 		unsigned char uc[4];
@@ -115,14 +130,16 @@ _attribute_ram_code_ void _swire_fcmd_faddr(unsigned char cmd, unsigned int addr
 	swire_write_bytes(0x000c, &tmp.uc[0], 1); // send 0..7 bits addr
 }
 /* flash chip select low + send write byte command */
-_attribute_ram_code_ void swire_fcmd(unsigned char fcmd) {
+_attribute_ram_code_
+void swire_fcmd(unsigned char fcmd) {
 	unsigned char tmp = fcmd;
 	_swire_set_fcs_low();
 	swire_write_bytes(0x000c, &tmp, 1); //[0x0c] send fwrite enable command
 	_swire_set_fcs_hi();
 }
 
-_attribute_ram_code_ unsigned int read_flash(unsigned int faddr, unsigned char *pbuf, unsigned int cnt) {
+_attribute_ram_code_
+unsigned int read_flash(unsigned int faddr, unsigned char *pbuf, unsigned int cnt) {
 
 	unsigned int rxlen;
 
@@ -141,23 +158,40 @@ _attribute_ram_code_ unsigned int read_flash(unsigned int faddr, unsigned char *
 }
 
 
-_attribute_ram_code_ unsigned int task_sws_print(unsigned int argv, unsigned char *pbuf) {
-	unsigned int rxlen = 0;
-	unsigned char out = 0;
-	if(swire_read_bytes(argv, &out, 1)) {
-		if(out != 0 && out != 0xff){
-			rxlen = swire_read_bytes(argv+1, pbuf, out);
-			if(rxlen == out) {
-				out = 0;
-				swire_write_bytes(argv, &out, 1);
-			} else
-				rxlen = 0;
-		}
+/* Version 2 */
+_attribute_ram_code_
+unsigned char task_sws_print(unsigned int argv, sws_pintf_buf_t *p) {
+	struct {
+		unsigned char id;
+		unsigned char len;
+	} head;
+	if(swire_read_bytes(argv, (unsigned char *)&head, sizeof(head)) == sizeof(head)) {
+		if(head.id == 0x55) {
+			if(head.len) {
+				if(head.len <= sizeof(p->data)) {
+					if(head.len == swire_read_bytes(argv, (unsigned char *)&p->id, head.len + 2) - 2
+					  && p->id == head.id
+					  && p->len == head.len) {
+						head.len = 0;
+						swire_write_bytes(argv + 1, &head.len, 1);
+					} else
+						p->len = 0;
+				} else {
+					// head.len <= 253
+					head.len = 0;
+					swire_write_bytes(argv + 1, &head.len, 1);
+					p->len = 0;
+				}
+			}
+		} else
+			p->len = 0;
 	}
-	return rxlen;
+	return p->len;
 }
 
-_attribute_ram_code_ int main (void) {
+/* Main */
+_attribute_ram_code_
+int main (void) {
 	union {
 		unsigned int  ud;
 		unsigned char uw[2];
@@ -167,6 +201,9 @@ _attribute_ram_code_ int main (void) {
 	};
 	unsigned int rxlen = 0;
 	unsigned int argv = 0;
+#if USE_IO_CRC
+	u16 crc16;
+#endif // USE_IO_CRC
 #if SWS_DOUBLE_BUF
 	dma_uart_sws_pintf_buf_t *psws_pr_txb = &sws_pr_txb[0];
 	dma_uart_sws_pintf_buf_t *psws_pr_rxb = &sws_pr_txb[0];
@@ -263,19 +300,20 @@ _attribute_ram_code_ int main (void) {
 	BM_SET(reg_gpio_pd_setting1, GPIO_PD4 & 0xff);
 	BM_CLR(reg_gpio_func(GPIO_PD4), GPIO_PD4 & 0xff); // GPIO_D4/SWM disable as gpio (0x586[7]=0, 0x586[0]=0)
 	BM_CLR(reg_gpio_out(GPIO_PD4), GPIO_PD4 & 0xff); // pin SWM output lo level
-	BM_CLR(reg_gpio_oen(GPIO_PD4), GPIO_PD4 & 0xFF); // pin SWM enable output
+	BM_CLR(reg_gpio_oen(GPIO_PD4), GPIO_PD4 & 0xff); // pin SWM enable output
+	BM_SET(reg_gpio_ds(GPIO_PD4), GPIO_PD4 & 0xff); // hi Drive strength
 
 	// Pin Power Output = "1"
 	BM_SET(reg_gpio_out(GPIO_POWER), GPIO_POWER & 0xff); // Pin POW = "1"
-	//BM_SET(reg_gpio_func(GPIO_POWER), GPIO_POWER & 0xFF); // enable as gpio (default = enable)
-	BM_CLR(reg_gpio_oen(GPIO_POWER), GPIO_POWER & 0xFF); // enable output
-	BM_SET(reg_gpio_ds(GPIO_POWER), GPIO_POWER & 0xFF); // hi Drive strength
+	//BM_SET(reg_gpio_func(GPIO_POWER), GPIO_POWER & 0xff); // enable as gpio (default = enable)
+	BM_CLR(reg_gpio_oen(GPIO_POWER), GPIO_POWER & 0xff); // enable output
+	BM_SET(reg_gpio_ds(GPIO_POWER), GPIO_POWER & 0xff); // hi Drive strength
 
 	// Pin RST Output = "1"
-	// BM_SET(reg_gpio_func(GPIO_RESET), GPIO_RESET & 0xFF); // enable as gpio (default = enable)
+	// BM_SET(reg_gpio_func(GPIO_RESET), GPIO_RESET & 0xff); // enable as gpio (default = enable)
 	BM_SET(reg_gpio_out(GPIO_RESET), GPIO_RESET & 0xff); // output hi level
-	BM_CLR(reg_gpio_oen(GPIO_RESET), GPIO_RESET & 0xFF); // enable output
-	BM_SET(reg_gpio_ds(GPIO_RESET), GPIO_RESET & 0xFF); // hi Drive strength
+	BM_CLR(reg_gpio_oen(GPIO_RESET), GPIO_RESET & 0xff); // enable output
+	BM_SET(reg_gpio_ds(GPIO_RESET), GPIO_RESET & 0xff); // hi Drive strength
 
 #else // CHIP_TYPE
 #error "Only TLSR825x!"
@@ -293,28 +331,26 @@ _attribute_ram_code_ int main (void) {
 		analog_write(0x0e, (analog_read(0x0e) & 0xfc) | PM_PIN_PULLUP_1M);
 #if SWIRE_OFF
 		reg_gpio_func(GPIO_PA0) = ((~(GPIO_PA0)) & 0xff) | GPIO_PA7; // GPIO_PA7/SWS set gpio (0x586[7]=0)
-		//BM_SET(reg_gpio_gpio_func(GPIO_PA7), GPIO_PA7 & 0xFF); // set PA7 as gpio (0x586[7]=0)
+		//BM_SET(reg_gpio_gpio_func(GPIO_PA7), GPIO_PA7 & 0xff); // set PA7 as gpio (0x586[7]=0)
 #else // SWIRE_OFF
 		reg_gpio_func(GPIO_PA0) = (~(GPIO_PA7 | GPIO_PA0)) & 0xff; // GPIO_PA7/SWS & GPIO_PA0/RX disable as gpio (0x586[7]=0, 0x586[0]=0)
 #endif // SWIRE_OFF
-		BM_SET(reg_gpio_ie(GPIO_PA0), GPIO_PA0 & 0xFF);  // PA0 enable input (0x581[0]=1)
+		BM_SET(reg_gpio_ie(GPIO_PA0), GPIO_PA0 & 0xff);  // PA0 enable input (0x581[0]=1)
 		reg_gpio_config_func(GPIO_PA0) = 2; // PA0 mux uart rx function (0x5a8[1:0] = 2)
 		//  PB1=TX
-		BM_CLR(reg_gpio_func(GPIO_PB1), GPIO_PB1 & 0xFF); // disable PB1 as gpio (0x58e[1] = 0)
-		analog_write(areg_gpio_pb_ie, analog_read(areg_gpio_pb_ie) | (GPIO_PB1 & 0xFF)); // PB1 enable input afe_0xbd[1]=1
+		BM_CLR(reg_gpio_func(GPIO_PB1), GPIO_PB1 & 0xff); // disable PB1 as gpio (0x58e[1] = 0)
+		analog_write(areg_gpio_pb_ie, analog_read(areg_gpio_pb_ie) | (GPIO_PB1 & 0xff)); // PB1 enable input afe_0xbd[1]=1
 		reg_gpio_config_func(GPIO_PB1) = 0x04; // (0x5aa[3:2] = 1)
 //	}
 	/////////////////////////// app floader /////////////////////////////
-#if USE_IO_CRC
-	u16 crc16;
-#endif // USE_IO_CRC
+
 	while(1) {
 #if SWS_DOUBLE_BUF
 		if(flg_wait_rx) {
-			if((reg_dma_tx_rdy0 & FLD_DMA_CHN_UART_TX) == 0) {
+			if((reg_dma_tx_rdy0 & FLD_DMA_CHN_UART_TX) == 0) {	// tx done
 				reg_dma_irq_src |= FLD_DMA_IRQ_UART_TX;
 				while((reg_uart_status1 & FLD_UART_TX_DONE)==0);
-				while(flg_wait_rx == 1) {
+				while(flg_wait_rx == FLG_CMD_SDI_PRINT) { // CMD_SDI_PRINT
 					if((reg_dma_tx_rdy0 & FLD_DMA_CHN_UART_TX) == 0) {
 						if(psws_pr_txb->busy) {
 							psws_pr_txb->busy = 0;
@@ -331,7 +367,7 @@ _attribute_ram_code_ int main (void) {
 						}
 					}
 					if(psws_pr_rxb->busy == 0) {
-						psws_pr_rxb->len = task_sws_print(argv, psws_pr_rxb->data);
+						psws_pr_rxb->len = task_sws_print(argv, (sws_pintf_buf_t *)psws_pr_rxb);
 						if(psws_pr_rxb->len) {
 							psws_pr_rxb->busy = 1;
 							psws_pr_tmp = psws_pr_rxb;
@@ -349,14 +385,14 @@ _attribute_ram_code_ int main (void) {
 					}
 					if(reg_dma_irq_src & FLD_DMA_IRQ_UART_RX) {
 						if(urxb.len) { // new command?
-							flg_wait_rx = 0; // clear flag sws_print
+							flg_wait_rx = FLG_CMD_DONE; // clear flag sws_print
 							break;
 						} else {
 							reg_dma_irq_src = FLD_DMA_IRQ_UART_RX;
 						}
 					}
 				}
-				while(flg_wait_rx == 2) {
+				while(flg_wait_rx == FLG_CMD_WAIT_RESP) { // CMD_WAIT_RESP
 					utxb.pkt.head.count = swire_read_bytes(argv, utxb.pkt.data, 4);
 					if(utxb.pkt.head.count == 4) {
 						if(wrsp_buf.len)
@@ -375,7 +411,7 @@ _attribute_ram_code_ int main (void) {
 					}
 					if(reg_dma_irq_src & FLD_DMA_IRQ_UART_RX) {
 						if(urxb.len) { // new command?
-							flg_wait_rx = 0; // clear flag
+							flg_wait_rx = FLG_CMD_DONE; // clear flag
 							break;
 						} else {
 							reg_dma_irq_src = FLD_DMA_IRQ_UART_RX;
@@ -385,7 +421,7 @@ _attribute_ram_code_ int main (void) {
 			}
 		}
 #endif
-		if((reg_dma_tx_rdy0 & FLD_DMA_CHN_UART_TX) == 0) {
+		if((reg_dma_tx_rdy0 & FLD_DMA_CHN_UART_TX) == 0) { // tx done?
 			if(cur_uart_baud != new_uart_baud) {
 				cur_uart_baud = new_uart_baud;
 				sleep_us(40000000u/115200u + 4); // 10000000/115200+4 = 90 us
@@ -640,7 +676,7 @@ _attribute_ram_code_ int main (void) {
 								else {
 									if(rxlen != 0)
 										utxb.pkt.head.count = swire_write_bytes(argv, urxb.pkt.data, rxlen);
-									flg_wait_rx = 1;
+									flg_wait_rx = FLG_CMD_SDI_PRINT;
 								}
 								break;
 							case CMD_WAIT_RESP: // Waiting for a response & write
@@ -653,7 +689,7 @@ _attribute_ram_code_ int main (void) {
 										memcpy(wrsp_buf.data, &urxb.pkt.data[3], wrsp_buf.len);
 									} else
 										wrsp_buf.len = 0;
-									flg_wait_rx = 2;
+									flg_wait_rx = FLG_CMD_WAIT_RESP;
 								}
 								break;
 							case CMD_FUNCS: // ext. functions

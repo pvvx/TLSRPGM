@@ -1,30 +1,36 @@
-/**************************************************
+/*****************************************************************
  * @file     sws_printf.c
  *
- * @brief    This is the source file for TLSR8258
+ * @brief    This is the source file for SWS printf() Version 2.0
  *
  * @author	 pvvx
  *
- *************************************************/
+ ****************************************************************/
 #include "app_config.h"
 #include "sws_printf.h"
 
-/* SWS send buffer */
-_sws_buffer_in_retention_ram_
-sws_buffer_t sws_buffer;
+#if USE_PRINTF
+
+#if SWS_PRINTF_MODE
+
+void sws_init(void) {
+	psws_buffer->id = 0x55;
+}
 
 /* Checking and waiting waiting for the transfer to end (buffer to be ready to fill) */
 int sws_ready(void) {
 	unsigned int tt;
-	if (sws_buffer.len == SWS_BUF_CLOSED)
+	sws_buffer_t *p = psws_buffer;
+	p->id = 0x55;
+	if (p->len == SWS_BUF_CLOSED)
 		// Wait for the next opening
 		return 0;
 	tt = clock_time();
-	while (sws_buffer.len != 0) {
+	while (p->len != 0) {
 		// The transfer is not finished
 		if (clock_time() - tt > SWS_WAITING_TIMEOUT) {
 			// SDI Timeout, Closed due to timeout
-			sws_buffer.len = SWS_BUF_CLOSED;
+			p->len = SWS_BUF_CLOSED;
 			return 0;
 		}
 	}
@@ -33,37 +39,91 @@ int sws_ready(void) {
 }
 
 /* Write a character to the send buffer */
-void sws_putchar(char c) {
-
+void sws_putchar(unsigned char c) {
+	sws_buffer_t *p = psws_buffer;
 	if (sws_ready()) { // The buffer is waiting for new data?
 		// Put in buffer
-		sws_buffer.data[sws_buffer.cur_len] = c;
-		sws_buffer.cur_len++;
+		p->data[p->cur_len] = c;
+		p->cur_len++;
 		// End of line or maximum transmit buffer size reached?
-		if (c == '\n' || sws_buffer.cur_len >= SWS_BUF_MAX_LEN) {
+		if (c == '\n' || p->cur_len >= SWS_BUF_MAX_LEN) {
 			// Set the length of the new data transfer
-			sws_buffer.len = sws_buffer.cur_len;
-			sws_buffer.cur_len = 0;
+			p->len = p->cur_len;
+			p->cur_len = 0;
 		}
 	}
 }
 
 /* Waiting for the transfer to end. (Use before sleep) */
 void sws_buffer_flush(void) {
-
+	sws_buffer_t *p = psws_buffer;
 	// Checking and waiting waiting for the transfer to end (buffer to be ready to fill)
 	if (sws_ready()) {
 		// Buffer to be ready to fill.
-		if(sws_buffer.cur_len) { // All data transferred?
+		if(p->cur_len) { // All data transferred?
 			// Set the length of the new data transfer
-			sws_buffer.len = sws_buffer.cur_len;
-			sws_buffer.cur_len = 0;
+			p->len = p->cur_len;
+			p->cur_len = 0;
 			// Waiting for buffer to be transmitted to SWS
 			sws_ready();
 		}
 	}
 }
 
+#else // GPIO_PRINTF_MODE
+
+#ifndef DEBUG_INFO_TX_PIN
+ #define	DEBUG_INFO_TX_PIN	GPIO_SWS
+#endif
+
+#ifndef GPIO_BAUDRATE
+ #define	1000000 // 1MBit
+#endif
+
+
+void sws_init(void) {
+	gpio_set_func(DEBUG_INFO_TX_PIN, AS_GPIO);
+	gpio_set_output_en(DEBUG_INFO_TX_PIN, 1);
+	gpio_setup_up_down_resistor(DEBUG_INFO_TX_PIN, PM_PIN_PULLUP_1M);
+	gpio_write(DEBUG_INFO_TX_PIN, 1);
+}
+
+_attribute_ram_code_
+void sws_putchar(unsigned char c)
+{
+	u8 j = 0;
+	u32 t1 = 0, t2 = 0;
+
+	u8 tmp_bit0 = reg_gpio_out(DEBUG_INFO_TX_PIN) & (~(DEBUG_INFO_TX_PIN & 0xff));
+	u8 tmp_bit1 = reg_gpio_out(DEBUG_INFO_TX_PIN) | (DEBUG_INFO_TX_PIN & 0xff);
+	u8 bit[10] = {0};
+
+	bit[0] = tmp_bit0;
+	bit[1] = (c & 0x01) ? tmp_bit1 : tmp_bit0;
+	bit[2] = ((c >> 1) & 0x01) ? tmp_bit1 : tmp_bit0;
+	bit[3] = ((c >> 2) & 0x01) ? tmp_bit1 : tmp_bit0;
+	bit[4] = ((c >> 3) & 0x01) ? tmp_bit1 : tmp_bit0;
+	bit[5] = ((c >> 4) & 0x01) ? tmp_bit1 : tmp_bit0;
+	bit[6] = ((c >> 5) & 0x01) ? tmp_bit1 : tmp_bit0;
+	bit[7] = ((c >> 6) & 0x01) ? tmp_bit1 : tmp_bit0;
+	bit[8] = ((c >> 7) & 0x01) ? tmp_bit1 : tmp_bit0;
+	bit[9] = tmp_bit1;
+	u8 r = irq_disable(); // enable this may disturb time sequence, but if disable unrecognizable code will show
+	t1 = clock_time();
+	for(j = 0; j < 10; j++){
+		t2 = t1;
+		while(t1 - t2 < (16000000/GPIO_BAUDRATE)){
+			t1 = clock_time();
+		}
+
+		reg_gpio_out(DEBUG_INFO_TX_PIN) = bit[j];       //send bit0
+	}
+	irq_restore(r);
+}
+
+#endif // SWS_PRINTF_MODE / GPIO_PRINTF_MODE
+
+//------ sws_puts -----------
 /* Write a string to the send buffer */
 void sws_puts(char *s)
 {
@@ -86,17 +146,19 @@ typedef char *va_list;
 #define OCTAL_OUTPUT        8
 #define HEX_OUTPUT          16
 
+const char tab_hex_ascii[] = "0123456789ABCDEF";
+// extern const char tab_hex_ascii[15];
+
 static void puti(unsigned int num, int base, int w)
 {
-    char re[] = "0123456789ABCDEF";
-    char buf[50];
+	unsigned char buf[50];
     int cnt = 0;
 
-    char *addr = &buf[49];
+    unsigned char *addr = &buf[49];
     *addr = '\0';
 
     do {
-        *--addr = re[num % base];
+        *--addr = tab_hex_ascii[num % base];
         num /= base;
         cnt++;
     } while (num != 0 && cnt < 49);
@@ -105,24 +167,36 @@ static void puti(unsigned int num, int base, int w)
         *--addr = '0';
     }
 
-    sws_puts(addr);
+    sws_puts((char *)addr);
+}
+
+/* sws print hex dump */
+void sws_print_hex_dump(void * d, int len) {
+	unsigned char *p = (unsigned char *)d;
+	while(len--) {
+		unsigned char c = *p++;
+		sws_putchar(tab_hex_ascii[c >> 8]);
+		sws_putchar(tab_hex_ascii[c & 0x0f]);
+	}
 }
 
 /* printf */
 int sws_printf(const char *format, ...)
 {
-    char span;
+	unsigned char span;
     unsigned long j;
-    char *s;
+    unsigned char *s;
     long m;
     int w;
 
     va_list arg_ptr;
-
-    if (sws_buffer.len == SWS_BUF_CLOSED)
+#if SWS_PRINTF_MODE
+    sws_buffer_t *p = psws_buffer;
+	p->id = 0x55;
+    if (p->len == SWS_BUF_CLOSED)
     	// Wait for the next opening
 		return 0;
-
+#endif
     va_start(arg_ptr, format);
 
     while ((span = *(format++))) {
@@ -148,11 +222,14 @@ int sws_printf(const char *format, ...)
                 }
                 puti(m, DECIMAL_OUTPUT, w);
             } else if (span == 's') {
-                s = va_arg(arg_ptr, char *);//get string value
-                sws_puts(s);
-            } else if (span == 'o') {
+                s = va_arg(arg_ptr, unsigned char *);//get string value
+                sws_puts((char *)s);
+//            } else if (span == 'o') {
+//                j = va_arg(arg_ptr, unsigned int);//get octal value
+//                puti(j, OCTAL_OUTPUT, w);
+            } else if (span == 'p') {
                 j = va_arg(arg_ptr, unsigned int);//get octal value
-                puti(j, OCTAL_OUTPUT, w);
+                sws_print_hex_dump((void *)j, w);
             } else if (span == 'x') {
                 j = va_arg(arg_ptr, unsigned int);//get hex value
                 puti(j, HEX_OUTPUT, w);
@@ -168,3 +245,6 @@ int sws_printf(const char *format, ...)
 
     return 0;
 }
+
+
+#endif // USE_PRINTF

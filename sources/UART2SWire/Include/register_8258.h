@@ -494,6 +494,8 @@ enum{
 	FLD_SWIRE_WR  = 			BIT(0),
 	FLD_SWIRE_RD  = 			BIT(1),
 	FLD_SWIRE_CMD =				BIT(2),
+	FLD_SWIRE_ERR_FLAG			= BIT(3),
+	FLD_SWIRE_EOP     			= BIT(4),
 	FLD_SWIRE_USB_DET =			BIT(6),
 	FLD_SWIRE_USB_EN =			BIT(7),
 };

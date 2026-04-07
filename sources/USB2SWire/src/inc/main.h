@@ -8,7 +8,7 @@
 #ifndef MAIN_H_
 #define MAIN_H_
 //-------------------------------
-#define VERSION_BCD 0x0007 // 0x1234 -> Ver 1.2.3.4
+#define VERSION_BCD 0x0008 // 0x1234 -> Ver 1.2.3.4
 //-------------------------------
 #define USE_IO_CRC			1
 //-------------------------------
@@ -35,7 +35,7 @@ typedef enum {
 	CMD_SWIRE_FIFO_FWRITE,		//c
 	CMD_FLASH_WRRD,				//d
 	CMD_FLASH_RDCRC,			//e Flash read CRC16 (blk max 1024 bytes)
-	CMD_SDI_PRINT,				//f
+	CMD_SWS_PRINT,				//f
 	CMD_WAIT_RESP				//10
 } E_CMD_t;
 
@@ -133,9 +133,10 @@ typedef struct _dma_uart_buf_t {
 }dma_uart_buf_t;
 
 typedef struct _sws_pintf_buf_t {
-	volatile unsigned int len;
+	unsigned char id;
+	unsigned char len;
 	unsigned char data[254];
-	volatile unsigned char busy;
+	//volatile unsigned char busy;
 }sws_pintf_buf_t;
 
 extern dma_uart_buf_t urxb;

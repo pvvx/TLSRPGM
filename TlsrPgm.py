@@ -17,14 +17,14 @@ import io
 
 __progname__ = 'TLSR82xx TlsrPgm'
 __filename__ = 'TlsrPgm'
-__version__ = '29.03.26'
+__version__ = '05.04.26'
 
 DEFAULT_UART_BAUD = 230400
 
 FLASH_SECTOR_SIZE = 4096
 
-sws_flg = 2
-sws_addr = 0
+#sws_flg = 2
+#sws_addr = 0
 sws_enable = False
 pgm = {}
 
@@ -311,6 +311,9 @@ class TLSRPGM:
 		elif self.pgm_cid == 0x5327:
 			self.pgm_chip = 'TLSR8269'
 			self.pgm_clk = 32
+		elif self.pgm_cid == 0x5591:
+			self.pgm_chip = 'TLSR8208'
+			self.pgm_clk = 32
 		else:
 			self.pgm_clk = 32
 			self.pgm_chip = '?'
@@ -541,6 +544,8 @@ class TLSRPGM:
 			self.ext_chip = 'TLSR8267'
 		elif self.ext_cid == 0x5327:
 			self.ext_chip = 'TLSR8269'
+		elif self.ext_cid == 0x5591:
+			self.ext_chip = 'TLSR8208'
 		else:
 			self.ext_chip = None
 		if self.ext_chip == None:
@@ -988,40 +993,16 @@ class TLSRPGM:
 			print('\r\nError unlock Flash!', file=sys.stderr) 
 			return None
 		return ret
-	def SwsPrintf(self, offset = 0, flg = 1):
-		offset &= 0xffffff
-		if flg == 0:
-			wdata = 0xff
-			s = 'Close '
-		elif flg == 1:
-			wdata = 0
-			s = 'Open '
-		elif flg == 2:
-			s = 'Continue '
-			flg = 2
-		else:
-			s = 'Next '
-			flg = 3
-		sws_addr = offset
-		sws_flg = flg
-		if flg < 2:
-			print('%sSWS Printf at SRAM address 0x%06x...' % (s, offset), end = '')
-			data = self.command(struct.pack('<BBHB', self.CMD_SWS_PRINTF, offset & 0xff, (offset>>8) & 0xffff, wdata), 6)
-			if data == None or self.wcnt != 1:
-				print('error!', flush=True)
-				return False
-			print('ok')
-			if flg == 0:
-				return True
-		if flg == 2:
-			print('%sSWS Printf at SRAM address 0x%06x...' % (s, offset), end = '')
-			data = self.command(struct.pack('<BBH', self.CMD_SWS_PRINTF, offset & 0xff, (offset>>8) & 0xffff), 6)
-			if data == None or self.wcnt != 0:
-				print('error!', flush=True)
-				return False
-			print('ok')
-			if flg == 0:
-				return True
+	def SwsPrintf(self, offset = 0x84E700):
+		if self.pgm_ver_int < 8:
+			print('Attention: this program requires PGM version 0.0.0.8 or higher!')
+			return False
+		print('Open SWS Printf at SRAM address 0x%06x...' % (offset), end = '')
+		data = self.command(struct.pack('<BBHB', self.CMD_SWS_PRINTF, offset & 0xff, (offset>>8) & 0xffff, 0), 6)
+		if data == None or self.wcnt != 1:
+			print('error!', flush=True)
+			return False
+		print('ok')
 		self._port.timeout = 0.01
 		sws_enable = True
 		while sws_enable: #TODO
@@ -1030,12 +1011,12 @@ class TLSRPGM:
 				print('Keyboard Break!')
 				break
 			try:
-				rblk = self._port.read(254)
+				rblk = self._port.read(253)
 			except:
 				#print('Error read %s!' % (self.port))
 				return False
 			if len(rblk) != 0:
-				print(rblk.decode(errors='ignore'), end = '', flush=True)
+				print(rblk.decode(encoding='ascii', errors='ignore'), end = '', flush=True) # encoding="utf-8" 
 		return True
 		
 
@@ -1493,10 +1474,6 @@ def main():
 	if args.run or args.go or args.mrst or args.osws != 0:
 		print('=== Post-Process ======================================')
 	# Commands / flags post main processing
-	if args.osws != 0:
-		if not pgm.SwsPrintf(args.osws):
-			pgm.close()
-			sys.exit(1)
 	if args.run:
 		print('CPU Run...', end = ' ')
 		if not pgm.WriteRegsData(0x602, b'\x88'): # CPU ReBoot
@@ -1519,6 +1496,10 @@ def main():
 		# Second time slice
 		t2 = time.time()
 		print(" Worked Time: %.3f sec" % (t2-t1))
+	if args.osws != 0:
+		if not pgm.SwsPrintf(args.osws):
+			pgm.close()
+			sys.exit(1)
 	pgm.close()
 	sys.exit(0)
 

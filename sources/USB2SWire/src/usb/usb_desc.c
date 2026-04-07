@@ -164,7 +164,7 @@ USB_Descriptor_Configuration_t configuration_desc = {
             (ENDPOINT_DIR_IN | CDC_NOTIFICATION_EPNUM), // EndpointAddress
             (EP_TYPE_INTERRUPT | ENDPOINT_ATTR_NO_SYNC | ENDPOINT_USAGE_DATA), // Attributes
             CDC_NOTIFICATION_EPSIZE, // EndpointSize: MaxPacketSize : 8 bytes
-            0xfa // PollingIntervalMS 250
+            0x0a // fa PollingIntervalMS 250
         },
 
         // CDC_DCI_Interface

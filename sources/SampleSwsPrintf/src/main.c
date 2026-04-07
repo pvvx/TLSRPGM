@@ -27,10 +27,6 @@
 #include "app_config.h"
 
 
-extern void user_init();
-extern void main_loop (void);
-
-
 /**
  * @brief		This function serves to handle the interrupt of MCU
  * @param[in] 	none
@@ -62,7 +58,7 @@ int main (void)   //must on ramcode
 
 	clock_init(SYS_CLK);
 
-	user_init();
+	user_init(deepRetWakeUp);
 
 	while (1) {
 		main_loop ();

@@ -1,18 +1,25 @@
-/******************************************************
+/****************************************************************
  * @file    sws_printf.h
  *
- * @brief   This is the header file for SWS printf
+ * @brief   This is the header file for SWS printf() Version 2.0
  *
  * @author	 pvvx
  *
- *****************************************************/
+ ***************************************************************/
 #ifndef _INC_SWS_PRINTF_H
 #define _INC_SWS_PRINTF_H
 
+//#define GPIO_PRINTF_MODE	1
+//#define SWS_PRINTF_MODE	1
 
+#define USE_PRINTF (SWS_PRINTF_MODE || GPIO_PRINTF_MODE)
+
+#if USE_PRINTF
+
+#if SWS_PRINTF_MODE
 /* The maximum transmit buffer size is 254 bytes.
    Size reduction is possible. */
-#define	SWS_BUF_MAX_LEN	254
+#define	SWS_BUF_MAX_LEN	253
 
 /* SDI Off or Closed due to timeout, Wait for the next opening */
 #define	SWS_BUF_CLOSED	255
@@ -24,6 +31,8 @@
 
 /* SWS send buffer */
 typedef struct {
+	/* id */
+	unsigned char id; // = 0x55 -> test TLSRPGM
 	/* if len = 255 -> SWS transmission is disabled,
 	   Timeout in SWS transmission, Wait for the next opening
 	   if len = 0 -> The buffer is ready to be filled
@@ -37,23 +46,47 @@ typedef struct {
 } sws_buffer_t;
 
 /* SWS send buffer */
-/* set a fixed address in memory:
-  __attribute__((at(address))) or __attribute__((section("name")))
- Or find the address of "sws_buffer" in the *.lst file */
-#define _sws_buffer_in_retention_ram_ _attribute_session_(".retention_data")
-sws_buffer_t sws_buffer;
+// sws_buffer_t sws_buffer; or fixed address:
+#define psws_buffer ((sws_buffer_t *)(0x847F00))
 
-/* Write a string to the send buffer */
-void sws_puts(char *s);
-/* Write a character to the send buffer */
-void sws_putchar(char c);
 /* Checking and waiting waiting for the transfer to end (buffer to be ready to fill) */
 int sws_ready(void);
 /* Waiting for the transfer to end. (Use before sleep) */
 void sws_buffer_flush(void);
+
+
+#else // if GPIO_PRINTF_MODE
+
+#define GPIO_BAUDRATE	1000000 //1M
+
+#define sws_ready()
+#define sws_buffer_flush()
+
+#endif // SWS_PRINTF_MODE / GPIO_PRINTF_MODE
+
+void sws_init(void);
+
+/* Write a string to the send buffer */
+void sws_puts(char *s);
+/* Write a character to the send buffer */
+void sws_putchar(unsigned char c);
 /* printf */
 int sws_printf(const char *format, ...);
 
-#define printf  sws_printf
+void sws_print_hex_dump(void * pdata, int len);
+
+#else // USE_PRINTF
+
+#define sws_init()
+#define sws_buffer_flush()
+#define sws_ready()
+#define sws_puts(...)
+#define sws_printf(...)
+#define sws_print_hex_dump(...)
+
+#endif // USE_PRINTF
+
+#define printf sws_printf
 
 #endif //_INC_SWS_PRINTF_H
+

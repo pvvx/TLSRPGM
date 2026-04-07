@@ -35,13 +35,18 @@ uart_tab_baud_t uart_tab_baud[] = {
 	{3,3},	//7 2000000 // 32000000/(3+1)/(3+1)=2000000
 	{3,1}	//8 3200000 // 32000000/(4+1)/(1+1)=3200000
 };
-//----------------------- CMD_SDI_PRINT --------
+
+//--------- CMD_SDI_PRINT, CMD_WAIT_RESP --------
 
 typedef enum {
 	FLG_CMD_DONE =	0,
-	FLG_CMD_SDI_PRINT,
+	FLG_CMD_SWS_PRINT,
 	FLG_CMD_WAIT_RESP
 } E_FLG_CMD_t;
+
+volatile E_FLG_CMD_t flg_wait_rx; // flag = 1 - SWS Print enable, = 2 Wait Response
+
+//----------------------- CMD_SDI_PRINT --------
 
 sws_pintf_buf_t sws_pr_txb;
 
@@ -52,10 +57,6 @@ struct {
 	 u32 addr;
 	 u8 data[4];
 } wrsp_buf;
-
-//--------- CMD_SDI_PRINT, CMD_WAIT_RESP --------
-
-volatile E_FLG_CMD_t flg_wait_rx; // flag = 1 - SWS Print enable, = 2 Wait Response
 
 //-------------------------------
 dma_uart_buf_t urxb = {.len = 0};
@@ -120,20 +121,33 @@ _attribute_ram_code_ unsigned int read_flash(unsigned int faddr, unsigned char *
 	return rxlen;
 }
 
-_attribute_ram_code_ unsigned int task_sws_print(unsigned int argv, unsigned char *pbuf) {
-	unsigned int rxlen = 0;
-	unsigned char out = 0;
-	if(swire_read_bytes(argv, &out, 1)) {
-		if(out != 0 && out != 0xff){
-			rxlen = swire_read_bytes(argv+1, pbuf, out);
-			if(rxlen == out) {
-				out = 0;
-				swire_write_bytes(argv, &out, 1);
-			} else
-				rxlen = 0;
-		}
+_attribute_ram_code_
+void task_sws_print(unsigned int argv, sws_pintf_buf_t *p) {
+	struct {
+		unsigned char id;
+		unsigned char len;
+	} head;
+	if(swire_read_bytes(argv, (unsigned char *)&head, sizeof(head)) == sizeof(head)) {
+		if(head.id == 0x55) {
+			if(head.len) {
+				if(head.len <= 253) {
+					if(head.len == swire_read_bytes(argv, (unsigned char *)p, head.len + 2) - 2
+					  && p->id == head.id
+					  && p->len == head.len) {
+						head.len = 0;
+						swire_write_bytes(argv + 1, &head.len, 1);
+					} else
+						p->len = 0;
+				} else {
+					// head.len <= 253
+					head.len = 0;
+					swire_write_bytes(argv + 1, &head.len, 1);
+					p->len = 0;
+				}
+			}
+		} else
+			p->len = 0;
 	}
-	return rxlen;
 }
 
 //-------------------------------
@@ -191,10 +205,10 @@ void USBCDC_reset(void) {
 
 //_attribute_ram_code_
 void USBCDC_dtr_rts(unsigned short dtr_rts) {
-	if((dtr_rts & 2) == 0) {	// bit0: DTR,  bit1: RTS
+	if(dtr_rts & 1) {	// bit0: DTR,  bit1: RTS
 		USBCDC_reset();
 	} else {
-		ENABLE_SWM(); // Pin SWM enable
+//		ENABLE_SWM(); // Pin SWM enable
 	}
 }
 
@@ -340,7 +354,7 @@ int main (void) {
 	uart_init();
 #endif
 #if (USE_USB_CDC)
-		//-------------------------- USB pins 8269
+	//-------------------------- USB pins 8269
 #if USE_USB
 #define PE2_FUNC	AS_USB
 #define PE3_FUNC	AS_USB
@@ -397,19 +411,19 @@ int main (void) {
 #endif // USE_USB_CDC
 	/////////////////////////// app floader /////////////////////////////
 	while(1) {
-		if(flg_wait_rx) {
-			ENABLE_SWM(); // Pin SWM enable
+		while(flg_wait_rx) {
+//			ENABLE_SWM(); // Pin SWM enable
 			if(utxb.len == 0) { // tx done
-				while(flg_wait_rx == FLG_CMD_SDI_PRINT) {
+				while(flg_wait_rx == FLG_CMD_SWS_PRINT) {
 					if(sws_pr_txb.len == 0) {
-						sws_pr_txb.len = task_sws_print(argv, sws_pr_txb.data);
+						task_sws_print(argv, &sws_pr_txb);
 					}
 					if(utxb.len == 0) {
 						if(sws_pr_txb.len) {
 							memcpy(utxb.uc, sws_pr_txb.data, sws_pr_txb.len);
 							utxb.len = sws_pr_txb.len;
-							sws_pr_txb.len = 0;
 							USBCDC_DataSend((unsigned char *)&utxb.uc, utxb.len);
+							sws_pr_txb.len = 0;
 						}
 					}
 					if(urxb.len) { // new command?
@@ -422,7 +436,7 @@ int main (void) {
 					if(utxb.pkt.head.count == 4) {
 						if(wrsp_buf.len)
 							swire_write_bytes(wrsp_buf.addr, wrsp_buf.data, wrsp_buf.len);
-						flg_wait_rx = FLG_CMD_DONE; // clear flag sws_print
+						flg_wait_rx = FLG_CMD_DONE; // clear flag
 						// send 4 bytes
 						utxb.len = sizeof(utxb.pkt.head) + 4;
 #if USE_IO_CRC
@@ -446,10 +460,7 @@ int main (void) {
 			}
 		}
 
-		// BM_SET(reg_gpio_gpio_func(GPIO_SWM), GPIO_SWM & 0xff); // Pin SWM disable
-
 #if (USE_USB_CDC)
-//		if(usb_flg & 1) { // USB-COM Open: DTR = 1
 		{
 			if(utxb.len == 0 && urxb.len) { // tx done & new command?
 #endif // USE_USB_CDC
@@ -487,8 +498,9 @@ int main (void) {
 #else // USE_IO_CRC
 						rxlen -= sizeof(urxb.pkt.head);
 #endif // USE_IO_CRC
-						if(urxb.pkt.head.cmd != CMD_FUNCS)
+						if(urxb.pkt.head.cmd != CMD_FUNCS) {
 							ENABLE_SWM(); // Pin SWM enable
+						}
 						switch(urxb.pkt.head.cmd) {
 							case CMD_SWIRE_READ: // regs read (1024 bytes - 11.4 ms)
 								if(rxlen == 0
@@ -705,14 +717,15 @@ int main (void) {
 								else
 									utxb.pkt.head.count = crcFast(utxb.pkt.data, rxlen);
 								break;
-							case CMD_SDI_PRINT:
+							case CMD_SWS_PRINT:
 								if(rxlen > sizeof(urxb.pkt.data))
 									utxb.pkt.head.err = ERR_LEN;
 								else {
-									if(rxlen != 0)
+									if(rxlen) {
 										utxb.pkt.head.count = swire_write_bytes(argv, urxb.pkt.data, rxlen);
+									}
 									sws_pr_txb.len = 0;
-									flg_wait_rx = FLG_CMD_SDI_PRINT;
+									flg_wait_rx = FLG_CMD_SWS_PRINT;
 								}
 								break;
 							case CMD_WAIT_RESP: // Waiting for a response & write

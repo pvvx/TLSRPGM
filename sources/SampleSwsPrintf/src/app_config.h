@@ -54,6 +54,12 @@ enum{
 	CLOCK_SYS_CLOCK_1US = (CLOCK_SYS_CLOCK_1S / 1000000),
 };
 
+#define SWS_PRINTF_MODE		1
+//or #define GPIO_PRINTF_MODE	1 // if = 1 - check define DEBUG_INFO_TX_PIN,  GPIO_BAUDRATE
+
+void user_init(int deepRetWakeUp);
+void main_loop(void);
+
 /* Disable C linkage for C++ Compilers: */
 #if defined(__cplusplus)
 }
