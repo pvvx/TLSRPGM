@@ -11,6 +11,8 @@ TEL_CHIP := -DMCU_CORE_B85=1 -DMCU_STARTUP_FLASH -DSWS_PRINTF=1
 
 LIBS := -ldriver
 
+MemInfo := TlsrMemInfo_b85.py
+
 else
 
 SDK := b80
@@ -19,6 +21,8 @@ TEL_CHIP := -DMCU_CORE_B80=1 -DMCU_STARTUP_FLASH -DSWS_PRINTF=1
 # -DDUT_TEST -DALL_SRAM_CODE=1 -DSRAM_OTP_FLASH_HANDLE=1
 
 LIBS := -ldriver_b80
+
+MemInfo := TlsrMemInfo_b80.py
 
 endif
 
@@ -155,7 +159,7 @@ $(BIN_FILE): $(ELF_FILE)
 	@echo ' '
 
 sizedummy: $(ELF_FILE)
-	@$(PYTHON) $(PYTOOLS_PATH)/TlsrMemInfo_$(SDK).py -s 16384 -t $(TC32_PATH)tc32-elf-nm $(ELF_FILE)
+	@$(PYTHON) $(PYTOOLS_PATH)/$(MemInfo) -t $(TC32_PATH)tc32-elf-nm $(ELF_FILE)
 
 clean:
 	-$(RM) $(FLASH_IMAGE) $(ELFS) $(OBJS) $(LST) $(SIZEDUMMY) $(ELF_FILE) $(BIN_FILE) $(LST_FILE)

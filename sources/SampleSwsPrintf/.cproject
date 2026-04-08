@@ -20,7 +20,7 @@
 							<option id="com.telink.tc32eclipse.toolchain.options.toolchain.objdump.app.debug.737975025" name="Generate Extended Listing (Source + generated Assembler)" superClass="com.telink.tc32eclipse.toolchain.options.toolchain.objdump.app.debug"/>
 							<option id="com.telink.tc32eclipse.toolchain.options.toolchain.size.app.debug.121930276" name="Print Size" superClass="com.telink.tc32eclipse.toolchain.options.toolchain.size.app.debug"/>
 							<targetPlatform id="com.telink.tc32eclipse.targetplatform.TC32Win.app.debug.743917607" name="TC32 Cross-Target" superClass="com.telink.tc32eclipse.targetplatform.TC32Win.app.debug"/>
-							<builder buildPath="${workspace_loc:TestSWSprintf}" command="make" id="com.telink.tc32eclipse.target.builder.TC32Win.app.debug.1477060698" keepEnvironmentInBuildfile="false" managedBuildOn="false" name="GNU Make Builder" parallelBuildOn="true" parallelizationNumber="unlimited" superClass="com.telink.tc32eclipse.target.builder.TC32Win.app.debug"/>
+							<builder buildPath="${workspace_loc:/${ProjName}}" command="make" id="com.telink.tc32eclipse.target.builder.TC32Win.app.debug.1477060698" keepEnvironmentInBuildfile="false" managedBuildOn="false" name="GNU Make Builder" parallelBuildOn="true" parallelizationNumber="unlimited" superClass="com.telink.tc32eclipse.target.builder.TC32Win.app.debug"/>
 							<tool id="com.telink.tc32eclipse.tool.assembler.TC32Win.app.debug.1406024759" name="TC32 CC/Assembler" superClass="com.telink.tc32eclipse.tool.assembler.TC32Win.app.debug">
 								<option id="com.telink.tc32eclipse.assembler.option.debug.level.210382772" name="Generate Debugging Info" superClass="com.telink.tc32eclipse.assembler.option.debug.level" value="com.telink.tc32eclipse.assembler.option.debug.level.none" valueType="enumerated"/>
 								<option id="com.telink.tc32eclipse.asm.option.flags.1743249601" name="Other GCC Flags" superClass="com.telink.tc32eclipse.asm.option.flags" value="-DMCU_STARTUP_825X" valueType="string"/>
@@ -72,7 +72,7 @@
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>
-						<entry excluding="sdk/boot/8253|sdk/boot/8258|sdk/boot/8251|sdk/freertos|sdk/make|sdk/example|sdk/doc|Source|sdk/study" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+						<entry flags="VALUE_WORKSPACE_PATH" kind="sourcePath" name=""/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
@@ -100,7 +100,7 @@
 							<option id="com.telink.tc32eclipse.toolchain.options.toolchain.objdump.app.debug.134610262" name="Generate Extended Listing (Source + generated Assembler)" superClass="com.telink.tc32eclipse.toolchain.options.toolchain.objdump.app.debug"/>
 							<option id="com.telink.tc32eclipse.toolchain.options.toolchain.size.app.debug.1798078475" name="Print Size" superClass="com.telink.tc32eclipse.toolchain.options.toolchain.size.app.debug"/>
 							<targetPlatform id="com.telink.tc32eclipse.targetplatform.TC32Win.app.debug.1400335976" name="TC32 Cross-Target" superClass="com.telink.tc32eclipse.targetplatform.TC32Win.app.debug"/>
-							<builder buildPath="${workspace_loc:TestSWSprintf}" command="make" id="com.telink.tc32eclipse.target.builder.TC32Win.app.debug.2087676438" keepEnvironmentInBuildfile="false" managedBuildOn="false" name="GNU Make Builder" parallelBuildOn="true" parallelizationNumber="unlimited" superClass="com.telink.tc32eclipse.target.builder.TC32Win.app.debug"/>
+							<builder buildPath="${workspace_loc:/${ProjName}}" command="make" id="com.telink.tc32eclipse.target.builder.TC32Win.app.debug.2087676438" keepEnvironmentInBuildfile="false" managedBuildOn="false" name="GNU Make Builder" parallelBuildOn="true" parallelizationNumber="unlimited" superClass="com.telink.tc32eclipse.target.builder.TC32Win.app.debug"/>
 							<tool id="com.telink.tc32eclipse.tool.assembler.TC32Win.app.debug.1520444391" name="TC32 CC/Assembler" superClass="com.telink.tc32eclipse.tool.assembler.TC32Win.app.debug">
 								<option id="com.telink.tc32eclipse.assembler.option.debug.level.1189782067" name="Generate Debugging Info" superClass="com.telink.tc32eclipse.assembler.option.debug.level" value="com.telink.tc32eclipse.assembler.option.debug.level.none" valueType="enumerated"/>
 								<option id="com.telink.tc32eclipse.asm.option.flags.429843622" name="Other GCC Flags" superClass="com.telink.tc32eclipse.asm.option.flags" value="-DMCU_STARTUP_825X" valueType="string"/>
@@ -151,7 +151,7 @@
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>
-						<entry excluding="sdk/boot/8253|sdk/boot/8258|sdk/boot/8251|sdk/freertos|sdk/make|sdk/example|sdk/doc|Source|sdk/study" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+						<entry flags="VALUE_WORKSPACE_PATH" kind="sourcePath" name=""/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
@@ -165,6 +165,8 @@
 		<project id="Termometr.com.telink.tc32eclipse.project.TC32Win.elf_0.1.0.434667173" name="TC32 Cross Target Application" projectType="com.telink.tc32eclipse.project.TC32Win.elf_0.1.0"/>
 	</storageModule>
 	<storageModule moduleId="refreshScope" versionNumber="2">
+		<configuration configurationName="b80"/>
+		<configuration configurationName="b85"/>
 		<configuration configurationName="out">
 			<resource resourceType="PROJECT" workspacePath="/TestSDI"/>
 		</configuration>

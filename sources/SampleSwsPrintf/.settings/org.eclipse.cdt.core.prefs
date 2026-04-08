@@ -28,3 +28,4 @@ environment/project/com.telink.tc32eclipse.configuration.app.release.2062992677/
 environment/project/com.telink.tc32eclipse.configuration.app.release.2062992677/SDK/value=Telink_825X_SDK
 environment/project/com.telink.tc32eclipse.configuration.app.release.2062992677/append=true
 environment/project/com.telink.tc32eclipse.configuration.app.release.2062992677/appendContributed=true
+org.eclipse.cdt.core.code_formatter=org.eclipse.cdt.core.defaultCodeFormatter
