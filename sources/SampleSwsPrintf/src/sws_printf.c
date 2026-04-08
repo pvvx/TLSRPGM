@@ -9,12 +9,13 @@
 #include "app_config.h"
 #include "sws_printf.h"
 
-#if USE_PRINTF
+#if SWS_PRINTF
 
 #if SWS_PRINTF_MODE
 
 void sws_init(void) {
 	psws_buffer->id = 0x55;
+//	psws_buffer->len = 0;
 }
 
 /* Checking and waiting waiting for the transfer to end (buffer to be ready to fill) */
@@ -247,4 +248,4 @@ int sws_printf(const char *format, ...)
 }
 
 
-#endif // USE_PRINTF
+#endif // SWS_PRINTF

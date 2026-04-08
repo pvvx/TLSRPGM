@@ -34,7 +34,12 @@ void main_loop (void)
 		printf("\n-------------------------------------------------------------------------------------------------------\n");
 		printf("Goto Sleep...............................\n");
 		sws_buffer_flush();
-		cpu_sleep_wakeup(DEEPSLEEP_MODE_RET_SRAM_LOW32K , PM_WAKEUP_TIMER,(clock_time() + 500*CLOCK_16M_SYS_TIMER_CLK_1MS));
+#if (MCU_CORE_B85)
+		cpu_sleep_wakeup(DEEPSLEEP_MODE_RET_SRAM_LOW16K, PM_WAKEUP_TIMER, (clock_time() + 500*CLOCK_SYS_TIMER_CLK_1MS));
+#elif (MCU_CORE_B80 || MCU_CORE_B80B)
+	    cpu_long_sleep_wakeup(DEEPSLEEP_MODE_RET_SRAM_LOW16K, PM_WAKEUP_TIMER, 500*CLOCK_32K_SYS_TIMER_CLK_1MS);
+#endif
+
 	}
 }
 

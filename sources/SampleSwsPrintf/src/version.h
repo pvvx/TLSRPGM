@@ -5,8 +5,8 @@
 
 #define DEVICE_TYPE							1
 
-#define APP_RELEASE							0x01 // app release 9.9
-#define APP_BUILD							0x01 // app build 9.9
+#define APP_RELEASE							0x00 // app release 9.9
+#define APP_BUILD							0x07 // app build 9.9
 #define STACK_RELEASE						0x30 // stack release 3.0
 #define STACK_BUILD							0x01 // stack build 01
 

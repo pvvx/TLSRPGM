@@ -1,19 +1,40 @@
-TEL_CHIP := -DCHIP_TYPE=CHIP_TYPE_8258
 
-PGM_PORT?=COM6
+PGM_PORT?=COM5
 
-PROJECT_NAME ?= sws_print
+MCU?=b85
 
-TEL_PATH ?= ./sdk
+ifeq ($(MCU),b85)
 
-LIBS := $(TEL_PATH)/8258/lib_rf_pm.a
+SDK := b85
+
+TEL_CHIP := -DMCU_CORE_B85=1 -DMCU_STARTUP_FLASH -DSWS_PRINTF=1
+
+LIBS := -ldriver
+
+else
+
+SDK := b80
+
+TEL_CHIP := -DMCU_CORE_B80=1 -DMCU_STARTUP_FLASH -DSWS_PRINTF=1
+# -DDUT_TEST -DALL_SRAM_CODE=1 -DSRAM_OTP_FLASH_HANDLE=1
+
+LIBS := -ldriver_b80
+
+endif
+
+PROJECT_NAME ?= sws_print_$(SDK)
+
+TEL_PATH ?= ./sdk/$(SDK)
+
 
 PROJECT_PATH := ./src
 OUT_PATH :=./out
-
 PYTOOLS_PATH ?= ./tools
 
-ifneq ($(TEL_PATH)/8258/gpio_8258.c, $(wildcard $(TEL_PATH)/8258/gpio_8258.c))
+INCLUDE_PATHS := -I$(PROJECT_PATH) -I$(TEL_PATH) -I$(TEL_PATH)/lib
+LS_INCLUDE := -L$(TEL_PATH)/lib
+
+ifneq ($(TEL_PATH)/gpio.c, $(wildcard $(TEL_PATH)/gpio.c))
 $(error "Please check SDK Path and set TEL_PATH.")
 endif
 
@@ -58,18 +79,18 @@ GCC_FLAGS := \
 -fshort-wchar \
 -fms-extensions
 
-INCLUDE_PATHS := -I$(TEL_PATH)/8258 -I$(PROJECT_PATH)
+LNK_FLAGS := --gc-sections -nostartfiles
 
 GCC_FLAGS += $(TEL_CHIP)
 GCC_FLAGS += $(POJECT_DEF)
 
-LS_FLAGS := $(PROJECT_PATH)/boot.link
-
-#include SDK makefile
--include $(TEL_PATH)/make/sdk_8258.mk
+LS_FLAGS := $(TEL_PATH)/boot.link
 
 #include Project makefile
 -include $(PROJECT_PATH)/project.mk
+
+#include SDK makefile
+-include $(TEL_PATH)/sdk.mk
 
 # Add inputs and outputs from these tool invocations to the build variables 
 LST_FILE := $(OUT_PATH)/$(PROJECT_NAME).lst
@@ -99,13 +120,14 @@ stop:
 go:
 	@$(PYTHON) $(PYTOOLS_PATH)/TlsrPgm.py -p$(PGM_PORT) -w -m
 
-TADDR?=0x00840b64
-TLEN?=128
-test_damp:
+TADDR?=0x00847E00
+TLEN?=512
+test_dump:
 	@$(PYTHON) $(PYTOOLS_PATH)/TlsrPgm.py -p$(PGM_PORT) -z11 -c -g ds $(TADDR) $(TLEN)
-	
-sws_print:
-	@$(PYTHON) $(PYTOOLS_PATH)/TlsrPgm.py -p$(PGM_PORT) -b921600 -z11 sws $(TADDR)	
+
+SWSBUF?=0x00847F00	
+sws_printf:
+	@$(PYTHON) $(PYTOOLS_PATH)/TlsrPgm.py -p$(PGM_PORT) -b1500000 sws $(SWSBUF)	
 
 # Main-build Target
 main-build: $(ELF_FILE) secondary-outputs
@@ -113,9 +135,9 @@ main-build: $(ELF_FILE) secondary-outputs
 # Tool invocations
 $(ELF_FILE): $(OBJS) $(USER_OBJS)
 	@echo 'Building Standard target: $@'
-	@$(TC32_PATH)tc32-elf-ld --gc-sections -L $(OUT_PATH) -T $(LS_FLAGS) -o $(ELF_FILE) $(OBJS) $(USER_OBJS) $(LIBS)
-	@echo 'Building Reduced target: $@'
-	@$(TC32_PATH)tc32-elf-ld --gc-sections -Ttext `$(PYTHON) $(PYTOOLS_PATH)/TlsrRetMemAddr.py -e $(ELF_FILE) -t $(TC32_PATH)tc32-elf-nm` -L $(OUT_PATH) -T $(LS_FLAGS) -o $(ELF_FILE) $(OBJS) $(USER_OBJS) $(LIBS)
+	@$(TC32_PATH)tc32-elf-ld $(LNK_FLAGS) $(LS_INCLUDE) -T$(LS_FLAGS) -o $(ELF_FILE) $(OBJS) $(USER_OBJS) $(LIBS)
+	#@echo 'Building Reduced target: $@'
+	#@$(TC32_PATH)tc32-elf-ld --gc-sections -Ttext `$(PYTHON) $(PYTOOLS_PATH)/TlsrRetMemAddr.py -e $(ELF_FILE) -t $(TC32_PATH)tc32-elf-nm` -L $(OUT_PATH) -T $(LS_FLAGS) -o $(ELF_FILE) $(OBJS) $(USER_OBJS) $(LIBS)
 	@echo 'Finished building target: $@'
 	@echo ' '
 
@@ -133,7 +155,7 @@ $(BIN_FILE): $(ELF_FILE)
 	@echo ' '
 
 sizedummy: $(ELF_FILE)
-	@$(PYTHON) $(PYTOOLS_PATH)/TlsrMemInfo.py -s 32768 -t $(TC32_PATH)tc32-elf-nm $(ELF_FILE)
+	@$(PYTHON) $(PYTOOLS_PATH)/TlsrMemInfo_$(SDK).py -s 16384 -t $(TC32_PATH)tc32-elf-nm $(ELF_FILE)
 
 clean:
 	-$(RM) $(FLASH_IMAGE) $(ELFS) $(OBJS) $(LST) $(SIZEDUMMY) $(ELF_FILE) $(BIN_FILE) $(LST_FILE)

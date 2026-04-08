@@ -26,15 +26,18 @@
 
 #pragma once
 
-#include "driver_8258.h"
+#include "driver.h"
+//#include "common.h"
 
 /* Enable C linkage for C++ Compilers: */
 #if defined(__cplusplus)
 extern "C" {
 #endif
 
-/////////////////// Clock  /////////////////////////////////
-#define CLOCK_SYS_CLOCK_HZ  	16000000
+/**
+ * @brief Define system clock
+ */
+#define CLOCK_SYS_CLOCK_HZ 24000000
 
 #if(CLOCK_SYS_CLOCK_HZ==12000000)
 	#define SYS_CLK  	SYS_CLK_12M_Crystal

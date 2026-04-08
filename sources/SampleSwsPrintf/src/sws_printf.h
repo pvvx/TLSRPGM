@@ -12,9 +12,11 @@
 //#define GPIO_PRINTF_MODE	1
 //#define SWS_PRINTF_MODE	1
 
-#define USE_PRINTF (SWS_PRINTF_MODE || GPIO_PRINTF_MODE)
+#ifndef SWS_PRINTF
+#define SWS_PRINTF (SWS_PRINTF_MODE || GPIO_PRINTF_MODE)
+#endif
 
-#if USE_PRINTF
+#if SWS_PRINTF
 
 #if SWS_PRINTF_MODE
 /* The maximum transmit buffer size is 254 bytes.
@@ -75,7 +77,7 @@ int sws_printf(const char *format, ...);
 
 void sws_print_hex_dump(void * pdata, int len);
 
-#else // USE_PRINTF
+#else // SWS_PRINTF
 
 #define sws_init()
 #define sws_buffer_flush()
@@ -84,7 +86,7 @@ void sws_print_hex_dump(void * pdata, int len);
 #define sws_printf(...)
 #define sws_print_hex_dump(...)
 
-#endif // USE_PRINTF
+#endif // SWS_PRINTF
 
 #define printf sws_printf
 

@@ -9,3 +9,7 @@ $(OUT_PATH)/src/sws_printf.o
 $(OUT_PATH)/src/%.o: $(PROJECT_PATH)/%.c
 	@echo 'Building file: $<'
 	@$(TC32_PATH)tc32-elf-gcc $(GCC_FLAGS) $(INCLUDE_PATHS) -c -o"$@" "$<"
+
+$(OUT_PATH)/src/%.o: $(PROJECT_PATH)/%.S
+	@echo 'Building file: $<'
+	@$(TC32_PATH)tc32-elf-gcc $(INCLUDE_PATHS) $(BOOT_FLAG) -c -o"$@" "$<"
