@@ -516,7 +516,12 @@ class TLSRPGM:
 		hex_dump(offset, data[4:rdsize+4])
 		return True
 	# Dump Ext. Chip FlashUID
-	def DumpChipFlashUID(self, offset = 0, rdsize = 0x20):
+	def DumpChipFlashUID(self, offset = 0, rdsize = None):
+		if rdsize == None:
+			if self.ext_chip == 'TLSR8208':
+				rdsize = 0x10
+			else:
+				rdsize = 0x20
 		rdsize +=4 # +4 dimmy
 		data = self.command(struct.pack('<BBHHB', self.CMD_FLASH_WRRD, offset & 0xff, (offset>>8) & 0xffff, rdsize, 0x4B), rdsize+6)
 		if data == None or self.wcnt != rdsize + 1:

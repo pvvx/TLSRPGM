@@ -176,7 +176,7 @@ void sws_print_hex_dump(void * d, int len) {
 	unsigned char *p = (unsigned char *)d;
 	while(len--) {
 		unsigned char c = *p++;
-		sws_putchar(tab_hex_ascii[c >> 8]);
+		sws_putchar(tab_hex_ascii[c >> 4]);
 		sws_putchar(tab_hex_ascii[c & 0x0f]);
 	}
 }
