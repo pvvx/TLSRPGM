@@ -179,8 +179,8 @@ class TLSRPGM:
 	pgm_clk = 24
 	pgm_swdiv = 5
 	pgm_swaddrlen = 3
-	pgm_swbuf = [b'\x5a\x00\x06\x02\x00\x05']
-	
+	pgm_swbuf = b'\x5a\x00\x06\x02\x00\x05'
+
 	pgm_chip = '?'
 	#-----------------------------------------------
 	# Functions for an PGM device
@@ -1368,12 +1368,12 @@ def main():
 		swd = args.div
 	if args.u2b:
 		if pgm.pgm_swaddrlen != 2 or pgm.pgm_swdiv != swd:
-			if not pgm.SetPgmConfig(swdiv = swd, swaddrlen=2, swbuf = b'\x5a\x00\x06\x02\x00\x05'):
+			if not pgm.SetPgmConfig(swdiv = swd, swaddrlen=2):
 				pgm.close()
 				sys.exit(1)
 	else:
 		if pgm.pgm_swaddrlen != 3 or pgm.pgm_swdiv != swd:
-			if not pgm.SetPgmConfig(swdiv = swd, swaddrlen=3, swbuf = b'\x5a\x00\x06\x02\x00\x05'):
+			if not pgm.SetPgmConfig(swdiv = swd, swaddrlen=3):
 				pgm.close()
 				sys.exit(1)
 	# set speed up?

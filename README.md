@@ -32,13 +32,13 @@ The firmware for the module works with all types of TLSR82xx chips via SWM-SWS c
 > **Options:** wsl /usr/bin/python3 TlsrPgm.py
 ```
 usage: TlsrPgm [-h] [-p PORT] [-b BAUD] [-t TRST] [-a ACT] [-z ZW] [-s] [-c]
-               [-r] [-g] [-m] [-w] [-u]
-               {rf,we,wf,es,ea,fsr,fsw,rs,ws,wsb,wsw,wsd,ra,wa,i,ds,df,da,dc,sws} ...
+               [-r] [-g] [-m] [-d DIV] [-o OSWS] [-u] [-w]
+               {rf,we,wf,es,ea,fsr,fsw,rs,ws,wsb,wsw,wsd,ra,ro,wa,i,ds,df,da,do,dc,sws} ...
 
-TLSR82xx TlsrPgm version 03.12.25
+TLSR82xx TlsrPgm version 13.04.26
 
 positional arguments:
-  {rf,we,wf,es,ea,fsr,fsw,rs,ws,wsb,wsw,wsd,ra,wa,i,ds,df,da,dc,sws}
+  {rf,we,wf,es,ea,fsr,fsw,rs,ws,wsb,wsw,wsd,ra,ro,wa,i,ds,df,da,do,dc,sws}
                         Run TlsrPgm {command} -h for additional help
     rf                  Read Flash to binary file
     we                  Write file to Flash with sectors erases
@@ -53,11 +53,13 @@ positional arguments:
     wsw                 Write 16-bit word to Swire address
     wsd                 Write 32-bit word to Swire address
     ra                  Read Analog Registers to binary file
+    ro                  Read TLSR8208 OTP to binary file
     wa                  Write file to Analog Registers
     i                   External Chip Information
     ds                  Dump Swire (Registers or SRAM)
     df                  Dump Flash
     da                  Dump Analog Registers
+    do                  Dump TLSR8208 OTP register
     dc                  Show uit32 register or SRAM addres
     sws                 SWS Printf (PGM version >= 0.0.0.4 is used)
 
@@ -74,8 +76,10 @@ options:
   -r, --run             CPU Run (post main processing)
   -g, --go              CPU Go (post main processing)
   -m, --mrst            Soft Reset (MCU Reboot) (post main processing)
-  -w, --wrktime         Show Worked Time
+  -d, --div DIV         Set the SWire transfer rate divisor
+  -o, --osws OSWS       Open SWS Printf (post main processing)
   -u, --u2b             Use 2 bytes swire address (TLSR826x)
+  -w, --wrktime         Show Worked Time
 ```
 
 #### Samples:
