@@ -1341,7 +1341,7 @@ def main():
 	parser_read_flash.add_argument('size', help='Size of region', type=arg_auto_int)
 	parser_read_flash = subparsers.add_parser(
 			'do',
-			help='Dump TLSR8208 OTP register')
+			help='Dump TLSR8208 OTP registers')
 	parser_read_flash.add_argument('address', help='Start address', type=arg_auto_int)
 	parser_read_flash.add_argument('size', help='Size of region', type=arg_auto_int)
 	parser_read_flash = subparsers.add_parser(

@@ -23,6 +23,7 @@ TLSR8269 chip for direct USB connection
 Pin PB1 (OUT) --> RESET, Pin PA7 (SWM) <-> SWS, Pin PC4 (OUT) --> Power (max 4 mA), Pin PE2 - USB_DM, PE3 - USB_DP
 
 The current version of the 'TlsrPgm.py' program is tested with chips only: TLSR8208, TLSR8250, TLSR8251, TLSR8253, TLSR8258, TLSR8266, TLSR8269.
+(TLSR8359 and TLSR8656 = TLSR825x)
 The firmware for the module works with all types of TLSR82xx chips via SWM-SWS connection.
 
 1. [How to write TLSRPGM program to TB-03F-KIT or TB-04-KIT](https://github.com/pvvx/TLSRPGM/tree/main/sources/UART2SWire/tb-0x-pgm).
@@ -130,7 +131,7 @@ REGISTERS:
 000070: 00 04 00 04 00 00 00 00 00 00 00 64 00 02 62 55 
 ```
 
-> **Read Full Flash:** TlsrPgm.py -w -t100 -a200 -c -pCOM3 -b1500000 rf 0 0x80000 ff_512k.bin
+> **Read Full Flash:** TlsrPgm.py -w -t100 -a200 -s -pCOM3 -b1500000 rf 0 0x80000 ff_512k.bin
 ```
 =======================================================
 TLSR825x TlsrPgm version 25.11.20
