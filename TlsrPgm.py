@@ -896,18 +896,17 @@ class TLSRPGM:
 		if rblk == None:
 			return False
 		regs = struct.unpack('<IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII', rblk[4:132])
-		for i in range(16):
-			print("r%d: 0x%08x\tr%d: 0x%08x" % (i, regs[i], i, regs[16+i]))
+		print("flg: 0x%08x" % regs[16])
+		for i in range(13):
+			print("r%02d: 0x%08x" % (i, regs[i]))
+			#\tr%02d: 0x%08x" % (i, regs[i], i, regs[16+i]))
+		print("sp: 0x%08x" % regs[13])
+		print("lr: 0x%08x" % regs[14])
+		print("pc: 0x%08x" % regs[15])
 
-		#for i, val in enumerate(regs):
-		#	print("r%d: 0x%08x" % (i, val))
-		#print('CPU alt registers:')
-		#rblk = self.ReadRegsData(0x06C0,80)
-		#if rblk == None:
-		#	return False
-		#regs = struct.unpack('<IIIIIIIIIIIIIIIIIIII', rblk[4:84])
-		#for i, val in enumerate(regs):
-		#	print("r%d: 0x%08x" % (i, val))
+		for i in range(14):
+			print("???: 0x%08x" % regs[i+17])
+		print("mul64: 0x%08x" % regs[31]) # 0x6fc = (mul32*32)>>32
 		return True
 	# Test
 	def TestDebugPC(self, ttime = 1, offset = 0x6bc):
