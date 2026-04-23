@@ -8,16 +8,23 @@ import sys
 import signal
 import struct
 import serial
-import keyboard
 import platform
 import time
 import argparse
 import os
 import io
 
+try:
+ import keyboard
+except ImportError:
+ class keyboard:
+  @staticmethod
+  def is_pressed(*args, **kwargs):
+   return False
+
 __progname__ = 'TLSR82xx TlsrPgm'
 __filename__ = 'TlsrPgm'
-__version__ = '23.04.26'
+__version__ = '23.04.26.2'
 
 DEFAULT_UART_BAUD = 230400
 
