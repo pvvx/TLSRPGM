@@ -881,12 +881,33 @@ class TLSRPGM:
 					flgsleep = False
 					flgrun = True
 				else:
-					print('\r\nError Read response!', file=sys.stderr) 
+					print('\r\nError Read response!', file=sys.stderr)
 					return False
 			else:
-				print('\r\nError CPU sleep!', file=sys.stderr) 
+				print('\r\nError CPU sleep!', file=sys.stderr)
 				return False
 		print()
+		return True
+	# Dump CPU registers
+	def DumpCPURegs(self):
+		print('-------------------------------------------------------')
+		print('CPU registers:')
+		rblk = self.ReadRegsData(0x0680,128)
+		if rblk == None:
+			return False
+		regs = struct.unpack('<IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII', rblk[4:132])
+		for i in range(16):
+			print("r%d: 0x%08x\tr%d: 0x%08x" % (i, regs[i], i, regs[16+i]))
+
+		#for i, val in enumerate(regs):
+		#	print("r%d: 0x%08x" % (i, val))
+		#print('CPU alt registers:')
+		#rblk = self.ReadRegsData(0x06C0,80)
+		#if rblk == None:
+		#	return False
+		#regs = struct.unpack('<IIIIIIIIIIIIIIIIIIII', rblk[4:84])
+		#for i, val in enumerate(regs):
+		#	print("r%d: 0x%08x" % (i, val))
 		return True
 	# Test
 	def TestDebugPC(self, ttime = 1, offset = 0x6bc):
@@ -1714,7 +1735,7 @@ def main():
 		if ret == None:
 			pgm.close()
 			sys.exit(1)
-		#if not pgm.DumpChipRegs(0x610, 0x10):
+		#if not pgm.DumpChipRegs(0x600, 0x100):
 		#	pgm.close()
 		#	sys.exit(1)
 		print('CPU Go...', end = ' ')
@@ -1723,6 +1744,12 @@ def main():
 			sys.exit(1)
 		print('ok')
 		if not pgm.WaitPC(1, dw):
+			pgm.close()
+			sys.exit(1)
+		#if not pgm.DumpChipRegs(0x600, 0x100):
+		#	pgm.close()
+		#	sys.exit(1)
+		if not pgm.DumpCPURegs():
 			pgm.close()
 			sys.exit(1)
 	else:
