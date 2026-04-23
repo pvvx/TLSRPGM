@@ -24,7 +24,7 @@ except ImportError:
 
 __progname__ = 'TLSR82xx TlsrPgm'
 __filename__ = 'TlsrPgm'
-__version__ = '23.04.26.2'
+__version__ = '23.04.26.3'
 
 DEFAULT_UART_BAUD = 230400
 
@@ -903,17 +903,30 @@ class TLSRPGM:
 		if rblk == None:
 			return False
 		regs = struct.unpack('<IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII', rblk[4:132])
-		print("flg: 0x%08x" % regs[16])
-		for i in range(13):
-			print("r%02d: 0x%08x" % (i, regs[i]))
-			#\tr%02d: 0x%08x" % (i, regs[i], i, regs[16+i]))
-		print("sp: 0x%08x" % regs[13])
-		print("lr: 0x%08x" % regs[14])
-		print("pc: 0x%08x" % regs[15])
+		print("flg: 0x%08x (psr)" % regs[16])
+		print("r00: 0x%08x" %  regs[0])
+		print("r01: 0x%08x" %  regs[1])
+		print("r02: 0x%08x" %  regs[2])
+		for i in range(8):
+			print("r%02d: 0x%08x s%02d: 0x%08x" % (i+3, regs[i+3], i+3, regs[i+19]))
+		print("r11: 0x%08x (fp) 0x%08x" % (regs[11], regs[11+16]))
+		print("r12: 0x%08x (ip) 0x%08x" % (regs[12], regs[12+16]))
+		print("r13: 0x%08x (sp) 0x%08x" % (regs[13], regs[13+16]))
+		print("r14: 0x%08x (lr) 0x%08x" % (regs[14], regs[14+16]))
+		print("r15: 0x%08x (pc) 0x%08x" % (regs[15], regs[18]))
+		print("r??: 0x%08x" % regs[17])
 
-		for i in range(14):
-			print("???: 0x%08x" % regs[i+17])
-		print("mul64: 0x%08x" % regs[31]) # 0x6fc = (mul32*32)>>32
+		print("m64: 0x%08x =(mul32*32)>>32" % regs[31]) # 0x6fc = (mul32*32)>>32
+
+		rblk = self.ReadRegsData(regs[13], 48)
+		if rblk == None:
+			return False
+		stek = struct.unpack('<IIIIIIIIIIII', rblk[4:52])
+		print("SP 0x%06x:" % regs[13])
+		print("0x%08x 0x%08x 0x%08x 0x%08x" % (stek[0], stek[1], stek[2], stek[3]))
+		print("0x%08x 0x%08x 0x%08x 0x%08x" % (stek[4], stek[5], stek[6], stek[7]))
+		print("0x%08x 0x%08x 0x%08x 0x%08x" % (stek[8], stek[9], stek[10], stek[11]))
+
 		return True
 	# Test
 	def TestDebugPC(self, ttime = 1, offset = 0x6bc):
@@ -1398,6 +1411,11 @@ def main():
 			help='Write break-point address')
 	parser_write_flash.add_argument('address', help='Write address', type=arg_auto_int)
 
+	parser_write_flash = subparsers.add_parser(
+			'stp',
+			help='CPU Step')
+	parser_write_flash.add_argument('count', help='Step count', type=arg_auto_int)
+
 	parser_read_flash = subparsers.add_parser(
 			'ra',
 			help='Read Analog Registers to binary file')
@@ -1738,12 +1756,10 @@ def main():
 		print('Write break-point adress 0x%06x...' % dw)
 		#pgm.setextadr(0x40)
 		ret = pgm.WriteRegsData(0x610, struct.pack("<IIII", 0, dw  | 0x01000000, 0, 0))
+		#pgm.setextadr(0x00)
 		if ret == None:
 			pgm.close()
 			sys.exit(1)
-		#if not pgm.DumpChipRegs(0x600, 0x100):
-		#	pgm.close()
-		#	sys.exit(1)
 		print('CPU Go...', end = ' ')
 		if not pgm.WriteRegsData(0x602, b'\x84'): # CPU Go
 			pgm.close()
@@ -1752,9 +1768,26 @@ def main():
 		if not pgm.WaitPC(1, dw):
 			pgm.close()
 			sys.exit(1)
-		#if not pgm.DumpChipRegs(0x600, 0x100):
-		#	pgm.close()
-		#	sys.exit(1)
+		if not pgm.DumpCPURegs():
+			pgm.close()
+			sys.exit(1)
+	elif args.operation == 'stp':
+		if args.count < 1:
+			print('Error count:', args.count)
+			pgm.close()
+			sys.exit(1)
+		print('CPU Stall...', end = ' ')
+		if not pgm.WriteRegsData(0x602, b'\x06'):
+			pgm.close()
+			sys.exit(1)
+		print('ok')
+		cnt = args.count
+		print('CPU %d Steps...' % cnt, end = '')
+		for i in range(cnt):
+			if not pgm.WriteRegsData(0x613, b'\x80'):
+				pgm.close()
+				sys.exit(1)
+		print('ok')
 		if not pgm.DumpCPURegs():
 			pgm.close()
 			sys.exit(1)
