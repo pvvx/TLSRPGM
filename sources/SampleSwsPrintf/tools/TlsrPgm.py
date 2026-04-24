@@ -24,7 +24,7 @@ except ImportError:
 
 __progname__ = 'TLSR82xx TlsrPgm'
 __filename__ = 'TlsrPgm'
-__version__ = '23.04.26.2'
+__version__ = '24.04.26'
 
 DEFAULT_UART_BAUD = 230400
 
@@ -140,14 +140,14 @@ class TLSRPGM:
 	CMDF_SWIRE_ACTIVATE = 4
 	CMDF_UART_BAUD = 5
 
-	ERR_NONE = 0
-	ERR_FUNC = 1
-	ERR_LEN  = 2
-	ERR_READ = 3
-	ERR_BUSY = 4
-	ERR_CRC  = 5
-	ERR_BAUD = 6
-	ERR_MAX  = 7
+	ERR_NONE = 0 # Errors None                               
+	ERR_FUNC = 1 # Function number error                     
+	ERR_LEN  = 2 # Data length error                         
+	ERR_READ = 3 # Swire read timeout                        
+	ERR_BUSY = 4 # Timeout flag while reading analog register
+	ERR_CRC  = 5 # Error CRC                                 
+	ERR_BAUD = 6 # Invalid baud rate number                  
+	ERR_MAX  = 7 
 
 	ERR_RETRY_COUNT = 3
 
@@ -187,7 +187,7 @@ class TLSRPGM:
 	pgm_swdiv = 5
 	pgm_swaddrlen = 3
 	pgm_swbuf = b'\x5a\x00\x06\x02\x00\x05'
-
+	ext_chip = None
 	pgm_chip = '?'
 	#-----------------------------------------------
 	# Functions for an PGM device
@@ -239,6 +239,11 @@ class TLSRPGM:
 			print('\rError read %s!' % (self.port), file=sys.stderr)
 			return None
 		return rblk
+	def error_msg(self):
+		err = self.err & 0xff
+		if err >= self.ERR_MAX:
+			return 'Unknown error!'
+		return 	tab_err[err]
 	def command(self, wblk, rdlen = None):
 		w = self.write(crc_blk(wblk))
 		if w != len(wblk)+2:
@@ -290,14 +295,14 @@ class TLSRPGM:
 	def SetPinRST(self, out = 1):
 		data = self.command(struct.pack('<BBH', self.CMD_FUNCS, self.CMDF_EXT_POWER, out), 7)
 		if data == None:
-			print('\rError[%d] Set pin RST/Power!' % self.err, file=sys.stderr)
+			print('\rError(%d) Set pin RST/Power!' % self.err, file=sys.stderr)
 			return False
 		return True
 	# Get version pgm board
 	def GetVersion(self):
 		data = self.command(struct.pack('<BBH', self.CMD_FUNCS, self.CMDF_GET_VERSION, 0), 19)
 		if data == None:
-			print('\rError[%d] Read PGM Version and Config!' % self.err)
+			print('\rError(%d) Read PGM Version and Config!' % self.err)
 			return False
 		self.pgm_version = [data[5], data[4]]
 		self.pgm_ver_int = (data[5] << 8) | data[4]
@@ -340,7 +345,7 @@ class TLSRPGM:
 		swbuf = struct.pack('<BBBBBB',0x5a,0,6,2,eaddr & 0xff,5)
 		data = self.command(struct.pack('<BBHBB', self.CMD_FUNCS, self.CMDF_SWIRE_CFG, 0, self.pgm_swdiv, self.pgm_swaddrlen) + swbuf, 14)
 		if data == None:
-			print('Error[%d] Set PGM Config!' % self.err, file=sys.stderr)
+			print('Error(%d) Set PGM Config!' % self.err, file=sys.stderr)
 			return False
 		return True
 	# Set Speed SWM pgm board
@@ -353,7 +358,7 @@ class TLSRPGM:
 			swbuf = self.pgm_swbuf;
 		data = self.command(struct.pack('<BBHBB', self.CMD_FUNCS, self.CMDF_SWIRE_CFG, 0, swdiv, swaddrlen) + swbuf, 14)
 		if data == None:
-			print('Error[%d] Set PGM Config!' % self.err, file=sys.stderr)
+			print('Error(%d) Set PGM Config!' % self.err, file=sys.stderr)
 			return False
 		(self.pgm_swdiv, self.pgm_swaddrlen) = struct.unpack('<BB', data[4:6])
 		self.pgm_swbuf = data[6:12]
@@ -377,7 +382,7 @@ class TLSRPGM:
 		data = self.command(struct.pack('<BBH', self.CMD_FUNCS, self.CMDF_SWIRE_ACTIVATE, count), 10)
 		self._port.timeout = t
 		if data == None:
-			print('Activate Error[%d]!' % self.err)
+			print('Activate Error(%d)!' % self.err)
 			return False
 		print('ok')
 		self.ext_pc = struct.unpack('<I', data[4:8])
@@ -407,12 +412,12 @@ class TLSRPGM:
 			return False
 		if self.err != self.ERR_NONE:
 			if self.err >= len(self.tab_err):
-				print('\r\nError[%d]: Unknown error!' % (self.err), file=sys.stderr)
+				print('\r\nError(%d): Unknown error!' % (self.err), file=sys.stderr)
 			else:
 				if self.err == self.ERR_READ:
 					print('Error!')
 					print('Check SWM<->SWS connection or Reset/Activation time!', file=sys.stderr)
-				print('\r\nError[%d]: %s' % (self.err, self.tab_err[self.err]), file=sys.stderr)
+				print('\r\nError(%d): %s' % (self.err, self.tab_err[self.err]), file=sys.stderr)
 			return False
 		if len(rblk) >= 10:
 			self.ext_pc = struct.unpack('<I', rblk[4:8])
@@ -898,22 +903,43 @@ class TLSRPGM:
 	# Dump CPU registers
 	def DumpCPURegs(self):
 		print('-------------------------------------------------------')
+		if self.pgm_swaddrlen == 2 and self.ext_chip == None:
+			self.ReadChipID()
 		print('CPU registers:')
 		rblk = self.ReadRegsData(0x0680,128)
 		if rblk == None:
 			return False
 		regs = struct.unpack('<IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII', rblk[4:132])
-		print("flg: 0x%08x" % regs[16])
-		for i in range(13):
-			print("r%02d: 0x%08x" % (i, regs[i]))
-			#\tr%02d: 0x%08x" % (i, regs[i], i, regs[16+i]))
-		print("sp: 0x%08x" % regs[13])
-		print("lr: 0x%08x" % regs[14])
-		print("pc: 0x%08x" % regs[15])
+		print("flg: 0x%08x (psr)" % regs[16])
+		if self.ext_chip == 'TLSR8266':
+			print("r00: 0x%08x ???: 0x%08x" %  (regs[0], regs[17]))
+			print("r01: 0x%08x" %  regs[1])
+			print("r02: 0x%08x s02: 0x%08x" %  (regs[2], regs[18]))
+		else:
+			print("r00: 0x%08x s00: 0x%08x" %  (regs[0], regs[17]))
+			print("r01: 0x%08x" %  regs[1])
+			print("r02: 0x%08x" %  regs[2])
+		for i in range(8):
+			print("r%02d: 0x%08x s%02d: 0x%08x" % (i+3, regs[i+3], i+3, regs[i+19]))
+		print("r11: 0x%08x (fp) 0x%08x" % (regs[11], regs[11+16]))
+		print("r12: 0x%08x (ip) 0x%08x" % (regs[12], regs[12+16]))
+		print("r13: 0x%08x (sp) 0x%08x" % (regs[13], regs[13+16]))
+		print("r14: 0x%08x (lr) 0x%08x" % (regs[14], regs[14+16]))
+		if self.ext_chip == 'TLSR8266':
+			print("r15: 0x%08x (pc)" % (regs[15]))
+		else:
+			print("r15: 0x%08x (pc) 0x%08x" % (regs[15], regs[18]))
+			print("m64: 0x%08x =(mul32*32)>>32" % regs[31]) # 0x6fc = (mul32*32)>>32
 
-		for i in range(14):
-			print("???: 0x%08x" % regs[i+17])
-		print("mul64: 0x%08x" % regs[31]) # 0x6fc = (mul32*32)>>32
+		rblk = self.ReadRegsData(regs[13], 48)
+		if rblk == None:
+			return False
+		stek = struct.unpack('<IIIIIIIIIIII', rblk[4:52])
+		print("SP 0x%06x:" % regs[13])
+		print("0x%08x 0x%08x 0x%08x 0x%08x" % (stek[0], stek[1], stek[2], stek[3]))
+		print("0x%08x 0x%08x 0x%08x 0x%08x" % (stek[4], stek[5], stek[6], stek[7]))
+		print("0x%08x 0x%08x 0x%08x 0x%08x" % (stek[8], stek[9], stek[10], stek[11]))
+
 		return True
 	# Test
 	def TestDebugPC(self, ttime = 1, offset = 0x6bc):
@@ -1395,8 +1421,13 @@ def main():
 
 	parser_write_flash = subparsers.add_parser(
 			'bkp',
-			help='Write break-point address')
+			help='Set break-point address (TLSR825x)')
 	parser_write_flash.add_argument('address', help='Write address', type=arg_auto_int)
+
+	parser_write_flash = subparsers.add_parser(
+			'stp',
+			help='CPU Step')
+	parser_write_flash.add_argument('count', help='Step count', type=arg_auto_int)
 
 	parser_read_flash = subparsers.add_parser(
 			'ra',
@@ -1734,27 +1765,54 @@ def main():
 				pgm.close()
 				sys.exit(1)
 	elif args.operation == 'bkp':
+		#if args.u2b:
+		#	print('bkp - Not work for TLSR826x!')
+		#	pgm.close()
+		#	sys.exit(1)
 		dw = args.address & 0x00ffffff
 		print('Write break-point adress 0x%06x...' % dw)
 		#pgm.setextadr(0x40)
 		ret = pgm.WriteRegsData(0x610, struct.pack("<IIII", 0, dw  | 0x01000000, 0, 0))
+		#pgm.setextadr(0x00)
 		if ret == None:
 			pgm.close()
 			sys.exit(1)
-		#if not pgm.DumpChipRegs(0x600, 0x100):
-		#	pgm.close()
-		#	sys.exit(1)
 		print('CPU Go...', end = ' ')
 		if not pgm.WriteRegsData(0x602, b'\x84'): # CPU Go
 			pgm.close()
 			sys.exit(1)
 		print('ok')
-		if not pgm.WaitPC(1, dw):
+		if not pgm.WaitPC(3, dw):
 			pgm.close()
 			sys.exit(1)
-		#if not pgm.DumpChipRegs(0x600, 0x100):
+		if not pgm.DumpCPURegs():
+			pgm.close()
+			sys.exit(1)
+	elif args.operation == 'stp':
+		#if args.u2b:
+		#	print('stp - Not work for TLSR826x!')
 		#	pgm.close()
 		#	sys.exit(1)
+		if args.count < 1:
+			print('Error count:', args.count)
+			pgm.close()
+			sys.exit(1)
+		print('CPU Stall...', end = ' ')
+		if not pgm.WriteRegsData(0x602, b'\x06'):
+			pgm.close()
+			sys.exit(1)
+		print('ok')
+		if not pgm.DumpCPURegs():
+			pgm.close()
+			sys.exit(1)
+		cnt = args.count
+		print('-------------------------------------------------------')
+		print('CPU %d Steps...' % cnt, end = '')
+		for i in range(cnt):
+			if not pgm.WriteRegsData(0x613, b'\x80'):
+				pgm.close()
+				sys.exit(1)
+		print('ok')
 		if not pgm.DumpCPURegs():
 			pgm.close()
 			sys.exit(1)
